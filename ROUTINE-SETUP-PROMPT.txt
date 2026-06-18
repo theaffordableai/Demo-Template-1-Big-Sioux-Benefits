@@ -1,0 +1,82 @@
+==============================================================================
+ AUTO-BLOGGING ROUTINE — SETUP PROMPT  (paste this to Claude, fill the 2 blanks)
+==============================================================================
+
+FILL THESE IN:
+  • GITHUB_REPO_URL = <<<paste the GitHub repo URL here, e.g. https://github.com/org/my-site>>>
+  • POSTS_PER_WEEK  = <<<a number, e.g. 3>>>
+
+------------------------------------------------------------------------------
+PROMPT TO CLAUDE:
+------------------------------------------------------------------------------
+
+Set up a fully automated, REMOTE (cloud) auto-blogging routine for the website in
+GITHUB_REPO_URL = [PASTE GITHUB URL HERE]
+Publish frequency: POSTS_PER_WEEK = [NUMBER] posts per week.
+Use model claude-opus-4-8 for the routine.
+
+Do the whole setup end to end and verify each step. Specifically:
+
+1) REPO + STRUCTURE
+   - Clone GITHUB_REPO_URL (use `gh`; if it's private, find the account that has access).
+     Confirm it's an Astro site and find how blog posts are added (e.g. src/pages/blog/<slug>.astro
+     plus a posts list in src/lib/posts.ts, OR a content collection). Note the blog URL pattern.
+   - Read the brand/site config (e.g. src/config/site.config.ts) for the real production domain,
+     brand name, author, phone, address, service area, and compliance disclaimer.
+   - If BRAND.md and BLOG-AUTHORING.md do NOT exist in the repo root, CREATE them:
+       • BRAND.md  = single source of brand truth (name, domain, author, CTA, disclaimer, colors, voice).
+       • BLOG-AUTHORING.md = the exact, repeatable recipe to add ONE compliant post (the two files to
+         touch, the proven .astro template to copy, the SEO/AEO requirements, required data visuals,
+         the build+verify+commit+push steps, and the live URL pattern).
+     Use the existing best post in the repo as the structural template.
+
+2) CLOUDFLARE PAGES (git-connected auto-deploy)
+   - Use the Cloudflare API token + account ID already saved in the site's .env (CLOUDFLARE_API_TOKEN /
+     CLOUDFLARE_ACCOUNT_ID). If no .env exists, ask me for them.
+   - Ensure a GIT-CONNECTED Cloudflare Pages project points at GITHUB_REPO_URL on branch main
+     (build command `npm run build`, output `dist`, env DEPLOY_TARGET=cloudflare). Create it if missing.
+   - Trigger an initial deploy and confirm the site is live. Report the *.pages.dev URL and the
+     canonical production domain. Confirm a `git push` to main auto-deploys (~4–10 min).
+
+3) WRITE + SHIP ONE CORNERSTONE POST NOW (proves the whole pipeline)
+   - Pick a high-value topic for the site's niche & location. Write a real, fully SEO+AEO-optimized post
+     using the repo's skills (brand-identity, seo-aeo-publishing, blog-write, blog-geo, blog-schema) and,
+     for insurance/health niches, the `ambrose-insurance-data` skill.
+   - DATA RULES (never fabricate a number; cite every stat with a real link):
+       • PRIMARY: the Ambrose Insurance Brain MCP ("Ambrose brain MCP" connector) — brain_catalog →
+         brain_tool_schema → brain_execute (e.g. cdc_county_health, census_market_snapshot,
+         healthcare_inflation, cms_hospitals, aca_premium_rates), or ask_brain.
+       • SECONDARY/VERIFY: WebSearch + WebFetch official FEDERAL sites only (Medicare.gov, CMS.gov,
+         CDC cdc.gov/places, Census.gov, BLS.gov, SSA.gov, federalregister.gov); cite the exact .gov URL.
+   - The post MUST include real data VISUALS: a stat-callout row (3+ real figures) and at least one
+     accessible bar chart or comparison table, each with a source line. Plus: one <h1>, answer-first
+     intro, question-shaped H2s, FAQ accordion matching FAQPage schema, author byline, related links,
+     sources list, and the compliance disclaimer.
+   - Verify: `DEPLOY_TARGET=cloudflare npm run build` passes clean; the built page's canonical = the real
+     production domain (NOT *.pages.dev); leak-check `grep -rEl "pages\.dev|netlify\.app|vercel\.app|workers\.dev|localhost" dist | wc -l` prints 0. Then commit ONLY the content files and push to main.
+
+4) CREATE THE REMOTE ROUTINE (cloud, model claude-opus-4-8)
+   - Use the claude.ai remote-trigger API (RemoteTrigger). Reuse my existing cloud environment_id and let
+     the platform attach my connectors (it auto-attaches the "Ambrose brain MCP" connector). Set:
+       • name: "<Brand> — Blog (Nx/week)"
+       • model: claude-opus-4-8
+       • session_context.sources = [{ git_repository: { url: GITHUB_REPO_URL } }]
+       • allowed_tools: Bash, Read, Write, Edit, Glob, Grep, WebSearch, WebFetch, Skill, Task
+       • cron_expression derived from POSTS_PER_WEEK, spread across the week at OFF-PEAK, off-:00 minutes
+         (e.g. 1/wk → "37 14 * * 1"; 2/wk → "37 14 * * 1,4"; 3/wk → "37 14 * * 1,3,5";
+          7/wk → "37 14 * * *"). Cron is in my local timezone.
+   - The routine PROMPT must be fully self-contained and tell each run to: git pull; read BRAND.md +
+     BLOG-AUTHORING.md; pick a FRESH topic not already in the blog (rotate the niche's content cluster);
+     fetch REAL data from the Ambrose brain FIRST and verify/supplement via federal-site web search;
+     write the two files with mandatory stats + a chart, full SEO/AEO schema, and cited .gov sources;
+     build + run the canonical/leak checks; then commit only the content files and push to main so
+     Cloudflare auto-deploys. End by reporting the title, slug, both live URLs, the data sources used,
+     and the commit hash.
+
+5) HYGIENE
+   - Do NOT also create a local scheduled task (remote only) to avoid double-posting.
+   - Report: the Pages project name + URLs, the remote routine's trigger id + cron + next run time, and
+     the live URL of the cornerstone post. Note that each future post goes live ~4–10 min after the
+     routine pushes.
+
+==============================================================================

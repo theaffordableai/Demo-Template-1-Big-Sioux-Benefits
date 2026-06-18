@@ -12,3 +12,6 @@ dist/
 .env
 .env.*
 !.env.example
+
+# Stray nested repo (not part of this site)
+_demo-repo/
