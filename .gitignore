@@ -1,0 +1,5 @@
+# Local tooling
+.claude/
+
+# Separate repository (has its own git remote)
+saa-sites/
