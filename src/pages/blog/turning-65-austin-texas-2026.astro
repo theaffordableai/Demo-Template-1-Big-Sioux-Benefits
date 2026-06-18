@@ -17,7 +17,21 @@ const SRC = {
   partD: { name: "Medicare.gov — Drug coverage (Part D) costs", url: "https://www.medicare.gov/drug-coverage-part-d/costs-for-medicare-drug-coverage" },
   ssa: { name: "Social Security — Sign up for Medicare", url: "https://www.ssa.gov/medicare/sign-up" },
   ship: { name: "Texas HICAP (State Health Insurance Assistance Program)", url: "https://www.hhs.texas.gov/services/aging/health-information-counseling-advocacy-program-hicap" },
+  cdc: { name: "CDC PLACES — Local Health Data", url: "https://www.cdc.gov/places/" },
+  census: { name: "U.S. Census Bureau — Travis County, TX", url: "https://www.census.gov/quickfacts/fact/table/traviscountytexas" },
+  bls: { name: "U.S. Bureau of Labor Statistics — Medical Care CPI", url: "https://www.bls.gov/cpi/" },
 };
+
+// Live data fetched from the Ambrose Insurance Brain (CDC PLACES 2023, U.S. Census 2022, BLS May 2026).
+const TRAVIS_HEALTH = [
+  { label: "Obesity", value: 30.4 },
+  { label: "High blood pressure", value: 28.0 },
+  { label: "Arthritis", value: 18.9 },
+  { label: "Diabetes (diagnosed)", value: 9.5 },
+  { label: "Coronary heart disease", value: 4.6 },
+];
+const TRAVIS = { population: "1.29M", populationFull: "1,289,054", income: "$92,731", uninsured: "12.5%", uninsuredCount: "159,505" };
+const INFLATION = { medCare: "2.16%", allItems: "3.90%" };
 
 const faqs = [
   { q: "When should I sign up for Medicare if I'm turning 65 in Austin?", a: "Your Initial Enrollment Period (IEP) is a 7-month window: the 3 months before your 65th-birthday month, your birthday month, and the 3 months after. Signing up in the 3 months BEFORE your birthday month means coverage starts the first day of your birthday month, with no gap. If you're still working with employer coverage, different timing and a Special Enrollment Period may apply — confirm your situation before you act." },
@@ -64,7 +78,7 @@ const systems = [
         <img src="/img/atx/martin-frey.jpg" alt="Martin Frey, Medicare ATX consultant" />
         <div>
           <div class="who">{site.brand.author}</div>
-          <div class="meta">Published June 19, 2026 · 9 min read · Sourced from Medicare.gov &amp; CMS</div>
+          <div class="meta">Published June 19, 2026 · 9 min read · Real data from CDC PLACES, U.S. Census &amp; BLS via the Ambrose Insurance Brain</div>
         </div>
       </div>
 
@@ -141,6 +155,26 @@ const systems = [
       </div>
       <p>If your doctors are concentrated in one system, the plans that include that system jump to the top of your list — and the rest fall away no matter how attractive the premium. Confirming your specific physicians and hospital are in-network for 2026 is the non-negotiable step before you enroll.</p>
 
+      <h2>Step 6: Match the plan to your local health picture</h2>
+      <p>Austin is a big, mostly young market — but the people aging into Medicare carry the chronic-condition load that decides which coverage actually pays off. Here is the Travis County picture by the numbers:</p>
+      <div class="stats">
+        <div class="stat"><div class="n">{TRAVIS.population}</div><div class="l">Travis County residents (U.S. Census, 2022)</div></div>
+        <div class="stat"><div class="n">{TRAVIS.uninsured}</div><div class="l">uninsured under 65 — a gap Medicare closes at 65 (Census, 2022)</div></div>
+        <div class="stat"><div class="n">+{INFLATION.medCare}</div><div class="l">medical-care inflation, year over year (BLS Medical Care CPI, May 2026)</div></div>
+      </div>
+      <p>Premium and network only get you halfway — coverage of <em>your</em> conditions and medications decides the rest. CDC data shows the real chronic-condition load among Travis County adults:</p>
+      <div class="chart">
+        {TRAVIS_HEALTH.map((h) => (
+          <div class="crow">
+            <span class="cl">{h.label}</span>
+            <span class="ct"><span class="cf" style={`width:${Math.round((h.value / 40) * 100)}%`}></span></span>
+            <span class="cv">{h.value}%</span>
+          </div>
+        ))}
+      </div>
+      <p class="src">Source: <a href={SRC.cdc.url} target="_blank" rel="noopener">{SRC.cdc.name}</a> (PLACES, 2023), Travis County — via the Ambrose Insurance Brain.</p>
+      <p>If you manage high blood pressure (about <strong>{TRAVIS_HEALTH[1].value}%</strong> of local adults), diabetes, or arthritis, the plan's drug formulary and specialist network matter far more than its premium. And with medical-care prices still rising <strong>+{INFLATION.medCare}</strong> a year, the 2026 ${RAILS.partDoopCap.toLocaleString()} Part D cap is doing real work to protect your downside. Bring your exact medication list when you compare.</p>
+
       <h2>What to watch as you approach 65 in 2026</h2>
       <ol>
         <li><strong>Mark your 7-month window</strong> on a calendar — and aim to enroll in the first 3 months.</li>
@@ -176,6 +210,9 @@ const systems = [
           <li><a href={SRC.partD.url} target="_blank" rel="noopener">{SRC.partD.name}</a> — 2026 drug-cost rules and the out-of-pocket cap.</li>
           <li><a href={SRC.ssa.url} target="_blank" rel="noopener">{SRC.ssa.name}</a> — how to enroll in Parts A &amp; B.</li>
           <li><a href={SRC.ship.url} target="_blank" rel="noopener">{SRC.ship.name}</a> — free, unbiased Texas counseling.</li>
+          <li><a href={SRC.cdc.url} target="_blank" rel="noopener">{SRC.cdc.name}</a> — Travis County chronic-condition prevalence (PLACES, 2023), via the Ambrose Insurance Brain.</li>
+          <li><a href={SRC.census.url} target="_blank" rel="noopener">{SRC.census.name}</a> — population, income & uninsured rate (ACS, 2022), via the Ambrose Insurance Brain.</li>
+          <li><a href={SRC.bls.url} target="_blank" rel="noopener">{SRC.bls.name}</a> — medical-care inflation (May 2026), via the Ambrose Insurance Brain.</li>
         </ul>
       </div>
 
