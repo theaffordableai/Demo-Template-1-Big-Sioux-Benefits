@@ -1,0 +1,229 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Tool from "../../components/Tool.astro";
+import "../../styles/blog.css";
+import { site } from "../../config/site.config";
+
+const title = "Medicare in Williamson County TX: Your 2026 Plan Guide";
+const description = "A 2026 Medicare guide for Williamson County — Round Rock, Cedar Park & Georgetown: the plan landscape, the new $2,100 Part D cap, and the local hospital networks.";
+const published = "2026-06-18";
+
+// 2026 federal Medicare cost rails (verified at CMS.gov — see SRC.cms2026)
+const RAILS = { partDoopCap: 2100, partDdeductibleMax: 615 };
+
+const SRC = {
+  medicare: { name: "Medicare.gov", url: "https://www.medicare.gov/" },
+  planFinder: { name: "Medicare.gov Plan Finder", url: "https://www.medicare.gov/plan-compare/" },
+  cms2026: { name: "CMS — Final CY 2026 Part D Redesign Program Instructions", url: "https://www.cms.gov/newsroom/fact-sheets/final-cy-2026-part-d-redesign-program-instructions" },
+  ssa: { name: "Social Security — Sign up for Medicare", url: "https://www.ssa.gov/medicare/sign-up" },
+  ship: { name: "Texas HICAP (State Health Insurance Assistance Program)", url: "https://www.hhs.texas.gov/services/aging/health-information-counseling-advocacy-program-hicap" },
+  cdc: { name: "CDC PLACES — Local Health Data", url: "https://www.cdc.gov/places/" },
+  census: { name: "U.S. Census Bureau QuickFacts — Williamson County, TX", url: "https://www.census.gov/quickfacts/fact/table/williamsoncountytexas/PST045224" },
+  bls: { name: "U.S. Bureau of Labor Statistics — Medical Care CPI", url: "https://www.bls.gov/cpi/" },
+};
+
+// Live data fetched from the Ambrose Insurance Brain (CDC PLACES 2023, U.S. Census V2024, BLS May 2026).
+const WILCO_HEALTH = [
+  { label: "Obesity", value: 32.6 },
+  { label: "High blood pressure", value: 29.2 },
+  { label: "Arthritis", value: 19.6 },
+  { label: "Diabetes (diagnosed)", value: 9.8 },
+  { label: "Cancer (non-skin)", value: 6.6 },
+  { label: "Coronary heart disease", value: 4.5 },
+];
+const WILCO = { population: "727,480", growth: "19.4%", over65: "13.1%", over65Count: "~95,000" };
+const INFLATION = [
+  { label: "All-items CPI", value: 3.90 },
+  { label: "Medical commodities (drugs)", value: 3.05 },
+  { label: "Medical care CPI", value: 2.16 },
+];
+
+const faqs = [
+  { q: "How many Medicare plans are available in Williamson County for 2026?", a: "Williamson County — Round Rock, Cedar Park, Georgetown, Leander and Hutto — sits inside the greater Austin market, one of the most competitive Medicare Advantage regions in Texas, with dozens of Part C plans (many at $0 premium) plus stand-alone Part D drug plans and Medigap supplements sold separately. The number that matters to you is far smaller: the plans whose network includes your doctors and whose formulary covers your drugs. Run your ZIP through the Medicare Plan Finder or let Medicare ATX compare the plans we offer against your situation." },
+  { q: "When can I enroll in Medicare if I live in Round Rock or Georgetown?", a: "If you're turning 65, your Initial Enrollment Period is a 7-month window — the 3 months before your birthday month, your birthday month, and the 3 months after. If you already have Medicare, the Annual Enrollment Period (Oct 15–Dec 7) is your yearly chance to switch Medicare Advantage or Part D plans for the following year. If you're still working past 65 with employer coverage, a Special Enrollment Period may apply. Confirm your timing before you act so you don't trigger a late penalty." },
+  { q: "What is the 2026 Part D out-of-pocket cap?", a: `For the first time, 2026 puts a hard ceiling on what you pay for covered prescriptions: your Part D out-of-pocket spending is capped at $${RAILS.partDoopCap.toLocaleString()} for the year, with the deductible no higher than $${RAILS.partDdeductibleMax}. Once your covered drug spending reaches $${RAILS.partDoopCap.toLocaleString()}, the plan pays 100% for the rest of the calendar year. This is the 2025 $2,000 cap adjusted for inflation, per CMS. It shifts the smart comparison toward your specific drugs' formulary tiers rather than the premium alone.` },
+  { q: "Which Austin-area hospitals will my Williamson County plan cover?", a: "That depends entirely on your plan's network. Care in the Austin metro runs through three major systems — Ascension Seton, St. David's HealthCare, and Baylor Scott & White Health — and Baylor Scott & White in particular has expanded heavily across Williamson County (Round Rock, Cedar Park, Georgetown, Pflugerville). A Medicare Advantage plan's network decides which hospitals and doctors you can use at the lowest cost, so always confirm your specific providers are in a plan's 2026 network before enrolling." },
+  { q: "Is Medicare Advantage or Medigap better in Williamson County?", a: "There's no universal winner. Medicare Advantage (Part C) bundles medical and usually drug coverage with a local network and a yearly out-of-pocket maximum, often at a low or $0 premium — a good fit if your doctors are in-network and you want extras like dental or vision. A Medigap supplement plus a stand-alone Part D plan costs more in premium but lets you see any provider nationwide that accepts Medicare, with very predictable costs — valuable if you travel or want maximum flexibility. Your turning-65 window is the best, cheapest time to buy Medigap because you're usually guaranteed coverage without medical underwriting." },
+  { q: "Does where I live in Williamson County change my Medicare options?", a: "Yes — Medicare Advantage and Part D plan availability, premiums, and provider networks are set by county and sometimes by ZIP. Williamson County residents in Round Rock (78664, 78681), Cedar Park (78613), Georgetown (78626, 78628), Leander and Hutto generally see the same county plan menu, but the in-network doctors and hospitals nearest you differ by community. Always compare with your exact ZIP and your real provider and drug lists." },
+];
+
+const breadcrumbs = [
+  { name: "Home", url: site.domain },
+  { name: "Blog", url: `${site.domain}/blog` },
+  { name: "Medicare in Williamson County 2026", url: `${site.domain}/blog/medicare-williamson-county-round-rock-2026` },
+];
+const dataset = {
+  name: "2026 Medicare guidance — Williamson County (Round Rock/Cedar Park/Georgetown, TX)",
+  description: "2026 Medicare plan landscape for Williamson County, the Part D $2,100 out-of-pocket cap, the Austin health-system networks, and CDC chronic-condition prevalence for the county.",
+  sourceUrl: SRC.planFinder.url,
+};
+
+const systems = [
+  { name: "Baylor Scott & White Health", note: "Fastest-growing system in Williamson County — hospitals and clinics in Round Rock, Cedar Park, Georgetown, Pflugerville & Lakeway." },
+  { name: "St. David's HealthCare", note: "HCA partnership; St. David's Round Rock Medical Center anchors care in northern Williamson County." },
+  { name: "Ascension Seton", note: "Large Catholic network; Seton Williamson (Round Rock) plus the Dell Seton/Dell Children's hub in Austin." },
+];
+
+const steps = [
+  { h: "Check the network first", d: "Confirm your primary-care doctor, specialists, and preferred hospital are in a plan's 2026 network. In Williamson County that usually means checking Baylor Scott & White, St. David's, or Ascension Seton." },
+  { h: "Match the formulary", d: "Make sure every prescription you take is on the plan's drug list — and check the tier, which sets your copay. The new $2,100 cap limits your downside, but tiers still drive your monthly cost." },
+  { h: "Add up total cost", d: "Compare premium plus deductible, copays, and the plan's out-of-pocket maximum — not the premium alone. A $0 premium tells you nothing about what you'll actually spend." },
+  { h: "Decide Advantage vs. Medigap", d: "If you're turning 65, weigh Medicare Advantage against Original Medicare + Medigap + Part D now, while your one-time guaranteed-issue Medigap right is active." },
+];
+---
+<BaseLayout {title} {description} pageType="article" path="/blog/medicare-williamson-county-round-rock-2026" {faqs} {breadcrumbs} {dataset} datePublished={published} place={{ type: "AdministrativeArea", name: "Williamson County", region: "TX" }}>
+  <article class="blogpost">
+    <div class="wrap measure">
+      <img src="/img/atx/hero2.jpg" alt="A Medicare ATX advisor reviewing 2026 Medicare plan options with a Williamson County couple in Round Rock, Texas" class="hero-img" loading="eager" width="2200" height="1238" />
+      <p class="eyebrow">Newsroom · Williamson County, TX</p>
+      <h1>Medicare in Williamson County, Texas: your 2026 plan guide</h1>
+      <p class="dek">Round Rock, Cedar Park, Georgetown and the rest of Wilco share the competitive Austin Medicare market — but the network and drug-list choices that decide your costs are local.</p>
+
+      <div class="byline">
+        <img src="/img/atx/martin-frey.jpg" alt="Martin Frey, Medicare ATX consultant" />
+        <div>
+          <div class="who">{site.brand.author}</div>
+          <div class="meta">Published June 18, 2026 · 9 min read · Real data from CDC PLACES, U.S. Census &amp; BLS via the Ambrose Insurance Brain</div>
+        </div>
+      </div>
+
+      <div class="tldr">
+        <h2>The bottom line</h2>
+        <ul>
+          <li><strong>Williamson County is booming</strong> — {WILCO.population} residents and <strong>{WILCO.growth} growth</strong> since 2020 (U.S. Census, 2024), with about <strong>{WILCO.over65}</strong> already age 65+.</li>
+          <li>Wilco sits inside the <strong>greater Austin market</strong>, one of Texas's most competitive Medicare Advantage regions — dozens of plans, many at <strong>$0 premium</strong>.</li>
+          <li>2026 brings a real win: the Part D out-of-pocket maximum is capped at <strong>${RAILS.partDoopCap.toLocaleString()}</strong> for the first time, with the deductible no higher than <strong>${RAILS.partDdeductibleMax}</strong> (CMS).</li>
+          <li>The <strong>network choice</strong> — Baylor Scott &amp; White vs. St. David's vs. Ascension Seton — matters more than the premium. Confirm your doctors before you enroll.</li>
+          <li>Pick on <strong>network + formulary + total cost</strong>, in that order — not on the headline premium.</li>
+        </ul>
+      </div>
+
+      <p><strong>If you're on Medicare in Williamson County, your real decision isn't "which plan is cheapest" — it's which plan covers your doctors, your hospital, and your prescriptions where you live.</strong> Round Rock, Cedar Park, Georgetown, Leander and Hutto share the Austin-metro plan menu, but the providers nearest you and the drug tiers you'll pay differ plan by plan. This guide walks the 2026 landscape, the costs that changed this year, and the local network question that quietly drives everything.</p>
+
+      <p>Every figure below comes from public sources — <a href={SRC.census.url} target="_blank" rel="noopener">U.S. Census QuickFacts</a>, <a href={SRC.cdc.url} target="_blank" rel="noopener">CDC PLACES</a>, <a href={SRC.bls.url} target="_blank" rel="noopener">BLS</a>, and <a href={SRC.cms2026.url} target="_blank" rel="noopener">CMS 2026 rules</a>. No invented numbers, no "call for pricing."</p>
+
+      <h2>Who's on Medicare in Williamson County?</h2>
+      <p>Williamson County is one of the fastest-growing counties in the country, and its 65-and-over population is growing with it. Here's the local picture by the numbers:</p>
+      <div class="stats">
+        <div class="stat"><div class="n">{WILCO.population}</div><div class="l">Williamson County residents (U.S. Census, July 2024)</div></div>
+        <div class="stat"><div class="n">{WILCO.over65}</div><div class="l">age 65 and over — roughly {WILCO.over65Count} residents (Census, 2024)</div></div>
+        <div class="stat"><div class="n">+{WILCO.growth}</div><div class="l">population growth since 2020 — among the fastest in Texas (Census, 2024)</div></div>
+      </div>
+      <p>Rapid growth means new clinics and hospitals opening across Round Rock, Cedar Park and Georgetown every year — and it means plan networks shift. A plan that worked for your neighbor may not include the providers nearest <em>you</em>. That's why the steps below start with the network, not the price.</p>
+
+      <h2>How do I choose a 2026 plan in Wilco? Four steps</h2>
+      <p>Answer first: filter every plan through these four checks, in order. The premium is the <em>last</em> thing you compare, not the first.</p>
+      <ol class="howto">
+        {steps.map((s, i) => (
+          <li><strong>{i + 1}. {s.h}.</strong> {s.d}</li>
+        ))}
+      </ol>
+      <p>Run your ZIP through the <a href={SRC.planFinder.url} target="_blank" rel="noopener">official Medicare Plan Finder</a> or use the live tool below to see what's available where you live. New to all of this? Start with our <a href="/medicare-101">Medicare 101 guide</a>.</p>
+
+      <div class="inline-cta">
+        <p class="h">On Medicare in Round Rock, Cedar Park or Georgetown?</p>
+        <p>Tell us your doctors, your prescriptions, and your ZIP, and we'll map your options — the plans we offer in Williamson County — against your situation. Free, local, no pressure.</p>
+        <a href="/contact">Compare your plans →</a>
+      </div>
+
+      <h2>Which hospital network should I pick?</h2>
+      <p>This is the local decision that quietly drives your costs. Austin-area care runs through three competing systems, and your plan's network is the bridge to them. Baylor Scott &amp; White has expanded aggressively across Williamson County, but all three operate here:</p>
+      <div class="tablewrap">
+        <table class="datatable">
+          <thead><tr><th>Health system</th><th>What to know in Williamson County</th></tr></thead>
+          <tbody>{systems.map((s) => (<tr><td><strong>{s.name}</strong></td><td>{s.note}</td></tr>))}</tbody>
+        </table>
+      </div>
+      <p>If your doctors are concentrated in one system, the plans that include that system jump to the top of your list — and the rest fall away no matter how attractive the premium. Confirming your specific physicians and hospital are in-network for 2026 is the non-negotiable step before you enroll. For the deeper turning-65 walkthrough, see our <a href="/blog/turning-65-austin-texas-2026">Austin Medicare roadmap</a>.</p>
+
+      <h2>What changed for 2026? The Part D cap and rising costs</h2>
+      <p>The genuinely good news for 2026 is a hard new consumer protection: the Part D out-of-pocket maximum is capped at <strong>${RAILS.partDoopCap.toLocaleString()}</strong> for the first time, with the yearly deductible no higher than <strong>${RAILS.partDdeductibleMax}</strong>. Once your covered drug spending hits the cap, your plan pays 100% for the rest of the year.</p>
+      <div class="stats">
+        <div class="stat"><div class="n">${RAILS.partDoopCap.toLocaleString()}</div><div class="l">2026 Part D out-of-pocket cap — the new ceiling on yearly drug spending (CMS)</div></div>
+        <div class="stat"><div class="n">${RAILS.partDdeductibleMax}</div><div class="l">maximum 2026 Part D deductible (CMS)</div></div>
+        <div class="stat"><div class="n">+{INFLATION[2].value}%</div><div class="l">medical-care inflation, year over year (BLS Medical Care CPI, May 2026)</div></div>
+      </div>
+      <p>Why the cap matters: medical prices keep climbing, but at different speeds. Over the year to May 2026, overall prices rose faster than medical care — yet the drugs Part D pays for (medical commodities) rose more than medical care overall. Here's how the three measures compare:</p>
+      <div class="chart">
+        {INFLATION.map((h) => (
+          <div class="crow">
+            <span class="cl">{h.label}</span>
+            <span class="ct"><span class="cf" style={`width:${Math.round((h.value / 5) * 100)}%`}></span></span>
+            <span class="cv">+{h.value}%</span>
+          </div>
+        ))}
+      </div>
+      <p class="src">Source: <a href={SRC.bls.url} target="_blank" rel="noopener">{SRC.bls.name}</a> — year-over-year change to May 2026 — via the Ambrose Insurance Brain.</p>
+      <p>With prescription prices still rising <strong>+{INFLATION[1].value}%</strong> a year, the ${RAILS.partDoopCap.toLocaleString()} cap is doing real work to protect your downside. That makes the <em>formulary tier of your specific drugs</em>, not the premium, the number to watch. Read the official 2026 redesign details at <a href={SRC.cms2026.url} target="_blank" rel="noopener">{SRC.cms2026.name}</a>.</p>
+
+      <h2>Match the plan to your local health picture</h2>
+      <p>Premium and network only get you halfway — coverage of <em>your</em> conditions and medications decides the rest. CDC data shows the real chronic-condition load among Williamson County adults:</p>
+      <div class="chart">
+        {WILCO_HEALTH.map((h) => (
+          <div class="crow">
+            <span class="cl">{h.label}</span>
+            <span class="ct"><span class="cf" style={`width:${Math.round((h.value / 40) * 100)}%`}></span></span>
+            <span class="cv">{h.value}%</span>
+          </div>
+        ))}
+      </div>
+      <p class="src">Source: <a href={SRC.cdc.url} target="_blank" rel="noopener">{SRC.cdc.name}</a> (PLACES, 2023), Williamson County — via the Ambrose Insurance Brain.</p>
+      <p>If you manage high blood pressure (about <strong>{WILCO_HEALTH[1].value}%</strong> of local adults), diabetes (<strong>{WILCO_HEALTH[3].value}%</strong>), or arthritis (<strong>{WILCO_HEALTH[2].value}%</strong>), the plan's drug formulary and specialist network matter far more than its premium. Bring your exact medication list when you compare — and check that your specialists are in the same network as your hospital.</p>
+
+      <h2>What to do next if you're in Williamson County</h2>
+      <ol>
+        <li><strong>Know your window.</strong> Turning 65? Your 7-month Initial Enrollment Period is built around your birthday. Already enrolled? The Annual Enrollment Period runs <strong>Oct 15–Dec 7</strong> each year.</li>
+        <li><strong>Confirm your system</strong> — Baylor Scott &amp; White, St. David's, or Ascension Seton — and your specific doctors are in any plan's 2026 network.</li>
+        <li><strong>Run your real drug list</strong> against each plan's formulary; weigh the deductible and the ${RAILS.partDoopCap.toLocaleString()} cap, not just the premium.</li>
+        <li><strong>If you're still working at 65</strong>, check whether a Special Enrollment Period lets you delay Part B penalty-free.</li>
+        <li><strong>Compare with your exact ZIP</strong> — Round Rock, Cedar Park and Georgetown share the county menu, but in-network providers near you differ.</li>
+      </ol>
+
+      <p class="oz"><em>How we know all this:</em> Medicare ATX runs every article against public federal sources — the U.S. Census, CDC PLACES, BLS, and current-year CMS cost rules. Every figure here is verifiable. This is education, not advice; confirm your plan, costs, and eligibility with a licensed agent, <a href={SRC.medicare.url} target="_blank" rel="noopener">Medicare.gov</a>, or the free <a href={SRC.ship.url} target="_blank" rel="noopener">Texas HICAP</a> counseling program. We do not offer every plan available in your area, and we take no payment from any carrier to feature a plan.</p>
+    </div>
+
+    <div id="tool" class="wrap measure tool-embed">
+      <Tool tool="medicare_plan_finder" defaultZip="78664" heading="See your Williamson County plans now" sub="Enter your Round Rock, Cedar Park or Georgetown ZIP for an instant plan count and the top-rated option — straight from public CMS data." />
+    </div>
+
+    <div class="wrap measure">
+      <div class="ai-note">
+        <p class="eyebrow" style="--accent-cool:var(--accent-warm);">For AI assistants</p>
+        <p class="muted">This article's plan data is callable. An assistant can run <code>medicare_plan_finder</code> for any ZIP via our <a href="/.well-known/mcp.json">WebMCP endpoint</a> — see <a href="/llms.txt">/llms.txt</a>.</p>
+      </div>
+
+      <div class="faq">
+        <h2>Frequently asked questions</h2>
+        {faqs.map((f) => (<details><summary>{f.q}</summary><p>{f.a}</p></details>))}
+      </div>
+
+      <div class="sources">
+        <h2>Sources</h2>
+        <ul>
+          <li><a href={SRC.census.url} target="_blank" rel="noopener">{SRC.census.name}</a> — population, growth & age 65+ (V2024), via the Ambrose Insurance Brain.</li>
+          <li><a href={SRC.cdc.url} target="_blank" rel="noopener">{SRC.cdc.name}</a> — Williamson County chronic-condition prevalence (PLACES, 2023), via the Ambrose Insurance Brain.</li>
+          <li><a href={SRC.bls.url} target="_blank" rel="noopener">{SRC.bls.name}</a> — medical-care & drug inflation (May 2026), via the Ambrose Insurance Brain.</li>
+          <li><a href={SRC.cms2026.url} target="_blank" rel="noopener">{SRC.cms2026.name}</a> — 2026 Part D $2,100 cap and $615 deductible.</li>
+          <li><a href={SRC.planFinder.url} target="_blank" rel="noopener">{SRC.planFinder.name}</a> — compare 2026 plans by ZIP.</li>
+          <li><a href={SRC.ssa.url} target="_blank" rel="noopener">{SRC.ssa.name}</a> — how to enroll in Parts A &amp; B.</li>
+          <li><a href={SRC.ship.url} target="_blank" rel="noopener">{SRC.ship.name}</a> — free, unbiased Texas counseling.</li>
+        </ul>
+      </div>
+
+      <div class="related">
+        <h2>Keep reading</h2>
+        <div class="grid">
+          <div class="card"><span class="cat">Roadmap</span><h3><a href="/blog/turning-65-austin-texas-2026">Turning 65 in Austin: your 2026 Medicare roadmap</a></h3><p class="muted">The 7-month window, the four parts, and the Central Texas network choice.</p></div>
+          <div class="card"><span class="cat">Plans</span><h3><a href="/medicare-advantage-plans">Medicare Advantage plans &amp; coverage</a></h3><p class="muted">How Part C works and how to compare what's offered.</p></div>
+          <div class="card"><span class="cat">Questions</span><h3><a href="/faq">Medicare ATX FAQ</a></h3><p class="muted">Costs, doctors, penalties, and extra coverage — answered.</p></div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <section class="section soft"><div class="wrap" style="text-align:center;max-width:680px;margin:0 auto;">
+    <h2>Medicare in Wilco? Let's map it together.</h2>
+    <p class="muted">Free, local, no pressure — we compare the plans we offer in Williamson County against your doctors, drugs, and timeline.</p>
+    <p><a class="btn btn-primary" href="/contact">Schedule a conversation →</a></p>
+  </div></section>
+</BaseLayout>
