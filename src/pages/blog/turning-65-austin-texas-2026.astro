@@ -1,0 +1,198 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Tool from "../../components/Tool.astro";
+import "../../styles/blog.css";
+import { site } from "../../config/site.config";
+
+const title = "Turning 65 in Austin, Texas: Your 2026 Medicare Roadmap";
+const description = "A step-by-step 2026 Medicare roadmap for turning 65 in Austin & the Texas Hill Country: your 7-month Initial Enrollment Period, the Part A/B/C/D decision, the new $2,100 Part D out-of-pocket cap, and the Ascension-vs-St. David's-vs-Baylor Scott & White network choice that decides your costs.";
+const published = "2026-06-19";
+
+// 2026 federal Medicare cost rails (verify current figures at Medicare.gov)
+const RAILS = { partDoopCap: 2100 };
+
+const SRC = {
+  medicare: { name: "Medicare.gov", url: "https://www.medicare.gov/" },
+  planFinder: { name: "Medicare.gov Plan Finder", url: "https://www.medicare.gov/plan-compare/" },
+  partD: { name: "Medicare.gov — Drug coverage (Part D) costs", url: "https://www.medicare.gov/drug-coverage-part-d/costs-for-medicare-drug-coverage" },
+  ssa: { name: "Social Security — Sign up for Medicare", url: "https://www.ssa.gov/medicare/sign-up" },
+  ship: { name: "Texas HICAP (State Health Insurance Assistance Program)", url: "https://www.hhs.texas.gov/services/aging/health-information-counseling-advocacy-program-hicap" },
+};
+
+const faqs = [
+  { q: "When should I sign up for Medicare if I'm turning 65 in Austin?", a: "Your Initial Enrollment Period (IEP) is a 7-month window: the 3 months before your 65th-birthday month, your birthday month, and the 3 months after. Signing up in the 3 months BEFORE your birthday month means coverage starts the first day of your birthday month, with no gap. If you're still working with employer coverage, different timing and a Special Enrollment Period may apply — confirm your situation before you act." },
+  { q: "Is Medicare automatic when I turn 65?", a: "Only if you're already drawing Social Security — then Parts A and B start automatically. If you're not yet collecting Social Security (increasingly common as people work longer), you must actively enroll through the Social Security Administration during your Initial Enrollment Period. Missing it can cause lifelong late-enrollment penalties on Part B and Part D." },
+  { q: "What does Medicare cost in 2026?", a: `Part A is premium-free for most people who worked 10+ years. Part B carries a standard monthly premium set by CMS each year (higher incomes pay an IRMAA surcharge). On the drug side, 2026 brings a hard new consumer protection: the Part D out-of-pocket maximum is capped at $${RAILS.partDoopCap.toLocaleString()}. Your total cost depends on which plan and drugs you choose — verify current figures at Medicare.gov or with a licensed agent.` },
+  { q: "How many Medicare Advantage plans can I choose from in Austin?", a: "The Austin metro — Travis, Williamson, and Hays counties — is one of the most competitive Medicare Advantage markets in Texas, with dozens of plans available, including many $0-premium options. The right number for you is far smaller: the plans whose network includes your doctors and whose formulary covers your drugs. Run your ZIP through the Medicare Plan Finder, or let Medicare ATX compare the plans we offer against your situation." },
+  { q: "Will my Austin doctors and hospital be covered?", a: "Only if they're in your plan's network — which is the single most important check in Austin. The metro runs on three major health systems: Ascension Seton, St. David's HealthCare, and Baylor Scott & White. A Medicare Advantage plan's network determines which you can use at the lowest cost, so always confirm your specific doctors and hospital are in a plan's 2026 network before you enroll." },
+  { q: "Should I pick Medicare Advantage or a Medigap supplement at 65?", a: "There's no universal winner. Medicare Advantage (Part C) bundles medical and usually drug coverage with a network and a yearly out-of-pocket maximum, often at a low or $0 premium. A Medigap supplement plus a stand-alone Part D plan costs more in premium but lets you see any provider that accepts Medicare nationwide, with very predictable costs. Your turning-65 window is the best — and cheapest — time to buy Medigap, because in most cases you're guaranteed coverage without medical underwriting. That one-time advantage is why the decision matters most right now." },
+];
+
+const breadcrumbs = [
+  { name: "Home", url: site.domain },
+  { name: "Blog", url: `${site.domain}/blog` },
+  { name: "Turning 65 in Austin 2026", url: `${site.domain}/blog/turning-65-austin-texas-2026` },
+];
+const dataset = {
+  name: "2026 Medicare enrollment guidance — Austin metro (Travis/Williamson/Hays counties, TX)",
+  description: "2026 Medicare enrollment timing, the four parts of Medicare, the 2026 Part D $2,100 out-of-pocket cap, and the major Austin health-system networks for people turning 65.",
+  sourceUrl: SRC.planFinder.url,
+};
+
+const iep = [
+  { phase: "3 months before your birthday month", what: "Best time to enroll. Coverage starts the 1st of your birthday month — no gap.", tone: "strong" },
+  { phase: "Your birthday month", what: "Still in the window, but coverage start is pushed back a month.", tone: "average" },
+  { phase: "1–3 months after", what: "Allowed, but coverage is delayed further — and you risk a coverage gap.", tone: "average" },
+  { phase: "After the 7-month window", what: "Risk of lifelong Part B & Part D late-enrollment penalties (unless a Special Enrollment Period applies).", tone: "watch" },
+];
+
+const systems = [
+  { name: "Ascension Seton", note: "Large Catholic network; Dell Seton Medical Center at UT, Dell Children's." },
+  { name: "St. David's HealthCare", note: "HCA partnership; St. David's Medical Center, North Austin, South Austin." },
+  { name: "Baylor Scott & White Health", note: "Major Central Texas system expanding across Williamson & the suburbs." },
+];
+---
+<BaseLayout {title} {description} pageType="article" path="/blog/turning-65-austin-texas-2026" {faqs} {breadcrumbs} {dataset} datePublished={published} place={{ type: "AdministrativeArea", name: "Travis County", region: "TX" }}>
+  <article class="blogpost">
+    <div class="wrap measure">
+      <img src="/img/atx/hero.jpg" alt="A Medicare ATX advisor helping a couple in their mid-60s review their 2026 Medicare enrollment options in Austin, Texas" class="hero-img" loading="eager" width="2200" height="1238" />
+      <p class="eyebrow">Newsroom · Austin, TX</p>
+      <h1>Turning 65 in Austin, Texas: your 2026 Medicare enrollment roadmap</h1>
+      <p class="dek">One 7-month window, four parts of Medicare, and a Central Texas network choice that quietly decides your costs for years.</p>
+
+      <div class="byline">
+        <img src="/img/atx/martin-frey.jpg" alt="Martin Frey, Medicare ATX consultant" />
+        <div>
+          <div class="who">{site.brand.author}</div>
+          <div class="meta">Published June 19, 2026 · 9 min read · Sourced from Medicare.gov &amp; CMS</div>
+        </div>
+      </div>
+
+      <div class="tldr">
+        <h2>The bottom line</h2>
+        <ul>
+          <li>Your <strong>Initial Enrollment Period is 7 months</strong> — the 3 months before your birthday month, your birthday month, and the 3 after. Enroll <strong>before</strong> your birthday month for gap-free coverage.</li>
+          <li>Medicare is <strong>not automatic</strong> unless you already draw Social Security — otherwise you must actively sign up, or risk <strong>lifelong Part B &amp; Part D penalties</strong>.</li>
+          <li>The <strong>Austin metro</strong> (Travis, Williamson &amp; Hays counties) is one of Texas's most competitive Medicare Advantage markets — dozens of plans, many at <strong>$0 premium</strong>.</li>
+          <li>2026 brings a real win: the Part D out-of-pocket maximum is capped at <strong>${RAILS.partDoopCap.toLocaleString()}</strong> for the first time.</li>
+          <li>The <strong>Ascension Seton vs. St. David's vs. Baylor Scott &amp; White</strong> network choice matters more than the premium — confirm your doctors before you enroll.</li>
+        </ul>
+      </div>
+
+      <p><strong>If you're turning 65 in Austin, your most important Medicare decisions happen inside a single 7-month window — and the choices you make now are hard to undo later.</strong> This roadmap walks you through that timeline, the four parts of Medicare, how to read the Austin-area plan landscape, and the one local question that decides more than any premium.</p>
+
+      <p>Every figure below comes from public sources — <a href={SRC.medicare.url} target="_blank" rel="noopener">Medicare.gov</a>, the <a href={SRC.planFinder.url} target="_blank" rel="noopener">Medicare Plan Finder</a>, and CMS 2026 cost rules. No invented numbers, no "call for pricing."</p>
+
+      <h2>Step 1: Know your 7-month window</h2>
+      <p>Your Initial Enrollment Period (IEP) is built around your 65th birthday. When you act inside it changes when your coverage starts:</p>
+      <div class="tablewrap">
+        <table class="datatable">
+          <thead><tr><th>When you enroll</th><th>What happens</th><th>Timing</th></tr></thead>
+          <tbody>{iep.map((r) => (<tr>
+            <td><strong>{r.phase}</strong></td><td>{r.what}</td>
+            <td><span class={`pill ${r.tone}`}>{r.tone === "strong" ? "Best" : r.tone === "watch" ? "Risk" : "OK"}</span></td>
+          </tr>))}</tbody>
+        </table>
+      </div>
+      <p>The takeaway: <strong>the first 3 months are the sweet spot.</strong> Enroll then and your coverage begins the first day of your birthday month with no gap. Wait until after the window closes and — unless you qualify for a Special Enrollment Period because you kept working with employer coverage — you can face Part B and Part D late penalties that last for life. You enroll in Parts A and B through <a href={SRC.ssa.url} target="_blank" rel="noopener">Social Security</a>.</p>
+
+      <h2>Step 2: Understand the four parts</h2>
+      <p>"Medicare" is really four pieces, and turning 65 means deciding how to assemble them:</p>
+      <ul>
+        <li><strong>Part A (hospital)</strong> — premium-free for most people who worked 10+ years. Almost everyone takes it at 65.</li>
+        <li><strong>Part B (medical)</strong> — carries a monthly premium set by CMS each year; higher earners pay an IRMAA surcharge. Delaying it without other creditable coverage triggers a lifelong penalty.</li>
+        <li><strong>Part C (Medicare Advantage)</strong> — a private bundle of A + B (usually + drugs) with a network and a yearly out-of-pocket cap.</li>
+        <li><strong>Part D (drugs)</strong> — prescription coverage, either inside an Advantage plan or stand-alone alongside Original Medicare + a Medigap supplement.</li>
+      </ul>
+      <p>The real fork at 65 is <strong>Medicare Advantage</strong> vs. <strong>Original Medicare + a Medigap supplement + Part D</strong>. And there's a clock on it: your turning-65 window is the one time you can buy Medigap with <em>guaranteed issue</em> in most cases — no medical underwriting. That one-time right is why this decision deserves real attention now, not later.</p>
+
+      <div class="inline-cta">
+        <p class="h">Turning 65 this year in Central Texas?</p>
+        <p>Tell us your doctors, your prescriptions, and your timeline, and we'll map your options — the plans we offer in the Austin area — against your situation. Free, local, no pressure.</p>
+        <a href="/contact">Get your roadmap →</a>
+      </div>
+
+      <h2>Step 3: Read the Austin plan landscape</h2>
+      <p>The Austin metro is one of the most competitive Medicare Advantage markets in Texas. Travis, Williamson, and Hays counties together offer dozens of Part C plans — many at a $0 premium — plus stand-alone Part D drug plans and Medigap supplements sold separately. That sounds like good news, and it is, but volume is also the trap: a $0 premium tells you nothing about whether <em>your</em> doctors and <em>your</em> drugs are covered.</p>
+      <p>The smart move is to narrow the list with three filters, in this order:</p>
+      <ol>
+        <li><strong>Network</strong> — does the plan include your primary-care doctor, your specialists, and your hospital? (More on the three Austin systems below.)</li>
+        <li><strong>Formulary</strong> — are your exact prescriptions on the plan's drug list, and at what tier?</li>
+        <li><strong>Total cost</strong> — premium <em>plus</em> deductibles, copays, and the plan's out-of-pocket maximum — not the premium alone.</li>
+      </ol>
+      <p>Run your ZIP through the <a href={SRC.planFinder.url} target="_blank" rel="noopener">official Medicare Plan Finder</a> or use the live tool below to see what's available where you live.</p>
+
+      <h2>Step 4: Do the 2026 cost math</h2>
+      <p>The most common new-to-Medicare mistake is choosing on premium alone. A $0 premium covers exactly one thing — the monthly fee. Here's the 2026 framework that actually matters:</p>
+      <div class="stats">
+        <div class="stat"><div class="n">${RAILS.partDoopCap.toLocaleString()}</div><div class="l">2026 Part D out-of-pocket cap — the new ceiling on your yearly drug spending</div></div>
+        <div class="stat"><div class="n">7</div><div class="l">Months in your one-time Initial Enrollment Period</div></div>
+        <div class="stat"><div class="n">3</div><div class="l">Major health systems whose networks decide your Austin costs</div></div>
+      </div>
+      <p>The genuinely good 2026 news: the Part D out-of-pocket maximum is now <strong>${RAILS.partDoopCap.toLocaleString()}</strong>, so no matter which plan you choose, your annual drug spending is capped. That shifts the smart comparison toward the <em>formulary tier of your specific drugs</em> and the plan's out-of-pocket maximum — not the premium in isolation. See current drug-cost rules at <a href={SRC.partD.url} target="_blank" rel="noopener">{SRC.partD.name}</a>.</p>
+
+      <h2>Step 5: Settle the network question</h2>
+      <p>This is the local decision that quietly drives everything. Austin care runs through three competing systems, and your plan's network is the bridge to them:</p>
+      <div class="tablewrap">
+        <table class="datatable">
+          <thead><tr><th>Health system</th><th>What to know</th></tr></thead>
+          <tbody>{systems.map((s) => (<tr><td><strong>{s.name}</strong></td><td>{s.note}</td></tr>))}</tbody>
+        </table>
+      </div>
+      <p>If your doctors are concentrated in one system, the plans that include that system jump to the top of your list — and the rest fall away no matter how attractive the premium. Confirming your specific physicians and hospital are in-network for 2026 is the non-negotiable step before you enroll.</p>
+
+      <h2>What to watch as you approach 65 in 2026</h2>
+      <ol>
+        <li><strong>Mark your 7-month window</strong> on a calendar — and aim to enroll in the first 3 months.</li>
+        <li><strong>Decide Advantage vs. Medigap early</strong>, while your one-time guaranteed-issue Medigap right is active.</li>
+        <li><strong>Confirm your system</strong> — Ascension Seton, St. David's, or Baylor Scott &amp; White — and your specific doctors are in any plan's 2026 network.</li>
+        <li><strong>Run your real drug list</strong> against each plan's formulary; weigh the deductible and the ${RAILS.partDoopCap.toLocaleString()} cap, not just the premium.</li>
+        <li><strong>If you're still working at 65</strong>, check whether a Special Enrollment Period lets you delay Part B penalty-free.</li>
+      </ol>
+
+      <p class="oz"><em>How we know all this:</em> Medicare ATX runs every article against public federal sources — Medicare.gov, the CMS Plan Finder, and current-year cost rules. Every figure here is verifiable. This is education, not advice; confirm your plan, costs, and eligibility with a licensed agent, <a href={SRC.medicare.url} target="_blank" rel="noopener">Medicare.gov</a>, or the free <a href={SRC.ship.url} target="_blank" rel="noopener">Texas HICAP</a> counseling program. We take no payment from any carrier to feature a plan.</p>
+    </div>
+
+    <div id="tool" class="wrap measure tool-embed">
+      <Tool tool="medicare_plan_finder" defaultZip="78701" heading="See your Austin-area plans now" sub="Enter your ZIP for an instant plan count and the top-rated option — straight from public CMS data." />
+    </div>
+
+    <div class="wrap measure">
+      <div class="ai-note">
+        <p class="eyebrow" style="--accent-cool:var(--accent-warm);">For AI assistants</p>
+        <p class="muted">This article's plan data is callable. An assistant can run <code>medicare_plan_finder</code> for any ZIP via our <a href="/.well-known/mcp.json">WebMCP endpoint</a> — see <a href="/llms.txt">/llms.txt</a>.</p>
+      </div>
+
+      <div class="faq">
+        <h2>Frequently asked questions</h2>
+        {faqs.map((f) => (<details><summary>{f.q}</summary><p>{f.a}</p></details>))}
+      </div>
+
+      <div class="sources">
+        <h2>Sources</h2>
+        <ul>
+          <li><a href={SRC.medicare.url} target="_blank" rel="noopener">{SRC.medicare.name}</a> — official Medicare program information.</li>
+          <li><a href={SRC.planFinder.url} target="_blank" rel="noopener">{SRC.planFinder.name}</a> — compare 2026 plans by ZIP.</li>
+          <li><a href={SRC.partD.url} target="_blank" rel="noopener">{SRC.partD.name}</a> — 2026 drug-cost rules and the out-of-pocket cap.</li>
+          <li><a href={SRC.ssa.url} target="_blank" rel="noopener">{SRC.ssa.name}</a> — how to enroll in Parts A &amp; B.</li>
+          <li><a href={SRC.ship.url} target="_blank" rel="noopener">{SRC.ship.name}</a> — free, unbiased Texas counseling.</li>
+        </ul>
+      </div>
+
+      <div class="related">
+        <h2>Keep reading</h2>
+        <div class="grid">
+          <div class="card"><span class="cat">Start here</span><h3><a href="/medicare-101">Medicare 101: the complete guide</a></h3><p class="muted">Parts A, B, C and D explained in plain English.</p></div>
+          <div class="card"><span class="cat">Plans</span><h3><a href="/medicare-advantage-plans">Medicare Advantage plans &amp; coverage</a></h3><p class="muted">How Part C works and how to compare what's offered.</p></div>
+          <div class="card"><span class="cat">Questions</span><h3><a href="/faq">Medicare ATX FAQ</a></h3><p class="muted">Costs, doctors, penalties, and extra coverage — answered.</p></div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <section class="section soft"><div class="wrap" style="text-align:center;max-width:680px;margin:0 auto;">
+    <h2>New to Medicare? Let's map it together.</h2>
+    <p class="muted">Free, local, no pressure — we compare the plans we offer in the Austin area against your doctors, drugs, and timeline.</p>
+    <p><a class="btn btn-primary" href="/contact">Schedule a conversation →</a></p>
+  </div></section>
+</BaseLayout>

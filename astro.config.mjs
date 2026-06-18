@@ -15,7 +15,7 @@ const target =
 const adapter = target === "vercel" ? vercel() : cloudflare({ platformProxy: { enabled: true } });
 
 export default defineConfig({
-  site: "https://bigsiouxbenefits.com",
+  site: "https://medicareatx.com",
   output: "static",
   adapter,
   integrations: [sitemap()],

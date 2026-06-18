@@ -10,6 +10,13 @@ export interface Post {
 
 export const posts: Post[] = [
   {
+    slug: "turning-65-austin-texas-2026",
+    title: "Turning 65 in Austin, Texas: Your 2026 Medicare Roadmap",
+    excerpt: "Your 7-month Initial Enrollment Period, the four parts of Medicare, the competitive Austin-metro plan landscape (Travis, Williamson & Hays counties), the new 2026 Part D $2,100 out-of-pocket cap, and the Ascension-vs-St. David's-vs-Baylor Scott & White network choice that decides your costs.",
+    date: "June 19, 2026",
+    img: "/img/atx/hero.jpg",
+  },
+  {
     slug: "part-d-drug-cost-cap-sioux-falls-2026",
     title: "The 2026 Part D $2,100 Drug Cost Cap Explained for Sioux Falls Medicare Beneficiaries",
     excerpt: "The first annual ceiling in Part D history: how the new $2,100 out-of-pocket cap works, who benefits most among Sioux Falls beneficiaries, and how formulary tiers — not premiums — become the deciding factor when choosing among the 15 drug-carrying plans in Minnehaha County.",
