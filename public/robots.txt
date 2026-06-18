@@ -1,0 +1,31 @@
+# AI crawlers explicitly welcomed (SAA Four-Pillar / Pillar 4 — the opposite of
+# sites that block AI). We WANT to be read and cited by AI engines.
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: *
+Allow: /
+
+Sitemap: https://coastalmedicareadvisors.com/sitemap-index.xml

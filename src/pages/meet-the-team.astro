@@ -1,0 +1,20 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { site } from "../config/site.config";
+const breadcrumbs = [{ name: "Home", url: site.domain }, { name: "Meet the Team", url: `${site.domain}/meet-the-team` }];
+---
+<BaseLayout title="Meet the Team — Big Sioux Benefits" description="Meet the licensed local Medicare advisors at Big Sioux Benefits, serving the Sioux Falls area and Siouxland." pageType="service" path="/meet-the-team" {breadcrumbs}>
+  <section class="section"><div class="wrap">
+    <p class="eyebrow">Meet the Team</p>
+    <h1>Local advisors you can actually talk to</h1>
+    <div class="grid cols-2" style="gap:2rem;align-items:center;margin-top:1.5rem;">
+      <img src="/img/mike-advisor.png" alt="Licensed Medicare advisor at Big Sioux Benefits" style="border-radius:18px;box-shadow:var(--shadow);width:100%;max-width:420px;" width="600" height="800" />
+      <div>
+        <h2>Your local Medicare advisor</h2>
+        <p>Licensed across South Dakota, Iowa, and Minnesota, we've helped hundreds of Sioux Falls-area families navigate Medicare with honest, no-pressure guidance. We compare the plans we offer on both sides of the Big Sioux and stay your advisor year-round.</p>
+        <p class="muted">Independent · salary-driven, not high-pressure · here after enrollment, not just during it.</p>
+        <p><a class="btn btn-primary" href="/contact">Book a free consultation →</a></p>
+      </div>
+    </div>
+  </div></section>
+</BaseLayout>

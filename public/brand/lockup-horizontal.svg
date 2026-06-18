@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 64" width="360" height="64" role="img" aria-label="Big Sioux Benefits">
+  <circle cx="32" cy="32" r="30" fill="none" stroke="#C2935E" stroke-width="2.1"></circle>
+  <text x="32" y="41" text-anchor="middle" fill="#C2935E" font-family="&#39;Cormorant Garamond&#39;, serif" font-weight="600" font-size="29">BS</text>
+  <text x="78" y="30" fill="#13243B" font-family="&#39;Cormorant Garamond&#39;, serif" font-weight="600" font-size="30" letter-spacing="0.3">Big Sioux</text>
+  <text x="79" y="48" fill="#C2935E" font-family="&#39;Hanken Grotesk&#39;, sans-serif" font-weight="600" font-size="11" letter-spacing="4.4">BENEFITS · SIOUX FALLS</text>
+</svg>

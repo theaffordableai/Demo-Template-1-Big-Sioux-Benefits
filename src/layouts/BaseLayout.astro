@@ -1,0 +1,71 @@
+---
+import "../styles/global.css";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import GHL from "../components/GHL.astro";
+import Accessibility from "../components/Accessibility.astro";
+import Consent from "../components/Consent.astro";
+import { buildSchemas, type Faq, type Crumb, type DatasetRef } from "../lib/schema";
+import { site } from "../config/site.config";
+
+interface Props {
+  title: string;
+  description: string;
+  pageType?: "home" | "service" | "location" | "article" | "tool";
+  path?: string;
+  faqs?: Faq[];
+  breadcrumbs?: Crumb[];
+  dataset?: DatasetRef;
+  place?: { type: "State" | "AdministrativeArea" | "City" | "PostalCode"; name: string; region?: string };
+  datePublished?: string;
+}
+const { title, description, pageType = "service", path = "/", faqs, breadcrumbs, dataset, place, datePublished } = Astro.props;
+const url = `${site.domain}${path}`;
+const schemas = buildSchemas({ pageType, url, name: title, description, faqs, breadcrumbs, dataset, place, datePublished });
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={url} />
+    <link rel="alternate" type="application/json" href="/.well-known/mcp.json" title="WebMCP tools" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+    <meta name="theme-color" content="#1d5082" />
+    <link rel="icon" href="/img/atx/favicon.png" type="image/png" />
+    {schemas.map((s) => <script type="application/ld+json" set:html={JSON.stringify(s)} />)}
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to main content</a>
+    <Nav />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+    <Accessibility />
+    <Consent />
+    <GHL />
+    <div id="scroll-progress" aria-hidden="true"></div>
+    <style>#scroll-progress{position:fixed;top:0;left:0;right:0;height:2px;background:var(--accent-warm);transform:scaleX(0);transform-origin:left;z-index:60;transition:transform .1s linear}</style>
+    <script is:inline>
+      (function(){
+        var bar=document.getElementById('scroll-progress');
+        function paint(){var d=document.documentElement,m=d.scrollHeight-window.innerHeight,p=m>0?Math.min(1,Math.max(0,window.scrollY/m)):0;if(bar)bar.style.transform='scaleX('+p+')';}
+        window.addEventListener('scroll',paint,{passive:true});paint();
+        if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        // calm transform-only reveal (content always visible)
+        var els=document.querySelectorAll('main .card, main .faq details, main .datatable, main blockquote, main section > .wrap > h2');
+        var io=new IntersectionObserver(function(es){es.forEach(function(x){if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target);}})},{threshold:.08,rootMargin:'0px 0px -6% 0px'});
+        els.forEach(function(e){var r=e.getBoundingClientRect();if(r.top<window.innerHeight){return;}e.classList.add('reveal');io.observe(e);});
+        setTimeout(function(){els.forEach(function(e){e.classList.add('in');});},4000);
+      })();
+    </script>
+  </body>
+</html>

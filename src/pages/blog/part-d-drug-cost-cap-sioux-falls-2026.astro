@@ -1,0 +1,368 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Tool from "../../components/Tool.astro";
+import "../../styles/blog.css";
+import { site } from "../../config/site.config";
+import {
+  SD_SOURCES, SF_MAPD, SF_MARKET, SF_HEALTH,
+  RAILS_2026, SD_MARKET,
+} from "../../data/sd-medicare.ts";
+
+const title = "The 2026 Part D $2,100 Drug Cost Cap Explained for Sioux Falls Medicare Beneficiaries";
+const description = "How the Inflation Reduction Act's new $2,100 Part D out-of-pocket ceiling changes drug cost planning in 2026 — and what Sioux Falls beneficiaries need to check in the local plan landscape before enrolling.";
+const published = "2026-06-18";
+
+const faqs = [
+  {
+    q: "What is the 2026 Part D $2,100 out-of-pocket cap?",
+    a: `Starting January 1, 2026, no Medicare beneficiary pays more than $${RAILS_2026.partDoopCap.toLocaleString()} out-of-pocket per year on covered Part D prescriptions — regardless of how expensive their drugs are. This cap was created by the Inflation Reduction Act and eliminates the old catastrophic-phase coinsurance that had no annual ceiling. It covers your deductible, copays, and coinsurance — but not your monthly Part D premium.`,
+  },
+  {
+    q: "Does the $2,100 Part D cap apply to Medicare Advantage drug plans in Sioux Falls?",
+    a: `Yes. All ${SF_MARKET.partCplans} Medicare Advantage plans in Minnehaha County include Part D drug coverage — they're called MAPD plans — and the $${RAILS_2026.partDoopCap.toLocaleString()} cap applies to all of them. It also applies to stand-alone Part D plans paired with Original Medicare + a Medigap supplement. The cap covers out-of-pocket drug costs only; monthly premiums do not count toward it.`,
+  },
+  {
+    q: "How many Medicare drug plans are available in Sioux Falls for 2026?",
+    a: `Minnehaha County has ${SF_MARKET.totalDrugPlans} plans that include Part D drug coverage for 2026: ${SF_MARKET.partCplans} Medicare Advantage (Part C) plans — including 5 standard PPOs open to anyone with Medicare — plus ${SF_MARKET.costPlans} Medica Cost plans. Stand-alone Part D drug plans are also available statewide. Big Sioux Benefits compares the plans we offer in the area against your specific prescription list.`,
+  },
+  {
+    q: "What is a formulary tier and why does it matter more under the new cap?",
+    a: "A formulary is a plan's approved drug list, organized into cost tiers — generics at the low end, specialty drugs at the high end — with escalating copays or coinsurance at each tier. Under the $2,100 cap, your spending toward that ceiling accumulates faster when your drugs carry high-tier cost-sharing. Lower-tier placements mean less money spent before hitting the cap. Always look up your exact medications on a plan's formulary tool before you enroll.",
+  },
+  {
+    q: "Does IRMAA affect Part D costs?",
+    a: "Yes. If your modified adjusted gross income (MAGI) from two years prior exceeds certain thresholds, Medicare charges an Income-Related Monthly Adjustment Amount (IRMAA) surcharge on top of your Part D plan premium. This surcharge is paid directly to Medicare — not to the plan — and does NOT count toward your $2,100 out-of-pocket cap. Check with Medicare.gov or a licensed agent if your income may trigger IRMAA.",
+  },
+  {
+    q: "What if my medication is not on a plan's formulary?",
+    a: "If a drug is excluded from a plan's formulary, you can request a coverage exception for medical necessity, ask your doctor about a therapeutically equivalent lower-tier alternative, or switch plans during the Annual Enrollment Period (Oct 15–Dec 7). Certain mid-year formulary changes can also trigger a Special Enrollment Period. Always verify your drug list against a plan's 2026 formulary before enrolling to avoid mid-year surprises.",
+  },
+];
+
+const breadcrumbs = [
+  { name: "Home", url: site.domain },
+  { name: "Blog", url: `${site.domain}/blog` },
+  { name: "Part D Drug Cost Cap Sioux Falls 2026", url: `${site.domain}/blog/part-d-drug-cost-cap-sioux-falls-2026` },
+];
+
+const dataset = {
+  name: "CMS PY2026 Part D Cost Rails & Medicare Plan Landscape — Minnehaha County, SD (Part D $2,100 cap guide)",
+  description: "2026 Part D out-of-pocket cap ($2,100), standard Part D deductible ceiling ($615), Minnehaha County drug-carrying plan roster (11 Medicare Advantage + 4 Medica Cost plans), CMS star ratings, and CDC PLACES 2023 chronic-condition prevalence supporting the 2026 Part D drug cost cap analysis.",
+  sourceUrl: SD_SOURCES.cmsLandscape.url,
+};
+
+const partDPhases = [
+  {
+    phase: "Deductible",
+    youPay: "100% of drug costs",
+    ceiling: `Up to $${RAILS_2026.partDdeductibleMax} standard max (plans may set lower)`,
+    note: "Many plans set $0 deductible for preferred generics",
+  },
+  {
+    phase: "Initial Coverage",
+    youPay: "Plan copay or coinsurance per formulary tier",
+    ceiling: `Accumulates toward the $${RAILS_2026.partDoopCap.toLocaleString()} annual cap`,
+    note: "Generic copays typically low; specialty drugs carry higher coinsurance",
+  },
+  {
+    phase: "Cap Zone (formerly Catastrophic)",
+    youPay: "$0 — you've hit the annual ceiling",
+    ceiling: `After $${RAILS_2026.partDoopCap.toLocaleString()} out-of-pocket, $0 for the rest of the year`,
+    note: "Old 5% catastrophic coinsurance eliminated — hard ceiling from 2026 forward",
+  },
+];
+
+const pdpStatewide = SD_MARKET.byType.find((t) => t.type.includes("PDP"));
+
+function prem(p: number | null) { return p == null ? "—" : p === 0 ? "$0" : `$${p.toFixed(2)}`; }
+function star(s: number | null) { return s == null ? "—" : `${s}★`; }
+---
+<BaseLayout
+  {title}
+  {description}
+  pageType="article"
+  path="/blog/part-d-drug-cost-cap-sioux-falls-2026"
+  {faqs}
+  {breadcrumbs}
+  {dataset}
+  datePublished={published}
+  place={{ type: "AdministrativeArea", name: "Minnehaha County", region: "SD" }}
+>
+  <article class="blogpost">
+    <div class="wrap measure">
+      <img
+        src="/img/blog/mike-part-d-drug-cost-2026.png"
+        alt="Big Sioux Benefits advisor Mike reviewing a Medicare Part D prescription drug plan with an older couple at their Sioux Falls kitchen table"
+        class="hero-img"
+        loading="eager"
+        width="3856"
+        height="2160"
+      />
+      <p class="eyebrow">Newsroom · Sioux Falls</p>
+      <h1>The 2026 Part D $2,100 Drug Cost Cap Explained for Sioux Falls Medicare Beneficiaries</h1>
+      <p class="dek">How the new out-of-pocket ceiling changes drug cost planning — and what to check in the local plan landscape before you enroll.</p>
+
+      <div class="byline">
+        <img src="/img/mike-advisor.png" alt="Big Sioux Benefits advisor" />
+        <div>
+          <div class="who">{site.brand.author}</div>
+          <div class="meta">Published June 18, 2026 · 9 min read · Sourced from CMS.gov</div>
+        </div>
+      </div>
+
+      <div class="tldr">
+        <h2>The bottom line</h2>
+        <ul>
+          <li>Starting in 2026, Medicare Part D has a hard <strong>${RAILS_2026.partDoopCap.toLocaleString()} out-of-pocket cap</strong> — the first annual ceiling in the program's history. Once you hit it, covered drugs cost <strong>$0 for the rest of the year</strong>.</li>
+          <li>The cap applies to all {SF_MARKET.partCplans} Medicare Advantage drug plans and stand-alone Part D plans in Minnehaha County — it's a federal floor, not a plan-specific perk.</li>
+          <li>Sioux Falls has <strong>{SF_MARKET.totalDrugPlans} drug-carrying plans</strong> for 2026 — {SF_MARKET.partCplans} Medicare Advantage plans and {SF_MARKET.costPlans} Medica Cost plans — plus stand-alone Part D options statewide.</li>
+          <li>With a ceiling in place, <strong>formulary tier now matters more than premium</strong> — high-tier cost-sharing burns through your $2,100 faster. Check your exact drugs before you enroll.</li>
+          <li>The standard Part D deductible is capped at <strong>${RAILS_2026.partDdeductibleMax}</strong> in 2026; two Sioux Falls MA plans carry a lower deductible ($300–$350), reducing your first-dollar spend toward the cap.</li>
+        </ul>
+      </div>
+
+      <p><strong>The 2026 Medicare Part D out-of-pocket cap is the most consumer-friendly change to the drug program since it launched in 2006.</strong> For the first time, there's a hard ceiling — ${RAILS_2026.partDoopCap.toLocaleString()} — on what you pay out-of-pocket for covered drugs in a calendar year. After that point, your plan covers 100% for the rest of the year.</p>
+
+      <p>Every figure in this article comes from public federal sources: the <a href={SD_SOURCES.cmsLandscape.url} target="_blank" rel="noopener">CMS PY2026 Medicare plan landscape</a>, <a href={SD_SOURCES.cmsStarRatings.url} target="_blank" rel="noopener">CMS 2026 star ratings</a>, and <a href={SD_SOURCES.cdcPlaces.url} target="_blank" rel="noopener">CDC PLACES 2023 county health data</a>. No numbers invented; every claim sourced.</p>
+
+      <h2>What the $2,100 cap actually means — and what changed</h2>
+      <p>Before 2026, Part D had four phases: a deductible, an initial coverage period, a coverage gap (the "donut hole"), and then a catastrophic phase — where you still owed <em>5% of very high drug costs with no upper limit</em>. The Inflation Reduction Act eliminated that catastrophic coinsurance entirely and replaced the whole structure with a clean annual ceiling.</p>
+
+      <div class="keytake">
+        <strong>Key takeaway:</strong> The old model said "you pay 5% no matter how high your drug bills go." The new model says "once you've spent ${RAILS_2026.partDoopCap.toLocaleString()}, you stop paying." For anyone on expensive specialty drugs — cancer therapy, rheumatoid arthritis biologics, MS medications, specialty diabetes drugs — this can mean thousands of dollars in annual relief.
+      </div>
+
+      <p>The cap counts your deductible, copays, and coinsurance — all your actual out-of-pocket drug costs. It does <strong>not</strong> count your monthly Part D premium toward that $2,100 total. And it resets every January 1.</p>
+
+      <h2>The three phases of 2026 Part D coverage</h2>
+      <p>The structure is simpler than it used to be. Here's how it works in 2026:</p>
+      <div class="tablewrap">
+        <table class="datatable">
+          <thead>
+            <tr>
+              <th>Phase</th>
+              <th>What you pay</th>
+              <th>When it ends</th>
+              <th>Note</th>
+            </tr>
+          </thead>
+          <tbody>
+            {partDPhases.map((r) => (
+              <tr>
+                <td><strong>{r.phase}</strong></td>
+                <td>{r.youPay}</td>
+                <td>{r.ceiling}</td>
+                <td class="muted">{r.note}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="src">Source: <a href={SD_SOURCES.cmsLandscape.url} target="_blank" rel="noopener">{SD_SOURCES.cmsLandscape.name}</a> — 2026 Part D cost rails.</p>
+
+      <p>The practical difference: in 2025, a beneficiary spending $10,000 on specialty drugs still owed 5% of the catastrophic-phase amount with no ceiling. In 2026, their out-of-pocket stops at ${RAILS_2026.partDoopCap.toLocaleString()} — period. <strong>If your drug list is expensive, the cap is the most important number on your plan comparison sheet.</strong></p>
+
+      <h2>Who benefits most — the Sioux Falls chronic condition picture</h2>
+      <p>The cap matters most for people on costly prescriptions. That includes anyone managing chronic conditions — and Minnehaha County carries a significant chronic-condition burden, per CDC PLACES 2023 data:</p>
+
+      <div class="chart">
+        {SF_HEALTH.slice(0, 6).map((h) => (
+          <div class="crow">
+            <span class="cl">{h.label}</span>
+            <span class="ct"><span class="cf" style={`width:${Math.round((h.value / 40) * 100)}%`}></span></span>
+            <span class="cv">{h.value}%</span>
+          </div>
+        ))}
+      </div>
+      <p class="src">Source: <a href={SD_SOURCES.cdcPlaces.url} target="_blank" rel="noopener">{SD_SOURCES.cdcPlaces.name}</a> (2023, model-based estimates for adults in Minnehaha County).</p>
+
+      <p>Nearly one in three Sioux Falls adults has high blood pressure (<strong>{SF_HEALTH[0].value}%</strong>). One in ten has diagnosed diabetes (<strong>{SF_HEALTH[4].value}%</strong>). Cancer prevalence stands at <strong>{SF_HEALTH[5].value}%</strong>. These conditions often require brand-name or specialty medications that, before 2026, could push annual drug spending far above any predictable ceiling.</p>
+
+      <p>If you manage hypertension with a standard generic, the cap may reassure you but never come into play. If you're on a biologic, an oncology drug, or a specialty diabetes medication, the cap is likely to become a real financial backstop — possibly in the first quarter of the year.</p>
+
+      <div class="inline-cta">
+        <p class="h">Managing high-cost prescriptions on Medicare?</p>
+        <p>We'll run your drug list against the plans we offer in the Sioux Falls area — formulary tiers, deductibles, and the path to the $2,100 cap. Free, local, no pressure.</p>
+        <a href="/contact">Review your drug costs →</a>
+      </div>
+
+      <h2>The Sioux Falls drug plan landscape for 2026</h2>
+      <p>Minnehaha County has <strong>{SF_MARKET.totalDrugPlans} plans that include Part D drug coverage</strong> for 2026. Here's the breakdown by plan type, including who can enroll and how drug coverage works in each:</p>
+
+      <div class="tablewrap">
+        <table class="datatable">
+          <thead>
+            <tr>
+              <th>Plan type</th>
+              <th>Count in county</th>
+              <th>Who can enroll</th>
+              <th>Drug coverage</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Medicare Advantage PPO (MAPD)</strong></td>
+              <td>5</td>
+              <td>Anyone with Medicare Parts A &amp; B</td>
+              <td>Built-in Part D (MAPD)</td>
+            </tr>
+            <tr>
+              <td><strong>D-SNP (Dual-Eligible)</strong></td>
+              <td>4</td>
+              <td>Medicare + Medicaid dual-eligible only</td>
+              <td>Built-in Part D (MAPD)</td>
+            </tr>
+            <tr>
+              <td><strong>I-SNP (Institutional)</strong></td>
+              <td>2</td>
+              <td>Nursing-home residents only</td>
+              <td>Built-in Part D (MAPD)</td>
+            </tr>
+            <tr>
+              <td><strong>Medicare Cost (Medica)</strong></td>
+              <td>4</td>
+              <td>Anyone with Medicare in coverage area</td>
+              <td>Built-in Part D (w/Rx Cost plan)</td>
+            </tr>
+            <tr>
+              <td><strong>Stand-alone Part D (PDP)</strong></td>
+              <td>{pdpStatewide?.plans ?? 11} statewide</td>
+              <td>Original Medicare + Medigap enrollees</td>
+              <td>Drug-only; pairs with Original Medicare</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="src">Source: <a href={SD_SOURCES.cmsLandscape.url} target="_blank" rel="noopener">{SD_SOURCES.cmsLandscape.name}</a>, Minnehaha County, PY2026.</p>
+
+      <p>If you're on <strong>Original Medicare + Medigap</strong>, you add a stand-alone PDP separately — choose from the {pdpStatewide?.plans ?? 11} plans available statewide. If you chose <strong>Medicare Advantage</strong>, drug coverage is bundled. Either way, the $2,100 cap applies — but the formulary, tiers, and pharmacy network are plan-specific and determine how fast you reach the ceiling.</p>
+
+      <h2>The 5 MA PPOs — drug deductibles compared</h2>
+      <p>For the 5 standard Medicare Advantage PPOs open to any Sioux Falls beneficiary in 2026, the drug deductible is the first expense that counts toward your $2,100 cap:</p>
+
+      <div class="tablewrap">
+        <table class="datatable">
+          <thead>
+            <tr>
+              <th>Plan</th>
+              <th>Carrier</th>
+              <th>Monthly premium</th>
+              <th>Drug deductible</th>
+              <th>CMS stars</th>
+            </tr>
+          </thead>
+          <tbody>
+            {SF_MAPD.map((p) => (
+              <tr>
+                <td><strong>{p.name}</strong></td>
+                <td>{p.carrier}</td>
+                <td>{prem(p.premium)}</td>
+                <td>${p.deductible}</td>
+                <td>{star(p.stars)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="src">Source: <a href={SD_SOURCES.cmsLandscape.url} target="_blank" rel="noopener">{SD_SOURCES.cmsLandscape.name}</a> &amp; <a href={SD_SOURCES.cmsStarRatings.url} target="_blank" rel="noopener">{SD_SOURCES.cmsStarRatings.name}</a>, Minnehaha County, PY2026.</p>
+
+      <p>Two things jump out. First, Sanford's <strong>Align ChoicePlus</strong> ($0 premium) carries a <strong>$350 drug deductible</strong> — $265 below the standard $615 ceiling — and <strong>Align ChoiceElite</strong> sets a $300 deductible. Both are Sanford-network plans. Second, all five plans sit at <strong>3.5★ CMS</strong>, so the deductible — not the star rating — becomes the primary differentiator when comparing drug costs. A lower deductible means you reach your copay/coinsurance phase sooner, which matters if your formulary tier keeps those copays low.</p>
+
+      <div class="stats">
+        <div class="stat">
+          <div class="n">${RAILS_2026.partDoopCap.toLocaleString()}</div>
+          <div class="l">2026 Part D annual out-of-pocket ceiling — hard stop on your drug spending</div>
+        </div>
+        <div class="stat">
+          <div class="n">${RAILS_2026.partDdeductibleMax}</div>
+          <div class="l">Standard Part D deductible ceiling in 2026 — plans may charge less</div>
+        </div>
+        <div class="stat">
+          <div class="n">{SF_MARKET.totalDrugPlans}</div>
+          <div class="l">Drug-carrying plans available in Minnehaha County for 2026</div>
+        </div>
+      </div>
+
+      <h2>Formulary tiers — the new deciding factor</h2>
+      <p>Before the cap, choosing the lowest-premium plan was a reasonable shortcut. Now that there's a ceiling, <strong>the formulary tier of your specific drugs is the deciding factor.</strong> Here's how the tier structure typically works:</p>
+      <ul>
+        <li><strong>Tier 1 — Preferred generic:</strong> lowest copays, often $0–$5. Spending accumulates slowly toward the cap.</li>
+        <li><strong>Tier 2 — Generic:</strong> still low, but slightly higher than Tier 1.</li>
+        <li><strong>Tier 3 — Preferred brand:</strong> coinsurance climbs. You approach the cap faster.</li>
+        <li><strong>Tier 4 — Non-preferred brand:</strong> higher coinsurance; brand drugs your plan prefers less.</li>
+        <li><strong>Tier 5 — Specialty:</strong> highest coinsurance — often 25–33% of the drug's cost. A single specialty drug can push you to the $2,100 cap within the first few months of the year.</li>
+      </ul>
+      <p>The strategic move: before AEP or when first enrolling, look up your exact drug names in each plan's online formulary tool — available at Medicare.gov or each plan's website — and compare tier placements across your options. A plan with a slightly higher premium may place your specialty drug at Tier 3 instead of Tier 5, saving far more than the premium difference before you hit the cap.</p>
+
+      <div class="keytake">
+        <strong>Key takeaway:</strong> The plan whose formulary places your highest-cost drug at the lowest tier is almost always the better deal — regardless of which plan has the lowest headline premium.
+      </div>
+
+      <h2>IRMAA and Part D — the income cost layer</h2>
+      <p>One cost the $2,100 cap does <em>not</em> cover: the IRMAA surcharge. If your modified adjusted gross income (MAGI) from two years prior exceeds certain thresholds set by CMS, Medicare adds an Income-Related Monthly Adjustment Amount to your Part D premium. This surcharge is billed separately by Medicare — not by the plan — and <strong>does not count toward your $2,100 out-of-pocket cap.</strong></p>
+
+      <p>IRMAA affects a minority of beneficiaries — typically those with higher retirement income, investment distributions, or a one-time income event (such as a property sale or Roth IRA conversion) that elevated MAGI in the reference year. If you think your income may be near a threshold, check with Medicare.gov or a licensed agent before finalizing your plan. You can also appeal an IRMAA determination if a qualifying life event — retirement, divorce, or death of a spouse — reduced your income after the reference year.</p>
+
+      <h2>What to watch in 2026</h2>
+      <ol>
+        <li><strong>Run your drug list through every plan's formulary tool</strong> — compare tier placement, copay or coinsurance, quantity limits, and prior-authorization requirements for your specific medications. Do this before AEP closes December 7.</li>
+        <li><strong>Compare drug deductibles alongside the premium</strong> — in Sioux Falls, deductibles range from lower amounts on certain Sanford plans to the $615 standard maximum. A lower deductible can be a meaningful saving if you're on expensive drugs.</li>
+        <li><strong>Watch for mid-year formulary changes</strong> — plans can move drugs to different tiers at plan-year renewal. Read your Annual Notice of Change (ANOC) each fall and act during AEP if your drug's tier worsens.</li>
+        <li><strong>Check your preferred pharmacy's network status</strong> — preferred pharmacy networks affect your drug copays. Confirm your usual pharmacy is in each plan's preferred network; switching to a preferred pharmacy can reduce your per-fill costs.</li>
+        <li><strong>Model any large income event before year-end if IRMAA is a concern</strong> — a Roth conversion, capital-gain realization, or required minimum distribution spike in one year can trigger two years of IRMAA surcharges. Plan with a tax advisor if applicable.</li>
+      </ol>
+
+      <p class="oz"><em>How we know all this:</em> Big Sioux Benefits runs every article through a data desk that cross-references the CMS PY2026 plan landscape, 2026 Part D cost rails, Minnehaha County enrollment, CMS star ratings, and CDC PLACES county health data — built by <a href="https://strategicaiarchitects.com" target="_blank" rel="noopener">Strategic AI Architects</a>. Every figure here is from a public federal dataset. This is education, not advice; confirm your plan, costs, and eligibility with a licensed agent or Medicare.gov. We take no payment from any carrier to feature a plan.</p>
+    </div>
+
+    <div id="tool" class="wrap measure tool-embed">
+      <Tool
+        tool="medicare_plan_finder"
+        defaultZip="57104"
+        heading="Check your Sioux Falls drug plan options now"
+        sub="Enter your ZIP for an instant plan count and drug coverage options — straight from public CMS data."
+      />
+    </div>
+
+    <div class="wrap measure">
+      <div class="ai-note">
+        <p class="eyebrow" style="--accent-cool:var(--accent-warm);">For AI assistants</p>
+        <p class="muted">This article's plan and drug coverage data is callable. An assistant can run <code>medicare_plan_finder</code> for any ZIP via our <a href="/.well-known/mcp.json">WebMCP endpoint</a> — see <a href="/llms.txt">/llms.txt</a>.</p>
+      </div>
+
+      <div class="faq">
+        <h2>Frequently asked questions</h2>
+        {faqs.map((f) => (<details><summary>{f.q}</summary><p>{f.a}</p></details>))}
+      </div>
+
+      <div class="related">
+        <h2>Keep reading</h2>
+        <div class="grid">
+          <div class="card">
+            <span class="cat">Plans</span>
+            <h3><a href="/blog/medicare-advantage-sioux-falls-2026">Medicare Advantage in Sioux Falls 2026: all 15 plans</a></h3>
+            <p class="muted">Every drug-carrying plan in Minnehaha County, ranked by premium, deductible, and star rating.</p>
+          </div>
+          <div class="card">
+            <span class="cat">Compare</span>
+            <h3><a href="/blog/medigap-vs-medicare-advantage-sioux-falls-2026">Medigap vs. Medicare Advantage in Sioux Falls 2026</a></h3>
+            <p class="muted">Two coverage tracks, one key decision — and the guaranteed-issue window that makes timing matter.</p>
+          </div>
+          <div class="card">
+            <span class="cat">AEP</span>
+            <h3><a href="/blog/medicare-aep-sioux-falls-2026">AEP in Sioux Falls 2026: Oct 15–Dec 7 action plan</a></h3>
+            <p class="muted">The annual enrollment window to change your plan — and exactly what to review before it closes.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <section class="section soft">
+    <div class="wrap" style="text-align:center;max-width:680px;margin:0 auto;">
+      <h2>Let's map your drug costs under the new cap.</h2>
+      <p class="muted">We'll run your prescription list against the plans we offer in the Sioux Falls area — formulary tiers, deductibles, and the path to the $2,100 ceiling. Free, local, no pressure.</p>
+      <p><a class="btn btn-primary" href="/contact">Book a conversation →</a></p>
+    </div>
+  </section>
+</BaseLayout>

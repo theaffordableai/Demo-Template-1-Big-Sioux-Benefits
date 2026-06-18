@@ -1,0 +1,46 @@
+/* ============================================================
+   MOTION — the system's signature. Lines draw themselves in,
+   rules wipe, content rises. Calm, weighted, never bouncy.
+   Honor prefers-reduced-motion at the point of use.
+   ============================================================ */
+:root{
+  --ease-out:cubic-bezier(.16,.8,.3,1); /* @kind other */
+  --ease-rule:cubic-bezier(.5,0,.1,1); /* @kind other */
+  --ease-draw:cubic-bezier(.45,0,.12,1); /* @kind other */
+
+  --dur-fast:.3s;   /* @kind other */
+  --dur-med:.6s;    /* @kind other */
+  --dur-slow:.95s;  /* @kind other */
+  --dur-draw:2s;    /* @kind other */
+
+  --stagger-1:.08s;  /* @kind other */
+  --stagger-2:.2s;   /* @kind other */
+  --stagger-3:.32s;  /* @kind other */
+  --stagger-4:.44s;  /* @kind other */
+}
+
+@keyframes bsb-rise{from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:none}}
+@keyframes bsb-fade{from{opacity:0} to{opacity:1}}
+@keyframes bsb-draw{from{stroke-dashoffset:1} to{stroke-dashoffset:0}}
+@keyframes bsb-rule{from{transform:scaleX(0)} to{transform:scaleX(1)}}
+
+/* ---- scroll-reveal utilities (pair with assets/motion.js) ----
+   Put [data-reveal] on a node (or its container); motion.js adds
+   .is-revealed when it scrolls into view. Stagger with
+   style="--reveal-delay:.2s". Reduced-motion shows the end state. */
+@media (prefers-reduced-motion:no-preference){
+  [data-reveal]{
+    opacity:0;transform:translateY(22px);
+    transition:opacity var(--dur-slow) var(--ease-out) var(--reveal-delay,0s),
+               transform var(--dur-slow) var(--ease-out) var(--reveal-delay,0s);
+  }
+  [data-reveal].is-revealed,.is-revealed [data-reveal]{opacity:1;transform:none;}
+
+  .bsb-draw{stroke-dasharray:1;stroke-dashoffset:1;
+    transition:stroke-dashoffset var(--dur-draw) var(--ease-draw) var(--reveal-delay,0s);}
+  .is-revealed .bsb-draw,.bsb-draw.is-revealed{stroke-dashoffset:0;}
+
+  .bsb-rule{transform:scaleX(0);transform-origin:left;
+    transition:transform 1.3s var(--ease-rule) var(--reveal-delay,.2s);}
+  .is-revealed .bsb-rule,.bsb-rule.is-revealed{transform:scaleX(1);}
+}

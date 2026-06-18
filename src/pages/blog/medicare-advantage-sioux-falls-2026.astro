@@ -1,0 +1,211 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Tool from "../../components/Tool.astro";
+import "../../styles/blog.css";
+import { site } from "../../config/site.config";
+import {
+  SD_SOURCES, SF_MAPD, SF_DSNP, SF_ISNP, SF_COST, SF_MARKET, SF_HOSPITALS,
+  SF_HEALTH, SIOUX_COUNTY_IA, RAILS_2026, stabilityTier,
+} from "../../data/sd-medicare.ts";
+
+const title = "Medicare Advantage in Sioux Falls for 2026: All 15 Plans, Ranked by What Actually Matters";
+const description = "The complete 2026 Medicare plan roster for Sioux Falls / Minnehaha County: 11 Medicare Advantage plans plus 4 Medica Cost plans, every premium, drug deductible, and CMS star rating — plus the Sanford-vs-Avera network fork, the Iowa cross-border math, and local health data. With a live plan finder.";
+const published = "2026-06-12";
+
+const allPlans = [...SF_MAPD, ...SF_DSNP, ...SF_ISNP, ...SF_COST];
+
+const faqs = [
+  { q: "How many Medicare Advantage plans are in Sioux Falls for 2026?", a: `Minnehaha County (Sioux Falls) has 11 Medicare Advantage (Part C) plans for 2026 — 5 standard PPOs, 4 Dual-Eligible D-SNPs, and 2 Institutional I-SNPs — plus 4 Medica Cost plans that also carry drug coverage, for 15 drug-carrying plans in total. Carriers are Aetna/CVS, Sanford (Align + Great Plains), UnitedHealthcare, Wellmark/BCBS, and Medica.` },
+  { q: "Which Sioux Falls Medicare Advantage plans have a $0 premium?", a: "Two standard Medicare Advantage PPOs in Minnehaha County carry a $0 monthly premium for 2026: Aetna Medicare Signature (PPO) and Align ChoicePlus (PPO), Sanford's local plan. Both still carry a $350–$615 Part D drug deductible, so 'free' applies to the premium, not the total cost of care." },
+  { q: "What's the highest-rated Medicare plan in Sioux Falls for 2026?", a: "UnitedHealthcare's two Dual Complete D-SNP plans hold the top CMS Overall Star Rating in Minnehaha County at 4.5 stars. Every other rated plan in the county — the Aetna, Align, Wellmark, and Medica plans — sits at 3.5 stars. Sanford's two new Great Plains I-SNPs are too new to be rated." },
+  { q: "Is Sanford or Avera better for Medicare Advantage in Sioux Falls?", a: "Neither is universally 'better' — they're competing systems, and the right answer depends on which one your doctors practice in. By CMS quality ratings, Sanford USD Medical Center holds 5 stars and Avera McKennan holds 4 stars. Sanford also runs its own Medicare plans (Align and Great Plains). The key step is confirming your specific doctors and hospital are in a plan's network before you enroll." },
+  { q: "Are there more Medicare Advantage plans on the Iowa side near Sioux Falls?", a: `Yes. Sioux County, Iowa — just across the Big Sioux River — has 21 Medicare Advantage plans for 2026 with 6 at $0 premium, versus 11 plans in the Sioux Falls metro. If you live near the state line, comparing both sides can genuinely change your options and costs.` },
+  { q: "What does a $0-premium Medicare Advantage plan really cost in Sioux Falls?", a: `A $0 premium covers only the monthly fee. You still face the Part D drug deductible (up to $615 in 2026), copays for visits and services, and a maximum out-of-pocket on medical care that can run into the thousands. The 2026 Part D out-of-pocket cap is $${RAILS_2026.partDoopCap.toLocaleString()}. The right comparison weighs premium, deductible, your specific drugs, and the out-of-pocket maximum together — not the premium alone.` },
+];
+
+const breadcrumbs = [
+  { name: "Home", url: site.domain },
+  { name: "Blog", url: `${site.domain}/blog` },
+  { name: "Medicare Advantage in Sioux Falls 2026", url: `${site.domain}/blog/medicare-advantage-sioux-falls-2026` },
+];
+const dataset = {
+  name: "CMS PY2026 Medicare Advantage / Part D Landscape — Minnehaha County, SD",
+  description: "The complete 2026 roster of Medicare Advantage, Special Needs, and Medicare Cost plans in Minnehaha County with premiums, drug deductibles, and CMS star ratings, plus Sioux Falls hospital ratings and Sioux County IA comparison.",
+  sourceUrl: SD_SOURCES.cmsLandscape.url,
+};
+
+function prem(p: number | null) { return p == null ? "—" : p === 0 ? "$0" : `$${p.toFixed(2)}`; }
+function star(s: number | null) { return s == null ? "—" : `${s}★`; }
+---
+<BaseLayout {title} {description} pageType="article" path="/blog/medicare-advantage-sioux-falls-2026" {faqs} {breadcrumbs} {dataset} datePublished={published} place={{ type: "AdministrativeArea", name: "Minnehaha County", region: "SD" }}>
+  <article class="blogpost">
+    <div class="wrap measure">
+      <img src="/img/blog/mike-plan-comparison.png" alt="A Big Sioux Benefits advisor explaining a Medicare Advantage plan comparison on screen" class="hero-img" loading="eager" width="1400" height="788" />
+      <p class="eyebrow">Newsroom · Sioux Falls</p>
+      <h1>Medicare Advantage in Sioux Falls for 2026: all 15 plans, ranked by what actually matters</h1>
+      <p class="dek">Eleven Medicare Advantage plans, four Medica Cost plans, two health systems, and one $0 premium that isn't really free.</p>
+
+      <div class="byline">
+        <img src="/img/mike-advisor.png" alt="Big Sioux Benefits advisor" />
+        <div>
+          <div class="who">{site.brand.author}</div>
+          <div class="meta">Published June 12, 2026 · 12 min read · Sourced from CMS.gov</div>
+        </div>
+      </div>
+
+      <div class="tldr">
+        <h2>The bottom line</h2>
+        <ul>
+          <li>Minnehaha County has <strong>11 Medicare Advantage (Part C) plans</strong> for 2026 — 5 standard PPOs, 4 Dual-Eligible D-SNPs, 2 Institutional I-SNPs — plus <strong>4 Medica Cost plans</strong> = 15 drug-carrying plans.</li>
+          <li><strong>Only 2 plans are $0-premium</strong>: Aetna Medicare Signature and Sanford's Align ChoicePlus. Both still carry a Part D deductible.</li>
+          <li><strong>UnitedHealthcare's two D-SNPs (4.5★) are the highest-rated</strong> in the county; everything else rated sits at 3.5★.</li>
+          <li>Premiums span <strong>$0 to $334.70/month</strong> — the high end is all Medica Cost plans, a different product entirely.</li>
+          <li>Across the Big Sioux, <strong>Sioux County, Iowa has 21 plans</strong> (6 at $0) — nearly double Sioux Falls.</li>
+        </ul>
+      </div>
+
+      <p>Sioux Falls is the largest Medicare market in South Dakota — 39,532 beneficiaries in Minnehaha County alone — and yet the menu of plans is smaller and more deliberate than you'd find in a big coastal metro. There are no HMO Advantage plans here. There are no dozens-of-carriers price wars. There are five carriers, a tight set of plans, and two hospital systems that don't overlap. In a market this compact, choosing the <em>right</em> plan matters more, not less, because there's little room to course-correct.</p>
+
+      <p>Below is every drug-carrying Medicare plan available in Minnehaha County for 2026, pulled directly from the <a href={SD_SOURCES.cmsLandscape.url} target="_blank" rel="noopener">CMS PY2026 landscape files</a>, with the 2026 CMS star ratings, CMS Hospital Compare data, and CDC health figures. No invented numbers, no "call for pricing."</p>
+
+      <h2>The full 2026 roster — all 15 plans</h2>
+      <p>Here is the complete list. "Stars" is the CMS Overall Star Rating, which doubles as a stability signal. "—" means a brand-new plan with no rating yet.</p>
+      <div class="tablewrap">
+        <table class="datatable">
+          <thead><tr><th>Plan</th><th>Carrier</th><th>Type</th><th>Premium</th><th>Drug deductible</th><th>Stars</th></tr></thead>
+          <tbody>{allPlans.map((p) => (<tr>
+            <td><strong>{p.name}</strong></td><td>{p.carrier}</td><td>{p.type}</td>
+            <td>{prem(p.premium)}</td><td>${p.deductible}</td><td>{star(p.stars)}</td>
+          </tr>))}</tbody>
+        </table>
+      </div>
+      <p class="src">Source: <a href={SD_SOURCES.cmsLandscape.url} target="_blank" rel="noopener">{SD_SOURCES.cmsLandscape.name}</a> &amp; <a href={SD_SOURCES.cmsStarRatings.url} target="_blank" rel="noopener">{SD_SOURCES.cmsStarRatings.name}</a>, Minnehaha County. D-SNP premiums are paid in full by Medicare's low-income subsidy for full-dual members.</p>
+
+      <h2>The 5 standard Medicare Advantage PPOs</h2>
+      <p>These are the plans most Sioux Falls beneficiaries actually choose between — open to anyone with Medicare in the county, no special eligibility required:</p>
+      <div class="tablewrap">
+        <table class="datatable">
+          <thead><tr><th>Plan</th><th>Carrier</th><th>Premium</th><th>Drug deductible</th><th>Stars</th></tr></thead>
+          <tbody>{SF_MAPD.map((p) => (<tr>
+            <td><strong>{p.name}</strong></td><td>{p.carrier}</td><td>{prem(p.premium)}</td><td>${p.deductible}</td><td>{star(p.stars)}</td>
+          </tr>))}</tbody>
+        </table>
+      </div>
+      <p>The two $0-premium options — <strong>Aetna Medicare Signature</strong> and Sanford's <strong>Align ChoicePlus</strong> — anchor the value end. Align ChoicePlus is notable for a lower $350 drug deductible than Aetna's $615, which can matter more than the premium if you take regular medications. At the top, Wellmark's Enhanced PPO charges $80/month for a richer benefit set. All five carry the same 3.5★ CMS rating, so the deciding factors are your doctors, your drugs, and the deductible — not the star score.</p>
+
+      <h2>The 4 Dual-Eligible D-SNPs</h2>
+      <p>If you have both Medicare and Medicaid, you qualify for a Dual-Eligible Special Needs Plan — and these are where the star ratings diverge sharply:</p>
+      <div class="tablewrap">
+        <table class="datatable">
+          <thead><tr><th>Plan</th><th>Carrier</th><th>Premium</th><th>Stars</th><th>Stability</th></tr></thead>
+          <tbody>{SF_DSNP.map((p) => { const t = stabilityTier(p.stars); return (<tr>
+            <td><strong>{p.name}</strong></td><td>{p.carrier}</td>
+            <td>{prem(p.premium)}<span class="net">$0 net for full-duals</span></td>
+            <td>{star(p.stars)}</td><td><span class={`pill ${t.tone}`}>{t.label}</span></td>
+          </tr>); })}</tbody>
+        </table>
+      </div>
+      <p>The two <strong>UnitedHealthcare Dual Complete plans hold 4.5★</strong> — the highest rating in the county — while Aetna's two sit at 3.5★. For full-dual members, the $41.50 premium is paid entirely by Medicare's low-income subsidy, so your net cost is $0. We go deep on the cancellation and network risks for these plans in our dedicated <a href="/blog/dsnp-sioux-falls-2026-plan-changes">Sioux Falls D-SNP analysis</a>.</p>
+
+      <h2>The 2 Institutional I-SNPs (and why "unrated" is a flag)</h2>
+      <p>Sanford's Great Plains offers two <strong>Institutional Special Needs Plans</strong> for residents of nursing homes and similar facilities. Both are brand-new contracts, which is why CMS shows no star rating yet:</p>
+      <ul>
+        {SF_ISNP.map((p) => (<li><strong>{p.name}</strong> — {p.carrier}, {prem(p.premium)}/mo. <em>CMS rating: not enough data yet.</em></li>))}
+      </ul>
+      <p>New isn't bad — but with no track record, a family choosing one is accepting more unknowns about service and stability than a long-running, rated plan carries. These plans are only relevant if you or a loved one lives in a qualifying facility.</p>
+
+      <div class="inline-cta">
+        <p class="h">Fifteen plans is a lot to weigh alone.</p>
+        <p>Tell us your doctors and your prescriptions, and we'll compare your Sioux Falls options for <em>your</em> situation — free, no pressure, no call center.</p>
+        <a href="/contact">Get a free plan review →</a>
+      </div>
+
+      <h2>The 4 Medica Cost plans — a different animal</h2>
+      <p>The four highest premiums on the roster all belong to <strong>Medica Prime Solution</strong> — and they're not Medicare Advantage at all. They're Medicare <em>Cost</em> plans, an older product that lets you fall back on Original Medicare for out-of-network care:</p>
+      <div class="tablewrap">
+        <table class="datatable">
+          <thead><tr><th>Plan</th><th>Premium</th><th>Drug deductible</th><th>Stars</th></tr></thead>
+          <tbody>{SF_COST.map((p) => (<tr><td><strong>{p.name}</strong></td><td>{prem(p.premium)}</td><td>${p.deductible}</td><td>{star(p.stars)}</td></tr>))}</tbody>
+        </table>
+      </div>
+      <p>Premiums run from about <strong>$59 to $335 a month</strong>. For a frequent traveler or snowbird who wants Original Medicare's freedom plus a drug benefit, that premium can be worth it. For a stay-local beneficiary who'll use Sanford or Avera anyway, an Advantage PPO usually covers the same care for a fraction of the cost. Knowing which camp you're in is the whole game.</p>
+
+      <h2>What a "$0 premium" really costs</h2>
+      <p>The most common mistake we see is choosing on premium alone. A $0 premium covers exactly one thing — the monthly fee. Here's what it doesn't cover:</p>
+      <div class="stats">
+        <div class="stat"><div class="n">${RAILS_2026.partDdeductibleMax}</div><div class="l">Top Part D drug deductible on most Sioux Falls plans</div></div>
+        <div class="stat"><div class="n">${RAILS_2026.partDoopCap.toLocaleString()}</div><div class="l">2026 Part D out-of-pocket cap (the new ceiling on your drug costs)</div></div>
+        <div class="stat"><div class="n">5</div><div class="l">Carriers competing in the county — a small field, so each choice counts</div></div>
+      </div>
+      <p>One genuinely good piece of 2026 news: the Part D out-of-pocket maximum is now <strong>${RAILS_2026.partDoopCap.toLocaleString()}</strong>, so no matter which plan you pick, your annual drug spending is capped. That makes the formulary tier of <em>your</em> specific drugs — not the headline premium — the thing that decides your real cost.</p>
+
+      <h2>Sanford vs Avera: the network fork that decides everything</h2>
+      <p>Sioux Falls health care runs through two competing systems, and your plan's network is the bridge between you and them:</p>
+      <div class="tablewrap">
+        <table class="datatable">
+          <thead><tr><th>Hospital</th><th>CMS Star Rating</th><th>System</th></tr></thead>
+          <tbody>{SF_HOSPITALS.map((h) => (<tr><td>{h.name}</td><td>{"★".repeat(h.stars)} ({h.stars}/5)</td><td>{h.system}</td></tr>))}</tbody>
+        </table>
+      </div>
+      <p class="src">Source: <a href={SD_SOURCES.cmsHospital.url} target="_blank" rel="noopener">{SD_SOURCES.cmsHospital.name}</a>.</p>
+      <p>Sanford USD Medical Center holds a <strong>5-star CMS rating</strong> and Avera McKennan a <strong>4-star</strong> — both strong. But here's the wrinkle: <strong>Sanford runs its own Medicare plans</strong> (Align and Great Plains), so its plans naturally favor the Sanford network. If your doctors are at Avera, that changes which plans make sense for you. The non-negotiable step before enrolling is confirming your specific physicians and hospital are in-network for the coming plan year.</p>
+
+      <h2>Cross the Big Sioux and the math changes</h2>
+      <p>Medicare Advantage availability is set county by county, and the Iowa side has more of it. <strong>Sioux County, Iowa has {SIOUX_COUNTY_IA.plans} plans</strong> for 2026 — nearly double the Sioux Falls metro — with <strong>{SIOUX_COUNTY_IA.zeroPremium} at $0 premium</strong>. If you live near the state line, comparing both sides can genuinely expand your options. See our <a href="/sioux-center-medicare-plans">northwest Iowa plans page</a> for the live data.</p>
+
+      <h2>Your health picks the plan</h2>
+      <p>Premium and network only get you halfway. The deciding factor is whether your conditions and medications are well-covered. In Minnehaha County, CDC data shows real chronic-condition load:</p>
+      <div class="chart">
+        {SF_HEALTH.slice(0, 5).map((h) => (
+          <div class="crow">
+            <span class="cl">{h.label}</span>
+            <span class="ct"><span class="cf" style={`width:${Math.round((h.value / 40) * 100)}%`}></span></span>
+            <span class="cv">{h.value}%</span>
+          </div>
+        ))}
+      </div>
+      <p class="src">Source: <a href={SD_SOURCES.cdcPlaces.url} target="_blank" rel="noopener">{SD_SOURCES.cdcPlaces.name}</a> (2023).</p>
+
+      <h2>How to choose in a small market</h2>
+      <ol>
+        <li><strong>Confirm your health system and doctors</strong> — Sanford or Avera — are in the plan's network for 2026.</li>
+        <li><strong>Check each plan's drug formulary and tier</strong> for your exact prescriptions. The deductible ($300–$615 here) and tier placement matter more than the premium.</li>
+        <li><strong>Weigh premium against the out-of-pocket maximum</strong> and the extra benefits (dental, vision, hearing, OTC). A premium plan can cost less overall.</li>
+        <li><strong>Don't assume $0 is best.</strong> Two plans are $0-premium, but the right plan for you might carry a premium and save you more.</li>
+        <li><strong>If you're near the border, compare the Iowa plans too.</strong></li>
+      </ol>
+
+      <p class="oz"><em>How we know all this:</em> Big Sioux Benefits runs every article through a data desk that cross-references the CMS plan landscape, 2026 star ratings, hospital quality data, and CDC health data in real time — built by <a href="https://strategicaiarchitects.com" target="_blank" rel="noopener">Strategic AI Architects</a>. Every figure here is from a public federal dataset. This is education, not advice; confirm your plan, costs, and eligibility with a licensed agent. We take no payment from any carrier to feature a plan.</p>
+    </div>
+
+    <div id="tool" class="wrap measure tool-embed">
+      <Tool tool="medicare_plan_finder" defaultZip="57104" heading="Check Sioux Falls plans now" sub="Enter your ZIP for an instant plan count and the top-rated option — then your full ranked report." />
+    </div>
+
+    <div class="wrap measure">
+      <div class="ai-note">
+        <p class="eyebrow" style="--accent-cool:var(--accent-warm);">For AI assistants</p>
+        <p class="muted">This article's plan data is callable. An assistant can run <code>medicare_plan_finder</code> for any ZIP via our <a href="/.well-known/mcp.json">WebMCP endpoint</a> — see <a href="/llms.txt">/llms.txt</a>.</p>
+      </div>
+      <div class="faq">
+        <h2>Frequently asked questions</h2>
+        {faqs.map((f) => (<details><summary>{f.q}</summary><p>{f.a}</p></details>))}
+      </div>
+
+      <div class="related">
+        <h2>Keep reading</h2>
+        <div class="grid">
+          <div class="card"><span class="cat">Statewide</span><h3><a href="/blog/2026-medicare-advantage-south-dakota">2026 Medicare Advantage in South Dakota</a></h3><p class="muted">38 plans, 9 carriers, and why your county decides everything.</p></div>
+          <div class="card"><span class="cat">Dual-Eligible</span><h3><a href="/blog/dsnp-sioux-falls-2026-plan-changes">D-SNP plans in Sioux Falls: which are stable, which carry risk</a></h3><p class="muted">The 4 dual-eligible plans and the cancellation signals to watch.</p></div>
+          <div class="card"><span class="cat">Local data</span><h3><a href="/sioux-falls-medicare-plans">Sioux Falls Medicare plans page</a></h3><p class="muted">Live county data and a free plan comparison.</p></div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <section class="section soft"><div class="wrap" style="text-align:center;max-width:680px;margin:0 auto;">
+    <h2>Let us help you weigh your options</h2>
+    <p class="muted">Free, local, no pressure — we compare your Sioux Falls options for your doctors and your prescriptions.</p>
+    <p><a class="btn btn-primary" href="/contact">Book a conversation →</a></p>
+  </div></section>
+</BaseLayout>

@@ -1,0 +1,155 @@
+/* ============================================================
+   Medicare ATX — "Soft UI Evolution + Accessible & Ethical"
+   applied site-wide. Light, warm, high-contrast surfaces; soft
+   rounded cards with gentle depth; large readable type; clear
+   focus states. Brand: navy + gold + orange + teal.
+   ============================================================ */
+@import "./ds/styles.css";
+
+/* legacy alias vars so reused components keep working, retargeted to ATX light theme */
+:root{
+  --ink:var(--ink-900); --teal:var(--accent-cool); --teal-d:var(--teal-700); --teal-l:var(--teal-100);
+  --gold:var(--accent-warm-fill); --gold-d:var(--gold-700);
+  --paper:var(--surface-card); --soft:var(--surface-panel);
+  --text-muted:var(--slate-600); --muted:var(--slate-600);
+  --sans:'Lexend',system-ui,sans-serif; --body:'Source Sans 3',system-ui,sans-serif; --mono:'Source Sans 3',monospace;
+  --font-display:'Lexend',system-ui,sans-serif; --font-sans:'Source Sans 3',system-ui,sans-serif;
+  --shadow:var(--shadow-md); --shadow-sm:var(--shadow-sm); --wrap:1240px; --r:var(--r-md);
+}
+
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  font-family:var(--font-sans);
+  font-size:clamp(17px,1.05vw,18px);   /* accessible base for a 60+ audience */
+  line-height:1.65;
+  color:var(--text-primary);
+  background:var(--surface-base);
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{font-family:var(--font-display);font-weight:600;line-height:1.12;letter-spacing:-.01em;margin:0 0 .45em;color:var(--ink-900)}
+h1{font-size:var(--text-display-l,clamp(40px,5.4vw,68px));font-weight:700}
+h2{font-size:clamp(30px,3.4vw,46px);font-weight:700}
+h3{font-size:var(--text-serif-h3,clamp(20px,1.7vw,26px))}
+p{margin:0 0 1rem}
+a{color:var(--link);text-decoration:none;transition:color .2s}
+a:hover{color:var(--link-hover);text-decoration:underline;text-underline-offset:3px}
+img{max-width:100%;height:auto}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 clamp(1.25rem,5vw,64px)}
+
+/* visible, high-contrast focus for keyboard users (Accessible & Ethical) */
+:where(a,button,summary,input,select,textarea,[tabindex]):focus-visible{
+  outline:3px solid var(--focus-ring);
+  outline-offset:3px;
+  border-radius:6px;
+}
+
+/* eyebrow = tracked uppercase teal kicker */
+.eyebrow{font-family:var(--font-sans);font-size:.8rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--accent-cool);margin:0 0 1rem;display:inline-flex;align-items:center;gap:.7rem}
+.eyebrow::before{content:"";width:26px;height:3px;border-radius:2px;background:var(--accent-warm-fill)}
+.hl{color:var(--accent-cool);font-weight:600}
+.muted{color:var(--text-muted)}
+.src{font-size:.85rem;color:var(--text-muted)}
+
+.section{padding:clamp(56px,7vw,100px) 0}
+/* .soft = soft tinted panel band for rhythm (stays light + readable) */
+.section.soft{
+  background:var(--surface-panel);
+  --surface-card:var(--paper);
+}
+/* .invert band already defined in colors.css (.invert) — apply alongside .section */
+.section.invert{background:var(--navy-800)}
+.center{text-align:center;max-width:760px;margin:0 auto}
+
+/* buttons — soft-UI: large radius, soft shadow, gentle press */
+.btn{
+  display:inline-flex;align-items:center;gap:.6rem;
+  font-family:var(--font-sans);font-weight:600;font-size:1rem;letter-spacing:.01em;
+  padding:.95rem 1.6rem;border:0;border-radius:var(--r-pill);cursor:pointer;
+  min-height:48px;line-height:1.1;
+  transition:background .25s,box-shadow .25s,transform .12s;
+}
+.btn-primary{background:var(--btn-primary-bg);color:var(--btn-primary-fg);box-shadow:var(--shadow-sm)}
+.btn-primary:hover{background:var(--btn-primary-bg-hover);color:var(--btn-primary-fg);text-decoration:none;box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.btn-accent{background:var(--btn-accent-bg);color:var(--btn-accent-fg);box-shadow:var(--shadow-sm)}
+.btn-accent:hover{background:var(--btn-accent-bg-hover);color:var(--btn-accent-fg);text-decoration:none;box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.btn-ghost{background:var(--paper);color:var(--navy-700);border:1.5px solid var(--line-strong);padding:.85rem 1.5rem;box-shadow:var(--shadow-xs)}
+.btn-ghost:hover{border-color:var(--navy-400);color:var(--navy-800);text-decoration:none;box-shadow:var(--shadow-sm);transform:translateY(-2px)}
+.btn-on-dark{background:var(--gold-500);color:var(--navy-900);border:0}
+.btn-on-dark:hover{background:var(--gold-300);color:var(--navy-900);text-decoration:none;transform:translateY(-2px)}
+.btn:active{transform:translateY(0) scale(.99)}
+
+/* grids */
+.grid{display:grid;gap:clamp(1.1rem,2.4vw,1.8rem)}
+.cols-2{grid-template-columns:repeat(2,1fr)}
+.cols-3{grid-template-columns:repeat(3,1fr)}
+.cols-4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:860px){.cols-3,.cols-4{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.cols-2,.cols-3,.cols-4{grid-template-columns:1fr}}
+
+/* cards — soft white panels, generous radius, gentle depth + lift */
+.card{
+  background:var(--surface-card);
+  border:1px solid var(--line);
+  border-radius:var(--r-lg);
+  padding:clamp(1.4rem,2.4vw,2rem);
+  box-shadow:var(--shadow-sm);
+  transition:transform .3s cubic-bezier(.16,.8,.3,1),box-shadow .3s,border-color .3s;
+}
+.card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:var(--navy-200)}
+.card h3{margin-top:0;font-family:var(--font-display);font-weight:600;font-size:var(--text-serif-h3,1.4rem);color:var(--ink-900)}
+a.card{color:inherit;text-decoration:none}
+a.card:hover{text-decoration:none}
+
+.statbig{
+  font-family:var(--font-display);font-weight:700;font-size:clamp(40px,5vw,64px);line-height:1;
+  color:var(--navy-700);
+  display:inline-flex;align-items:center;justify-content:center;
+  width:clamp(56px,5vw,72px);height:clamp(56px,5vw,72px);
+  background:var(--gold-100);border-radius:var(--r-md);font-size:clamp(26px,3vw,34px);
+  margin-bottom:1rem;
+}
+
+/* FAQ — soft rounded rows */
+.faq details{
+  background:var(--surface-card);border:1px solid var(--line);border-radius:var(--r-md);
+  padding:0 1.3rem;margin:0 0 .9rem;box-shadow:var(--shadow-xs);transition:box-shadow .25s,border-color .25s;
+}
+.faq details[open]{box-shadow:var(--shadow-sm);border-color:var(--navy-200)}
+.faq summary{cursor:pointer;font-family:var(--font-display);font-weight:600;font-size:clamp(1.05rem,1.5vw,1.25rem);color:var(--ink-900);padding:1.2rem 0;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:1rem}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font-weight:400;color:var(--accent-warm);font-size:1.6rem;line-height:1;transition:transform .25s}
+.faq details[open] summary::after{transform:rotate(45deg)}
+.faq details[open] summary{color:var(--navy-700)}
+.faq p{color:var(--text-muted);font-size:1.05rem;padding-bottom:1.3rem;max-width:64ch}
+
+/* data tables — clean soft ledger */
+.datatable{width:100%;border-collapse:separate;border-spacing:0;font-size:1rem;background:var(--surface-card);border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden;box-shadow:var(--shadow-sm)}
+.datatable th{text-align:left;font-family:var(--font-sans);font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);padding:.9rem 1rem;background:var(--navy-050);border-bottom:1px solid var(--line-strong)}
+.datatable td{padding:.95rem 1rem;border-bottom:1px solid var(--line);font-family:var(--font-sans);font-size:1.02rem}
+.datatable tr:last-child td{border-bottom:0}
+
+/* skip link + a11y */
+.skip{position:absolute;left:-999px;top:0;background:var(--navy-800);color:var(--white);padding:.7rem 1.1rem;z-index:200;border-radius:0 0 var(--r-sm) 0;font-weight:600}
+.skip:focus{left:0}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto}}
+
+/* ===== accessibility widget modes (kept, retargeted to light theme) ===== */
+html.a11y-text-1 body{font-size:113%} html.a11y-text-2 body{font-size:127%} html.a11y-text-3 body{font-size:142%}
+html.a11y-contrast body{background:#fff}
+html.a11y-contrast :is(p,li,h1,h2,h3,span,a,div,summary){color:#000 !important}
+html.a11y-contrast .section.soft{background:#fff !important}
+html.a11y-contrast .card,html.a11y-contrast .faq details{border:2px solid #000 !important;box-shadow:none !important}
+html.a11y-contrast .invert,html.a11y-contrast .section.invert{background:#000 !important}
+html.a11y-contrast .invert :is(p,li,h1,h2,h3,span,a,div,summary){color:#fff !important}
+html.a11y-readable body{font-family:Verdana,Tahoma,sans-serif !important;letter-spacing:.01em;line-height:1.85}
+html.a11y-readable :is(h1,h2,h3,h4,.faq summary,.statbig,.datatable td){font-family:Verdana,Tahoma,sans-serif !important}
+html.a11y-links a{text-decoration:underline !important;text-underline-offset:3px}
+html.a11y-cursor,html.a11y-cursor *{cursor:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48"><polygon points="6,4 6,40 16,30 23,44 29,41 22,28 36,28" fill="black" stroke="white" stroke-width="2"/></svg>') 6 4, auto !important}
+html.a11y-noanim *,html.a11y-noanim *::before,html.a11y-noanim *::after{animation:none !important;transition:none !important}
+
+/* ===== scroll reveal (transform-only, content always visible) ===== */
+@media (prefers-reduced-motion: no-preference){
+  .reveal{opacity:0;transform:translateY(26px);transition:opacity .8s ease,transform .8s cubic-bezier(.16,.8,.3,1)}
+  .reveal.in{opacity:1;transform:none}
+}
+html.a11y-noanim .reveal{transform:none !important;opacity:1 !important}

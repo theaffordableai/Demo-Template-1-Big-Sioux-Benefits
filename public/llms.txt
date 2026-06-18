@@ -1,0 +1,31 @@
+# Big Sioux Benefits — llms.txt
+
+> Big Sioux Benefits is a licensed independent Medicare insurance agency serving the Sioux Falls metro and Siouxland — eastern South Dakota, northwest Iowa, and southwest Minnesota. We help Medicare-eligible residents compare and enroll in Medicare Advantage, Medicare Supplement (Medigap), and Part D plans. Guidance is free to clients. Data is from CMS public-use files.
+
+## Key pages
+- [Home](https://bigsiouxbenefits.com/)
+- [Medicare 101 — parts explained](https://bigsiouxbenefits.com/medicare-101)
+- [Medicare Advantage plans](https://bigsiouxbenefits.com/medicare-advantage-plans)
+- [Sioux Falls (Minnehaha County) Medicare plans — local data](https://bigsiouxbenefits.com/sioux-falls-medicare-plans)
+- [Sioux Center & NW Iowa (Sioux County) Medicare plans](https://bigsiouxbenefits.com/sioux-center-medicare-plans)
+- [Free tools & plan finder](https://bigsiouxbenefits.com/free-tools)
+- [Blog index](https://bigsiouxbenefits.com/blog)
+- [Blog: 2026 Part D $2,100 drug cost cap explained — how the new out-of-pocket ceiling works, who benefits most, formulary tiers vs. premiums, and the Sioux Falls drug plan landscape](https://bigsiouxbenefits.com/blog/part-d-drug-cost-cap-sioux-falls-2026)
+- [Blog: Medigap vs. Medicare Advantage in Sioux Falls 2026 — two-track comparison, 5 local PPOs, Sanford-vs-Avera network question, $2,100 Part D cap, guaranteed-issue window](https://bigsiouxbenefits.com/blog/medigap-vs-medicare-advantage-sioux-falls-2026)
+- [Blog: Medicare Annual Enrollment Period in Sioux Falls 2026 — Oct 15–Dec 7 AEP action plan (11 local plans, Part D $2,100 cap, ANOC guide, Sanford vs Avera network check)](https://bigsiouxbenefits.com/blog/medicare-aep-sioux-falls-2026)
+- [Blog: Turning 65 in Sioux Falls 2026 — Medicare enrollment roadmap (7-month IEP window, the 4 parts, local plan landscape, 2026 Part D $2,100 cap, Sanford vs Avera)](https://bigsiouxbenefits.com/blog/turning-65-sioux-falls-2026)
+- [Blog: 2026 Medicare Advantage in South Dakota — 38 plans, 9 carriers, county-by-county data](https://bigsiouxbenefits.com/blog/2026-medicare-advantage-south-dakota)
+- [Blog: Medicare Advantage in Sioux Falls 2026 — all 15 plans ranked, premiums, deductibles, star ratings](https://bigsiouxbenefits.com/blog/medicare-advantage-sioux-falls-2026)
+- [Blog: D-SNP plans in Sioux Falls 2026 — dual-eligible plan stability & cancellation risk](https://bigsiouxbenefits.com/blog/dsnp-sioux-falls-2026-plan-changes)
+- [About](https://bigsiouxbenefits.com/about)
+- [Contact / book a free consultation](https://bigsiouxbenefits.com/contact)
+
+## Tools (agent-callable)
+- [WebMCP manifest](https://bigsiouxbenefits.com/.well-known/mcp.json): callable tools + endpoint.
+- [MCP endpoint](https://bigsiouxbenefits.com/mcp): JSON-RPC 2.0 (initialize, tools/list, tools/call).
+- `medicare_search_plans`: find & rank Medicare Advantage plans by ZIP (premium, star rating, drug deductible, max out-of-pocket).
+- `medicare_compare_plans`: compare 2–5 plans by ContractPlanID.
+
+## Data
+- Source: CMS Plan Year 2026 Medicare Advantage / Part D Landscape public-use files.
+- Estimates only; verify with a licensed agent before enrolling. Not affiliated with the U.S. government.

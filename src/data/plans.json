@@ -1,0 +1,476 @@
+{
+  "meta": {
+    "source": "CMS PY2026 Medicare Advantage / Part D Landscape (medicare_landscape, healthcare.db)",
+    "source_url": "https://www.cms.gov/medicare/health-drug-plans/medicare-advantage-rates-statistics/announcements-and-documents",
+    "total_landscape_rows": 138263,
+    "note": "Sioux Falls-area demo subset: top 15 MA-PD plans per ZIP, real CMS PY2026 data.",
+    "demo_zips": [
+      {
+        "zip": "57104",
+        "city": "Sioux Falls",
+        "county": "Minnehaha",
+        "state": "SD"
+      },
+      {
+        "zip": "57106",
+        "city": "Sioux Falls",
+        "county": "Minnehaha",
+        "state": "SD"
+      },
+      {
+        "zip": "57108",
+        "city": "Sioux Falls",
+        "county": "Lincoln",
+        "state": "SD"
+      },
+      {
+        "zip": "57013",
+        "city": "Canton",
+        "county": "Lincoln",
+        "state": "SD"
+      },
+      {
+        "zip": "51250",
+        "city": "Orange City",
+        "county": "Sioux",
+        "state": "IA"
+      },
+      {
+        "zip": "57005",
+        "city": "Brandon",
+        "county": "Minnehaha",
+        "state": "SD"
+      }
+    ]
+  },
+  "zips": {
+    "51250": {
+      "zip": "51250",
+      "city": "Orange City",
+      "county": "Sioux",
+      "state": "IA",
+      "county_total_ma_pd": 9,
+      "plans": [
+        {
+          "id": "H0028_053",
+          "name": "Humana Gold Plus H0028-053 (HMO)",
+          "carrier": "Humana",
+          "type": "HMO",
+          "snp": false,
+          "premium": 0,
+          "drug_deductible": 615,
+          "stars": 3.5,
+          "moop": 4200
+        },
+        {
+          "id": "H5216_340",
+          "name": "HumanaChoice Giveback H5216-340 (PPO)",
+          "carrier": "Humana",
+          "type": "PPO",
+          "snp": false,
+          "premium": 0,
+          "drug_deductible": 600,
+          "stars": 3.5,
+          "moop": 5000
+        },
+        {
+          "id": "H5216_411",
+          "name": "Humana Full Access H5216-411 (PPO)",
+          "carrier": "Humana",
+          "type": "PPO",
+          "snp": false,
+          "premium": 0,
+          "drug_deductible": 400,
+          "stars": 3.5,
+          "moop": 4250
+        },
+        {
+          "id": "H8385_003",
+          "name": "Align ChoicePlus (PPO)",
+          "carrier": "Align powered by Sanford Health Plan",
+          "type": "PPO",
+          "snp": false,
+          "premium": 0,
+          "drug_deductible": 350,
+          "stars": 3.5,
+          "moop": 4900
+        },
+        {
+          "id": "H1862_005",
+          "name": "Wellcare Simple (HMO-POS)",
+          "carrier": "Wellcare",
+          "type": "HMO-POS",
+          "snp": false,
+          "premium": 0,
+          "drug_deductible": 615,
+          "stars": null,
+          "moop": 4400
+        },
+        {
+          "id": "H5216_014",
+          "name": "HumanaChoice H5216-014 (PPO)",
+          "carrier": "Humana",
+          "type": "PPO",
+          "snp": false,
+          "premium": 38,
+          "drug_deductible": 615,
+          "stars": 3.5,
+          "moop": 9250
+        },
+        {
+          "id": "H1609_068",
+          "name": "Aetna Medicare Value Care (HMO-POS)",
+          "carrier": "Aetna Medicare",
+          "type": "HMO-POS",
+          "snp": false,
+          "premium": 41,
+          "drug_deductible": 615,
+          "stars": 4.5,
+          "moop": 3900
+        },
+        {
+          "id": "H1608_117",
+          "name": "Aetna Medicare Enhanced Extra (PPO)",
+          "carrier": "Aetna Medicare",
+          "type": "PPO",
+          "snp": false,
+          "premium": 57,
+          "drug_deductible": 615,
+          "stars": 3.5,
+          "moop": 4500
+        },
+        {
+          "id": "H8385_001",
+          "name": "Align ChoiceElite (PPO)",
+          "carrier": "Align powered by Sanford Health Plan",
+          "type": "PPO",
+          "snp": false,
+          "premium": 66,
+          "drug_deductible": 300,
+          "stars": 3.5,
+          "moop": 3500
+        }
+      ]
+    },
+    "57005": {
+      "zip": "57005",
+      "city": "Brandon",
+      "county": "Minnehaha",
+      "state": "SD",
+      "county_total_ma_pd": 5,
+      "plans": [
+        {
+          "id": "H1608_120",
+          "name": "Aetna Medicare Signature (PPO)",
+          "carrier": "Aetna Medicare",
+          "type": "PPO",
+          "snp": false,
+          "premium": 0,
+          "drug_deductible": 615,
+          "stars": 3.5,
+          "moop": 6750
+        },
+        {
+          "id": "H8385_003",
+          "name": "Align ChoicePlus (PPO)",
+          "carrier": "Align powered by Sanford Health Plan",
+          "type": "PPO",
+          "snp": false,
+          "premium": 0,
+          "drug_deductible": 350,
+          "stars": 3.5,
+          "moop": 4900
+        },
+        {
+          "id": "H1608_119",
+          "name": "Aetna Medicare Enhanced Extra (PPO)",
+          "carrier": "Aetna Medicare",
+          "type": "PPO",
+          "snp": false,
+          "premium": 52,
+          "drug_deductible": 615,
+          "stars": 3.5,
+          "moop": 5000
+        },
+        {
+          "id": "H8385_001",
+          "name": "Align ChoiceElite (PPO)",
+          "carrier": "Align powered by Sanford Health Plan",
+          "type": "PPO",
+          "snp": false,
+          "premium": 66,
+          "drug_deductible": 300,
+          "stars": 3.5,
+          "moop": 3500
+        },
+        {
+          "id": "H5900_004",
+          "name": "Blue Medicare Advantage Enhanced PPO (PPO)",
+          "carrier": "Wellmark Advantage Health Plan",
+          "type": "PPO",
+          "snp": false,
+          "premium": 80,
+          "drug_deductible": 300,
+          "stars": 3.5,
+          "moop": 4200
+        }
+      ]
+    },
+    "57013": {
+      "zip": "57013",
+      "city": "Canton",
+      "county": "Lincoln",
+      "state": "SD",
+      "county_total_ma_pd": 5,
+      "plans": [
+        {
+          "id": "H1608_120",
+          "name": "Aetna Medicare Signature (PPO)",
+          "carrier": "Aetna Medicare",
+          "type": "PPO",
+          "snp": false,
+          "premium": 0,
+          "drug_deductible": 615,
+          "stars": 3.5,
+          "moop": 6750
+        },
+        {
+          "id": "H8385_003",
+          "name": "Align ChoicePlus (PPO)",
+          "carrier": "Align powered by Sanford Health Plan",
+          "type": "PPO",
+          "snp": false,
+          "premium": 0,
+          "drug_deductible": 350,
+          "stars": 3.5,
+          "moop": 4900
+        },
+        {
+          "id": "H1608_119",
+          "name": "Aetna Medicare Enhanced Extra (PPO)",
+          "carrier": "Aetna Medicare",
+          "type": "PPO",
+          "snp": false,
+          "premium": 52,
+          "drug_deductible": 615,
+          "stars": 3.5,
+          "moop": 5000
+        },
+        {
+          "id": "H8385_001",
+          "name": "Align ChoiceElite (PPO)",
+          "carrier": "Align powered by Sanford Health Plan",
+          "type": "PPO",
+          "snp": false,
+          "premium": 66,
+          "drug_deductible": 300,
+          "stars": 3.5,
+          "moop": 3500
+        },
+        {
+          "id": "H5900_004",
+          "name": "Blue Medicare Advantage Enhanced PPO (PPO)",
+          "carrier": "Wellmark Advantage Health Plan",
+          "type": "PPO",
+          "snp": false,
+          "premium": 80,
+          "drug_deductible": 300,
+          "stars": 3.5,
+          "moop": 4200
+        }
+      ]
+    },
+    "57104": {
+      "zip": "57104",
+      "city": "Sioux Falls",
+      "county": "Minnehaha",
+      "state": "SD",
+      "county_total_ma_pd": 5,
+      "plans": [
+        {
+          "id": "H1608_120",
+          "name": "Aetna Medicare Signature (PPO)",
+          "carrier": "Aetna Medicare",
+          "type": "PPO",
+          "snp": false,
+          "premium": 0,
+          "drug_deductible": 615,
+          "stars": 3.5,
+          "moop": 6750
+        },
+        {
+          "id": "H8385_003",
+          "name": "Align ChoicePlus (PPO)",
+          "carrier": "Align powered by Sanford Health Plan",
+          "type": "PPO",
+          "snp": false,
+          "premium": 0,
+          "drug_deductible": 350,
+          "stars": 3.5,
+          "moop": 4900
+        },
+        {
+          "id": "H1608_119",
+          "name": "Aetna Medicare Enhanced Extra (PPO)",
+          "carrier": "Aetna Medicare",
+          "type": "PPO",
+          "snp": false,
+          "premium": 52,
+          "drug_deductible": 615,
+          "stars": 3.5,
+          "moop": 5000
+        },
+        {
+          "id": "H8385_001",
+          "name": "Align ChoiceElite (PPO)",
+          "carrier": "Align powered by Sanford Health Plan",
+          "type": "PPO",
+          "snp": false,
+          "premium": 66,
+          "drug_deductible": 300,
+          "stars": 3.5,
+          "moop": 3500
+        },
+        {
+          "id": "H5900_004",
+          "name": "Blue Medicare Advantage Enhanced PPO (PPO)",
+          "carrier": "Wellmark Advantage Health Plan",
+          "type": "PPO",
+          "snp": false,
+          "premium": 80,
+          "drug_deductible": 300,
+          "stars": 3.5,
+          "moop": 4200
+        }
+      ]
+    },
+    "57106": {
+      "zip": "57106",
+      "city": "Sioux Falls",
+      "county": "Minnehaha",
+      "state": "SD",
+      "county_total_ma_pd": 5,
+      "plans": [
+        {
+          "id": "H1608_120",
+          "name": "Aetna Medicare Signature (PPO)",
+          "carrier": "Aetna Medicare",
+          "type": "PPO",
+          "snp": false,
+          "premium": 0,
+          "drug_deductible": 615,
+          "stars": 3.5,
+          "moop": 6750
+        },
+        {
+          "id": "H8385_003",
+          "name": "Align ChoicePlus (PPO)",
+          "carrier": "Align powered by Sanford Health Plan",
+          "type": "PPO",
+          "snp": false,
+          "premium": 0,
+          "drug_deductible": 350,
+          "stars": 3.5,
+          "moop": 4900
+        },
+        {
+          "id": "H1608_119",
+          "name": "Aetna Medicare Enhanced Extra (PPO)",
+          "carrier": "Aetna Medicare",
+          "type": "PPO",
+          "snp": false,
+          "premium": 52,
+          "drug_deductible": 615,
+          "stars": 3.5,
+          "moop": 5000
+        },
+        {
+          "id": "H8385_001",
+          "name": "Align ChoiceElite (PPO)",
+          "carrier": "Align powered by Sanford Health Plan",
+          "type": "PPO",
+          "snp": false,
+          "premium": 66,
+          "drug_deductible": 300,
+          "stars": 3.5,
+          "moop": 3500
+        },
+        {
+          "id": "H5900_004",
+          "name": "Blue Medicare Advantage Enhanced PPO (PPO)",
+          "carrier": "Wellmark Advantage Health Plan",
+          "type": "PPO",
+          "snp": false,
+          "premium": 80,
+          "drug_deductible": 300,
+          "stars": 3.5,
+          "moop": 4200
+        }
+      ]
+    },
+    "57108": {
+      "zip": "57108",
+      "city": "Sioux Falls",
+      "county": "Lincoln",
+      "state": "SD",
+      "county_total_ma_pd": 5,
+      "plans": [
+        {
+          "id": "H1608_120",
+          "name": "Aetna Medicare Signature (PPO)",
+          "carrier": "Aetna Medicare",
+          "type": "PPO",
+          "snp": false,
+          "premium": 0,
+          "drug_deductible": 615,
+          "stars": 3.5,
+          "moop": 6750
+        },
+        {
+          "id": "H8385_003",
+          "name": "Align ChoicePlus (PPO)",
+          "carrier": "Align powered by Sanford Health Plan",
+          "type": "PPO",
+          "snp": false,
+          "premium": 0,
+          "drug_deductible": 350,
+          "stars": 3.5,
+          "moop": 4900
+        },
+        {
+          "id": "H1608_119",
+          "name": "Aetna Medicare Enhanced Extra (PPO)",
+          "carrier": "Aetna Medicare",
+          "type": "PPO",
+          "snp": false,
+          "premium": 52,
+          "drug_deductible": 615,
+          "stars": 3.5,
+          "moop": 5000
+        },
+        {
+          "id": "H8385_001",
+          "name": "Align ChoiceElite (PPO)",
+          "carrier": "Align powered by Sanford Health Plan",
+          "type": "PPO",
+          "snp": false,
+          "premium": 66,
+          "drug_deductible": 300,
+          "stars": 3.5,
+          "moop": 3500
+        },
+        {
+          "id": "H5900_004",
+          "name": "Blue Medicare Advantage Enhanced PPO (PPO)",
+          "carrier": "Wellmark Advantage Health Plan",
+          "type": "PPO",
+          "snp": false,
+          "premium": 80,
+          "drug_deductible": 300,
+          "stars": 3.5,
+          "moop": 4200
+        }
+      ]
+    }
+  }
+}

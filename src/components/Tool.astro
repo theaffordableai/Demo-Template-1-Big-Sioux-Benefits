@@ -1,0 +1,201 @@
+---
+// Interactive, WebMCP-backed tool widget.
+// Flow: user enters inputs → instant PREVIEW (calls /mcp tools/call) → enters
+// email → FULL report (re-calls /mcp with email + posts the lead to GHL).
+// The SAME /mcp tool an AI agent calls powers this widget — true dogfooding.
+import { site } from "../config/site.config";
+
+interface Field { name: string; label: string; type: "text" | "number" | "select"; placeholder?: string; options?: { v: string; l: string }[]; }
+interface Props { tool: string; heading?: string; sub?: string; defaultZip?: string; }
+const { tool, heading, sub, defaultZip } = Astro.props as Props;
+
+const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"]
+  .map((m, i) => ({ v: String(i + 1), l: m }));
+
+const FIELDS: Record<string, { title: string; sub: string; cta: string; fields: Field[] }> = {
+  medicare_plan_finder: { title: "Medicare Plan Finder", sub: "See every Medicare Advantage plan in your area, ranked from public CMS data.", cta: "Find my plans",
+    fields: [{ name: "zip", label: "Your ZIP code", type: "text", placeholder: "57104" }] },
+  irmaa_calculator: { title: "IRMAA Surcharge Calculator", sub: "Find out if your income triggers a Part B & Part D surcharge.", cta: "Check my IRMAA",
+    fields: [{ name: "income", label: "Annual income (MAGI)", type: "number", placeholder: "95000" },
+             { name: "filing", label: "Filing status", type: "select", options: [{ v: "single", l: "Single" }, { v: "married", l: "Married, filing jointly" }] }] },
+  medicare_eligibility: { title: "Medicare Eligibility Checker", sub: "Find your exact 7-month enrollment window.", cta: "Check my window",
+    fields: [{ name: "birth_month", label: "Birth month", type: "select", options: MONTHS },
+             { name: "birth_year", label: "Birth year", type: "number", placeholder: "1961" }] },
+  part_b_penalty: { title: "Part B Late-Penalty Estimator", sub: "See the lifetime cost of enrolling in Part B late.", cta: "Estimate my penalty",
+    fields: [{ name: "months_late", label: "Months you'd delay past eligibility", type: "number", placeholder: "24" }] },
+  part_d_penalty: { title: "Part D Late-Penalty Estimator", sub: "See the lifetime cost of going without drug coverage.", cta: "Estimate my penalty",
+    fields: [{ name: "months_late", label: "Months without creditable drug coverage", type: "number", placeholder: "30" }] },
+  drug_cost_estimate: { title: "Drug Cost Estimator", sub: "Estimate your yearly drug spend under the $2,000 cap.", cta: "Estimate my cost",
+    fields: [{ name: "monthly_retail", label: "Approx. monthly prescription retail cost", type: "number", placeholder: "400" }] },
+};
+
+const cfg = FIELDS[tool] ?? FIELDS.medicare_plan_finder;
+const title = heading ?? cfg.title;
+const subtitle = sub ?? cfg.sub;
+---
+<div class="tool-widget" data-tool={tool} data-default-zip={defaultZip ?? ""}>
+  <div class="tw-head">
+    <span class="tw-badge">Interactive tool · live data</span>
+    <h3>{title}</h3>
+    <p class="tw-sub">{subtitle}</p>
+  </div>
+
+  <form class="tw-form" novalidate>
+    {cfg.fields.map((f) => (
+      <label class="tw-field">
+        <span>{f.label}</span>
+        {f.type === "select" ? (
+          <select name={f.name}>{(f.options ?? []).map((o) => <option value={o.v}>{o.l}</option>)}</select>
+        ) : (
+          <input name={f.name} type={f.type} placeholder={f.placeholder} inputmode={f.type === "number" ? "numeric" : "text"} value={f.name === "zip" ? (defaultZip ?? "") : ""} />
+        )}
+      </label>
+    ))}
+    <button type="submit" class="btn btn-primary tw-go">{cfg.cta} →</button>
+  </form>
+
+  <div class="tw-out" hidden>
+    <div class="tw-preview"></div>
+    <div class="tw-gate">
+      <p class="tw-gate-msg"></p>
+      <form class="tw-email">
+        <input name="email" type="email" placeholder="you@email.com" required />
+        <button type="submit" class="btn btn-primary">Email me the full report →</button>
+      </form>
+      <p class="tw-fine">No spam. We'll email your report and a licensed Sioux Falls advisor can walk you through it — only if you ask.</p>
+    </div>
+    <div class="tw-full" hidden></div>
+  </div>
+  <p class="tw-err" hidden></p>
+</div>
+
+<style>
+  .tool-widget{border:1px solid var(--line-strong);border-radius:4px;background:var(--surface-card);padding:clamp(1.4rem,3vw,2.4rem);max-width:680px;margin:0 auto}
+  .tw-badge{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--accent-cool);border:1px solid var(--line);border-radius:99px;padding:.3rem .8rem;margin-bottom:1rem}
+  .tw-head h3{margin:.2rem 0;font-family:var(--font-display);font-size:var(--text-serif-h3)}
+  .tw-sub{color:var(--text-muted);margin:0 0 1.4rem}
+  .tw-form{display:grid;grid-template-columns:1fr 1fr;gap:1rem;align-items:end}
+  .tw-form .tw-go{grid-column:1/-1}
+  .tw-field{display:flex;flex-direction:column;gap:.4rem;font-size:13px;font-weight:600;letter-spacing:.04em;color:var(--text-primary)}
+  /* Inputs are ALWAYS a light field with dark text so typing is visible in BOTH
+     navy and cream sections (the previous navy-on-navy bug hid the text). */
+  .tw-field input,.tw-field select{font:inherit;font-weight:600;padding:.85rem 1rem;border:1px solid #b9a88a;border-radius:3px;background:#fffdf7;color:#13243B}
+  .tw-field input::placeholder{color:#8a8270;font-weight:500}
+  .tw-field select{appearance:auto}
+  .tw-field input:focus,.tw-field select:focus{outline:2px solid var(--accent-warm);outline-offset:1px;background:#fff}
+  .tw-out{margin-top:1.6rem}
+  .tw-preview{display:grid;gap:.6rem;margin-bottom:1.4rem}
+  .tw-row{display:flex;justify-content:space-between;gap:1rem;border-bottom:1px solid var(--line);padding-bottom:.6rem}
+  .tw-row .k{color:var(--text-muted);font-size:13px}
+  .tw-row .v{font-family:var(--font-display);font-size:1.35rem;color:var(--accent-warm);text-align:right}
+  .tw-headline{font-family:var(--font-display);font-size:1.5rem;line-height:1.2;margin:.2rem 0 1rem}
+  .tw-gate{border-top:1px dashed var(--line-strong);padding-top:1.2rem}
+  .tw-gate-msg{font-weight:600;margin:0 0 .9rem}
+  .tw-email{display:flex;gap:.6rem;flex-wrap:wrap}
+  .tw-email input{flex:1;min-width:200px;font:inherit;font-weight:600;padding:.85rem 1rem;border:1px solid #b9a88a;border-radius:3px;background:#fffdf7;color:#13243B}
+  .tw-email input::placeholder{color:#8a8270;font-weight:500}
+  .tw-email input:focus{outline:2px solid var(--accent-warm);outline-offset:1px;background:#fff}
+  .tw-fine{font-size:11.5px;color:var(--text-muted);margin:.8rem 0 0}
+  .tw-full table{width:100%;border-collapse:collapse;margin-top:.5rem}
+  .tw-full th{text-align:left;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);padding:.5rem .5rem;border-bottom:1px solid var(--line-strong)}
+  .tw-full td{padding:.7rem .5rem;border-bottom:1px solid var(--line);font-family:var(--font-display);font-size:1.05rem}
+  .tw-err{color:#c0392b;font-weight:600;margin-top:1rem}
+  @media(max-width:560px){.tw-form{grid-template-columns:1fr}}
+</style>
+
+<script>
+  const ENDPOINT = "/mcp";
+  async function callTool(name: string, args: Record<string, unknown>) {
+    const res = await fetch(ENDPOINT, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ jsonrpc: "2.0", id: Date.now(), method: "tools/call", params: { name, arguments: args } }),
+    });
+    const json = await res.json();
+    if (json.error) throw new Error(json.error.message || "Tool error");
+    const r = json.result;
+    if (r?.isError) throw new Error(r.content?.[0]?.text || "Tool error");
+    return r?.structuredContent ?? {};
+  }
+
+  const LABELS: Record<string, string> = {
+    plans_available: "Plans available", lowest_premium: "Lowest premium", top_rated: "Top-rated plan",
+    zero_premium_plans: "$0-premium plans", county: "County", zip: "ZIP",
+    part_b_monthly: "Your Part B premium", tier: "IRMAA tier", source_year: "Source year",
+    turns_65: "You turn 65", iep_start: "Enrollment opens", iep_end: "Enrollment closes",
+    penalty_percent: "Penalty", full_12mo_periods: "Full years late", penalty_monthly: "Monthly penalty",
+    you_pay_estimate: "You'd pay", capped: "Hits the $2,000 cap", cap: "Annual cap", months_late: "Months late",
+  };
+  const HIDE = new Set(["full_report_locked", "unlock", "headline", "has_surcharge", "note", "full_report_unlocked", "plans", "source_year", "filing", "income"]);
+
+  function renderRows(obj: Record<string, any>) {
+    let html = "";
+    if (obj.headline) html += `<p class="tw-headline">${obj.headline}</p>`;
+    for (const [k, v] of Object.entries(obj)) {
+      if (HIDE.has(k) || v === null || v === undefined || typeof v === "object") continue;
+      const label = LABELS[k] || k.replace(/_/g, " ");
+      const val = typeof v === "boolean" ? (v ? "Yes" : "No") : v;
+      html += `<div class="tw-row"><span class="k">${label}</span><span class="v">${val}</span></div>`;
+    }
+    return html;
+  }
+
+  function renderFull(obj: Record<string, any>) {
+    if (Array.isArray(obj.plans) && obj.plans.length) {
+      const rows = obj.plans.slice(0, 12).map((p: any) =>
+        `<tr><td>${p.name ?? ""}</td><td>$${p.premium ?? "—"}/mo</td><td>${p.stars ?? "—"}★</td><td>$${p.moop ?? "—"}</td></tr>`).join("");
+      return `<table><thead><tr><th>Plan</th><th>Premium</th><th>Rating</th><th>Max out-of-pocket</th></tr></thead><tbody>${rows}</tbody></table>`;
+    }
+    return `<div class="tw-preview">${renderRows(obj)}</div>`;
+  }
+
+  function gatePost(email: string, tool: string, args: Record<string, unknown>) {
+    // Fire a lead event the GHL/consent layer can pick up (no PII stored in /mcp).
+    try { window.dispatchEvent(new CustomEvent("bsb:tool-lead", { detail: { email, tool, args } })); } catch {}
+  }
+
+  document.querySelectorAll<HTMLElement>(".tool-widget").forEach((root) => {
+    const tool = root.dataset.tool!;
+    const form = root.querySelector<HTMLFormElement>(".tw-form")!;
+    const out = root.querySelector<HTMLElement>(".tw-out")!;
+    const preview = root.querySelector<HTMLElement>(".tw-preview")!;
+    const gate = root.querySelector<HTMLElement>(".tw-gate")!;
+    const gateMsg = root.querySelector<HTMLElement>(".tw-gate-msg")!;
+    const emailForm = root.querySelector<HTMLFormElement>(".tw-email")!;
+    const full = root.querySelector<HTMLElement>(".tw-full")!;
+    const err = root.querySelector<HTMLElement>(".tw-err")!;
+    let lastArgs: Record<string, unknown> = {};
+
+    const showErr = (m: string) => { err.textContent = m; err.hidden = false; };
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      err.hidden = true; full.hidden = true; gate.hidden = false;
+      const fd = new FormData(form);
+      lastArgs = Object.fromEntries([...fd.entries()].filter(([, v]) => String(v).trim() !== ""));
+      try {
+        const r = await callTool(tool, lastArgs);
+        preview.innerHTML = renderRows(r);
+        gateMsg.textContent = r.unlock || "Enter your email to unlock the full report.";
+        out.hidden = false;
+        out.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      } catch (ex: any) { showErr(ex.message || "Something went wrong — try again."); }
+    });
+
+    emailForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = (new FormData(emailForm).get("email") as string || "").trim();
+      if (!email) return;
+      try {
+        const r = await callTool(tool, { ...lastArgs, email });
+        gatePost(email, tool, lastArgs);
+        full.innerHTML = renderFull(r);
+        full.hidden = false;
+        gate.hidden = true;
+      } catch (ex: any) { showErr(ex.message || "Something went wrong — try again."); }
+    });
+
+    // Auto-run plan finder if a default ZIP is provided (location/blog pages).
+    const dz = root.dataset.defaultZip;
+    if (dz && tool === "medicare_plan_finder") form.requestSubmit();
+  });
+</script>

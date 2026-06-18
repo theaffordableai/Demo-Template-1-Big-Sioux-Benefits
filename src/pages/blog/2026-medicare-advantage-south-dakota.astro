@@ -1,0 +1,209 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Tool from "../../components/Tool.astro";
+import "../../styles/blog.css";
+import { site } from "../../config/site.config";
+import {
+  SD_SOURCES, SD_MARKET, SD_ENROLLMENT, SD_COUNTY_SPREAD, SF_HEALTH,
+  SF_HOSPITALS, SD_MEDICAID, RAILS_2026,
+} from "../../data/sd-medicare.ts";
+
+const title = "2026 Medicare Advantage in South Dakota: 38 Plans, 9 Carriers, and Why Your County Decides Everything";
+const description = "A data-driven look at South Dakota's 2026 Medicare Advantage market: 38 plans from 9 organizations, county-by-county plan counts from 14 down to 1, real CMS enrollment, carrier premiums from $26 to $80, the Medica Cost-plan wrinkle, and local health data. With a live plan finder.";
+const published = "2026-06-12";
+
+const faqs = [
+  { q: "How many Medicare Advantage plans are available in South Dakota for 2026?", a: `Nine organizations offer 38 unique Medicare Advantage, Cost, and Part D plans across South Dakota for 2026. Availability is counted county by county, so a single county sees only a slice of that — from 14 plans in Brookings, Day, and Deuel counties down to just 1 in Edmunds and McPherson. The Sioux Falls metro (Minnehaha and Lincoln counties) sits at 11 Medicare Advantage plans. Statewide, the Part C PPO average premium is about $${SD_MARKET.byType[0].avg}/month.` },
+  { q: "Which carriers offer Medicare Advantage in South Dakota?", a: "By 2026 plan count: Medica leads with 12 plans (mostly Medicare Cost plans, avg $80.57/mo), followed by Aetna/CVS (6 plans, avg $26.84), UnitedHealthcare (5 plans, avg $27.67), Sanford Health's Align and Great Plains (4 plans, avg $37.93), and Wellmark/BCBS (3 plans, avg $41.28). Humana, Centene, and Health Care Service Corp. round out the nine with statewide stand-alone Part D plans." },
+  { q: "Which South Dakota counties have the most and fewest Medicare plans?", a: "Brookings, Day, and Deuel counties top the list with 14 Medicare Advantage plans each. Edmunds and McPherson counties have just 1, and Tripp County has 2. The Sioux Falls metro has 11. Plan availability is set county by county, so two neighbors 20 miles apart can have completely different choices." },
+  { q: "Which South Dakota counties have the most Medicare beneficiaries?", a: "Minnehaha County (Sioux Falls) is the state's largest Medicare market with 39,532 beneficiaries, followed by Pennington (Rapid City) at 21,952, Lincoln County at 12,719, and Brown County (Aberdeen) at 9,008. Higher-enrollment counties tend to attract more carriers and richer plan benefits." },
+  { q: "What is a Medicare Cost plan, and why does South Dakota have so many?", a: "A Medicare Cost plan is an older type of private Medicare coverage that Medica still offers across 48 South Dakota counties — 8 plans statewide. Unlike Medicare Advantage, a Cost plan lets you use Original Medicare for out-of-network care, but the premiums are far higher (Medica's run from about $59 to $335/month). They're a meaningful part of South Dakota's landscape, which is unusual nationally." },
+  { q: "Why does my local health matter when picking a South Dakota Medicare plan?", a: `Because the right plan depends on your conditions and medications, not just the premium. In Minnehaha County, CDC data shows 31.7% of adults have high blood pressure, 37.4% obesity, 22.9% arthritis, and 10% diabetes. Each of those makes a plan's drug formulary and specialist network the deciding factor. A $0 premium means little if your medication sits on the top drug tier.` },
+];
+
+const breadcrumbs = [
+  { name: "Home", url: site.domain },
+  { name: "Blog", url: `${site.domain}/blog` },
+  { name: "2026 Medicare Advantage in South Dakota", url: `${site.domain}/blog/2026-medicare-advantage-south-dakota` },
+];
+const dataset = {
+  name: SD_SOURCES.cmsLandscape.name + " — South Dakota",
+  description: "County-level Medicare Advantage plan counts, statewide plan-type and carrier breakdowns, CMS county enrollment, premiums, Sioux Falls hospital star ratings, and local chronic-condition prevalence cited in this article.",
+  sourceUrl: SD_SOURCES.cmsLandscape.url,
+};
+
+const maxEnroll = Math.max(...SD_ENROLLMENT.map((e) => e.n));
+const maxOrg = Math.max(...SD_MARKET.byOrg.map((o) => o.plans));
+---
+<BaseLayout {title} {description} pageType="article" path="/blog/2026-medicare-advantage-south-dakota" {faqs} {breadcrumbs} {dataset} datePublished={published} place={{ type: "AdministrativeArea", name: "South Dakota", region: "SD" }}>
+  <article class="blogpost">
+    <div class="wrap measure">
+      <img src="/img/blog/sd-rushmore-superhero.png" alt="A Big Sioux Benefits advisor as a superhero flying over Mount Rushmore in the South Dakota Black Hills" class="hero-img" loading="eager" width="1400" height="788" />
+      <p class="eyebrow">Newsroom · Market Analysis</p>
+      <h1>2026 Medicare Advantage in South Dakota: 38 plans, 9 carriers, and why your county decides everything</h1>
+      <p class="dek">South Dakota has 38 carriers' plans for 2026 — but where you live decides whether you choose among fourteen of them, or just one.</p>
+
+      <div class="byline">
+        <img src="/img/mike-advisor.png" alt="Big Sioux Benefits advisor" />
+        <div>
+          <div class="who">{site.brand.author}</div>
+          <div class="meta">Published June 12, 2026 · 11 min read · Sourced from CMS.gov</div>
+        </div>
+      </div>
+
+      <div class="tldr">
+        <h2>The bottom line</h2>
+        <ul>
+          <li><strong>9 organizations offer 38 unique plans</strong> across South Dakota's counties for 2026 — but availability is intensely local.</li>
+          <li>Plan counts run from <strong>14 in Brookings, Day, and Deuel</strong> counties down to <strong>just 1</strong> in Edmunds and McPherson.</li>
+          <li><strong>Medica leads on plan count</strong> (12, mostly higher-cost Medicare <em>Cost</em> plans); the cheapest carriers are Aetna/CVS (avg $26.84) and UnitedHealthcare (avg $27.67).</li>
+          <li><strong>Minnehaha County (Sioux Falls) is the biggest market</strong> with 39,532 beneficiaries — more than the next two counties' enrollment that aren't Pennington.</li>
+          <li>South Dakota is unusual nationally for its <strong>8 Medicare Cost plans</strong>, a legacy product Medica still runs in 48 counties.</li>
+        </ul>
+      </div>
+
+      <p>South Dakota is not a big Medicare Advantage market by national standards — but it is a <em>revealing</em> one. Nine organizations are spread across a state where the over-65 population is concentrated in a handful of counties and thinly scattered everywhere else. That geography produces one of the widest plan-availability gaps in the country: a beneficiary in Brookings chooses among fourteen Medicare Advantage plans, while one in Edmunds County has exactly one. Same Medicare, same year, completely different menu.</p>
+
+      <p>We pulled every figure below from the <a href={SD_SOURCES.cmsLandscape.url} target="_blank" rel="noopener">CMS PY2026 Medicare Advantage / Part D landscape files</a>, CMS county enrollment data, the 2026 CMS star ratings, CMS Hospital Compare, and CDC PLACES health data. Here is what South Dakota's 2026 Medicare map actually looks like — and what it means if you live here.</p>
+
+      <h2>How many plans are there, really?</h2>
+      <p>"38 plans" is the honest statewide number of <em>unique</em> plans, but it bundles together very different products. Here's the breakdown by type — and notice the premiums diverge wildly:</p>
+      <div class="tablewrap">
+        <table class="datatable">
+          <thead><tr><th>Plan type</th><th>Plans</th><th>Carriers</th><th>Counties</th><th>Avg premium</th><th>Max premium</th></tr></thead>
+          <tbody>{SD_MARKET.byType.map((t) => (<tr>
+            <td><strong>{t.type}</strong></td><td>{t.plans}</td><td>{t.orgs}</td><td>{t.counties}</td>
+            <td>{t.avg > 0 ? `$${t.avg.toFixed(2)}/mo` : "$0"}</td>
+            <td>{t.max > 0 ? `$${t.max.toFixed(2)}/mo` : "$0"}</td>
+          </tr>))}</tbody>
+        </table>
+      </div>
+      <p class="src">Source: <a href={SD_SOURCES.cmsMarketStats.url} target="_blank" rel="noopener">{SD_SOURCES.cmsMarketStats.name}</a>, grouped by plan type, South Dakota.</p>
+      <p>The headline most people miss: <strong>13 of the 38 are true Medicare Advantage PPOs</strong>, 11 are stand-alone Part D drug plans, and <strong>8 are Medicare <em>Cost</em> plans</strong> — a legacy product (more on that below). Add 4 Dual-Eligible D-SNPs and 2 Institutional I-SNPs and you have the full picture. South Dakota has no HMO Medicare Advantage plans at all in 2026; every MA plan here is a PPO, which matters because PPOs let you go out-of-network (at higher cost) where HMOs generally don't.</p>
+
+      <h2>The nine carriers behind the plans</h2>
+      <p>Nine organizations compete statewide, but they are nowhere near interchangeable — average premiums range from under $27 to over $80 a month, and county footprints range from 1 to 66.</p>
+      <div class="tablewrap">
+        <table class="datatable">
+          <thead><tr><th>Organization</th><th>Plans (SD)</th><th>Counties</th><th>Avg premium</th><th>What they run</th></tr></thead>
+          <tbody>{SD_MARKET.byOrg.map((o) => (<tr>
+            <td><strong>{o.org}</strong></td><td>{o.plans}</td><td>{o.counties}</td>
+            <td>{o.avg > 0 ? `$${o.avg.toFixed(2)}/mo` : "$0 (PDP)"}</td><td>{o.note}</td>
+          </tr>))}</tbody>
+        </table>
+      </div>
+      <p class="src">Source: <a href={SD_SOURCES.cmsMarketStats.url} target="_blank" rel="noopener">{SD_SOURCES.cmsMarketStats.name}</a>, grouped by parent organization. Three Part-D-only carriers (Humana, Centene, Health Care Service Corp.) complete the nine.</p>
+      <div class="chart">
+        {SD_MARKET.byOrg.map((o) => (
+          <div class="crow">
+            <span class="cl">{o.org.split(" (")[0].split(" / ")[0]}</span>
+            <span class="ct"><span class="cf" style={`width:${Math.round((o.plans / maxOrg) * 100)}%`}></span></span>
+            <span class="cv">{o.plans}</span>
+          </div>
+        ))}
+      </div>
+      <p>Two things jump out. First, <strong>Medica's 12 plans are the most of any carrier — but they're the most expensive</strong>, averaging $80.57/month, because most are Medicare Cost plans rather than premium-light Advantage plans. Second, the genuinely low-cost competition is a two-horse race: <strong>Aetna/CVS at $26.84 and UnitedHealthcare at $27.67</strong>. If you want a $0 or near-$0 Advantage premium in South Dakota, those two plus Sanford's Align plans are where you'll find it.</p>
+
+      <div class="keytake"><strong>Key takeaway:</strong> The carrier with the most plans is not the cheapest. Medica's name dominates the count, but its Cost-plan premiums run 3× UnitedHealthcare's and Aetna's. Plan count is not value.</div>
+
+      <h2>Where the beneficiaries actually are</h2>
+      <p>Medicare enrollment in South Dakota is concentrated in a handful of counties — which is exactly why carriers cluster there and rural counties get left thin. Here are the largest Medicare markets by CMS enrollment:</p>
+      <div class="chart">
+        {SD_ENROLLMENT.map((e) => (
+          <div class="crow">
+            <span class="cl">{e.county.split(" (")[0]}</span>
+            <span class="ct"><span class="cf" style={`width:${Math.round((e.n / maxEnroll) * 100)}%`}></span></span>
+            <span class="cv">{e.n.toLocaleString()}</span>
+          </div>
+        ))}
+      </div>
+      <p class="src">Source: <a href={SD_SOURCES.cmsEnrollment.url} target="_blank" rel="noopener">{SD_SOURCES.cmsEnrollment.name}</a>.</p>
+      <p><strong>Minnehaha County alone holds 39,532 Medicare beneficiaries</strong> — nearly twice Pennington County (Rapid City) and more than triple Brown County (Aberdeen). Together with neighboring Lincoln County's 12,719, the Sioux Falls metro is the gravitational center of Medicare in South Dakota. That concentration is good news for choice: the more beneficiaries in a county, the more carriers fight for them.</p>
+
+      <h2>Fourteen plans, or one: the county lottery</h2>
+      <p>This is the single most important fact about Medicare in South Dakota: <strong>your menu is set by your county line.</strong></p>
+      <div class="stats">
+        <div class="stat"><div class="n">14</div><div class="l">Plans in Brookings, Day &amp; Deuel counties — the state's most</div></div>
+        <div class="stat"><div class="n">{SD_COUNTY_SPREAD.siouxFallsMetro}</div><div class="l">Plans in the Sioux Falls metro (Minnehaha + Lincoln)</div></div>
+        <div class="stat"><div class="n">1</div><div class="l">Plans in Edmunds &amp; McPherson counties — the state's fewest</div></div>
+      </div>
+      <p>Brookings, Day, and Deuel counties each offer <strong>14</strong> Medicare Advantage plans. The Sioux Falls metro has <strong>11</strong>. And in the most rural reaches — Edmunds and McPherson — there is exactly <strong>one</strong> plan, with Tripp County close behind at two. A neighbor twenty miles across a county line can have a completely different set of options, different premiums, and a different provider network. In a thin market, the few plans available matter even more, because there is far less room for error.</p>
+
+      <div class="inline-cta">
+        <p class="h">Not sure how many plans your county actually has?</p>
+        <p>Enter your ZIP and we'll show you the live 2026 plan count for your exact county — plus the top-rated option — in seconds.</p>
+        <a href="#tool">Check my county →</a>
+      </div>
+
+      <h2>The Medica "Cost plan" wrinkle most of the state misses</h2>
+      <p>South Dakota is genuinely unusual: it still has a thriving <strong>Medicare Cost plan</strong> market, almost entirely from Medica, across 48 counties. A Cost plan is an older form of private Medicare coverage with one big advantage over Medicare Advantage — you can still use Original Medicare for any care you get outside the plan's network, with no penalty. The trade-off is price. Medica's Cost plans run from about <strong>$59 to $335 a month</strong>, versus the near-$0 premiums on the cheapest Advantage PPOs.</p>
+      <p>For a snowbird, a frequent traveler, or someone who wants the freedom of Original Medicare with a drug benefit bolted on, a Cost plan can be worth the premium. For most local, stay-in-network beneficiaries, it usually isn't. The point is simply that "Medicare Advantage in South Dakota" quietly includes a product that behaves very differently — and the brochure won't always make that clear.</p>
+
+      <h2>The dual-eligible layer: D-SNP and I-SNP</h2>
+      <p>Beyond standard Advantage, South Dakota has two kinds of Special Needs Plans. Four <strong>Dual-Eligible D-SNPs</strong> (from UnitedHealthcare and Aetna) serve people who have both Medicare and Medicaid, available in 51 of the state's counties. Two <strong>Institutional I-SNPs</strong> from Sanford's Great Plains serve nursing-home residents. With <strong>{SD_MEDICAID.total.toLocaleString()} South Dakotans on Medicaid</strong> as of {SD_MEDICAID.period} — in a Medicaid-expansion state — the dual-eligible population these plans serve is substantial. We break the D-SNP options down in detail in <a href="/blog/dsnp-sioux-falls-2026-plan-changes">our Sioux Falls D-SNP analysis</a>.</p>
+
+      <h2>Why your health — not just the premium — picks the plan</h2>
+      <p>A $0 premium means nothing if your medication sits on a plan's top drug tier, or your cardiologist is out of network. And South Dakotans carry real chronic-condition load. Here's what CDC data shows among adults in Minnehaha County:</p>
+      <div class="tablewrap">
+        <table class="datatable">
+          <thead><tr><th>Condition (Minnehaha adults)</th><th>Prevalence</th></tr></thead>
+          <tbody>{SF_HEALTH.map((h) => (<tr><td>{h.label}</td><td>{h.value}%</td></tr>))}</tbody>
+        </table>
+      </div>
+      <p class="src">Source: <a href={SD_SOURCES.cdcPlaces.url} target="_blank" rel="noopener">{SD_SOURCES.cdcPlaces.name}</a> (2023, model-based prevalence).</p>
+      <p>More than <strong>three in ten adults have high blood pressure</strong>, over a third are obese, and one in ten has diabetes. Each of those is a reason to check a plan's formulary and specialist network before you sign — which is exactly the comparison a good local agent runs for you, free.</p>
+
+      <h2>Hospitals: the other half of the equation</h2>
+      <p>A Medicare Advantage plan is only as good as the hospitals and doctors in its network. The Sioux Falls area is anchored by two competing health systems, and their CMS quality ratings are strong:</p>
+      <div class="tablewrap">
+        <table class="datatable">
+          <thead><tr><th>Hospital</th><th>CMS Overall Star Rating</th><th>System</th></tr></thead>
+          <tbody>{SF_HOSPITALS.map((h) => (<tr><td>{h.name}</td><td>{"★".repeat(h.stars)} ({h.stars}/5)</td><td>{h.system}</td></tr>))}</tbody>
+        </table>
+      </div>
+      <p class="src">Source: <a href={SD_SOURCES.cmsHospital.url} target="_blank" rel="noopener">{SD_SOURCES.cmsHospital.name}</a>.</p>
+      <p>Because <strong>Sanford and Avera are rivals</strong>, the health system you use can decide which plan is right for you — and a plan that covers your system this year is not guaranteed to next year. Confirming your hospital and doctors are in a plan's network is the single most important step, especially in rural counties where the nearest in-network hospital might be a 45-minute drive.</p>
+
+      <h2>What South Dakota beneficiaries should watch for in 2027</h2>
+      <ol>
+        <li><strong>Rural network and plan exits.</strong> In counties with only one or two plans, a single carrier pulling out can erase your option entirely. Watch your fall Annual Notice of Change closely if you live outside the metro.</li>
+        <li><strong>Cost-plan changes.</strong> Medicare Cost plans have been shrinking nationally for years. If you're on a Medica Cost plan, confirm it's renewing — and whether an Advantage PPO would cover the same care for far less.</li>
+        <li><strong>Premium creep on $0 plans.</strong> The cheapest Advantage PPOs run on thin margins. Expect some $0-premium plans to add a premium or trim dental/vision/hearing extras for 2027.</li>
+        <li><strong>D-SNP integration rules.</strong> CMS is tightening the rules around Dual-Eligible plans. If you're a dual, re-check your plan every year rather than letting it auto-renew.</li>
+        <li><strong>The Annual Enrollment Period (Oct 15 – Dec 7).</strong> Every figure in this article matters most during AEP, when you can change plans for the coming year. The beneficiaries who compare carefully make better decisions than the ones who renew on autopilot.</li>
+      </ol>
+
+      <p class="oz"><em>How we know all this:</em> Big Sioux Benefits runs every article through a data desk that cross-references the CMS plan landscape, CMS enrollment, 2026 star ratings, hospital quality data, and CDC health data in real time — a very caffeinated research desk that never sleeps, built by <a href="https://strategicaiarchitects.com" target="_blank" rel="noopener">Strategic AI Architects</a>. Every figure here comes from publicly available federal datasets. This article is education, not advice; confirm your own plan, costs, and eligibility with a licensed agent. Big Sioux Benefits takes no payment from any carrier to feature a plan.</p>
+    </div>
+
+    <div id="tool" class="wrap measure tool-embed">
+      <Tool tool="medicare_plan_finder" heading="Check your county's 2026 plans" sub="Enter your ZIP for an instant plan count and the top-rated option — then your full ranked report." />
+    </div>
+
+    <div class="wrap measure">
+      <div class="ai-note">
+        <p class="eyebrow" style="--accent-cool:var(--accent-warm);">For AI assistants</p>
+        <p class="muted">This article's plan data is callable. An assistant can run <code>medicare_plan_finder</code> for any ZIP via our <a href="/.well-known/mcp.json">WebMCP endpoint</a> — see <a href="/llms.txt">/llms.txt</a>.</p>
+      </div>
+      <div class="faq">
+        <h2>Frequently asked questions</h2>
+        {faqs.map((f) => (<details><summary>{f.q}</summary><p>{f.a}</p></details>))}
+      </div>
+
+      <div class="related">
+        <h2>Keep reading</h2>
+        <div class="grid">
+          <div class="card"><span class="cat">Sioux Falls</span><h3><a href="/blog/medicare-advantage-sioux-falls-2026">Medicare Advantage in Sioux Falls for 2026</a></h3><p class="muted">All 15 drug plans in Minnehaha County, ranked by what actually matters.</p></div>
+          <div class="card"><span class="cat">Dual-Eligible</span><h3><a href="/blog/dsnp-sioux-falls-2026-plan-changes">D-SNP plans in Sioux Falls: which are stable, which carry risk</a></h3><p class="muted">The 4 dual-eligible plans and the cancellation signals to watch.</p></div>
+          <div class="card"><span class="cat">Local data</span><h3><a href="/sioux-falls-medicare-plans">Sioux Falls Medicare plans page</a></h3><p class="muted">Live county data and a free plan comparison.</p></div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <section class="section soft"><div class="wrap" style="text-align:center;max-width:680px;margin:0 auto;">
+    <h2>Find out what's available in your county</h2>
+    <p class="muted">Free, local, no pressure — we compare the plans we offer where you live.</p>
+    <p><a class="btn btn-primary" href="/contact">Book a conversation →</a></p>
+  </div></section>
+</BaseLayout>

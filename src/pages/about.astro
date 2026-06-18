@@ -1,0 +1,25 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { site } from "../config/site.config";
+const b = site.brand;
+const title = "About Big Sioux Benefits — Local Medicare Help in the Sioux Falls Area";
+const description = `${b.name} is a licensed independent Medicare agency serving ${b.serviceArea}. Free, unbiased guidance from local advisors.`;
+const breadcrumbs = [ { name: "Home", url: site.domain }, { name: "About", url: `${site.domain}/about` } ];
+---
+<BaseLayout {title} {description} pageType="service" path="/about" {breadcrumbs}>
+  <section class="section"><div class="wrap" style="max-width:760px;">
+    <p class="eyebrow">About us</p>
+    <h1>Local Medicare help you can <span class="hl">actually talk to</span></h1>
+    <p style="font-size:1.18rem;">{b.name} is a licensed independent Medicare agency based in {b.address.city}, {b.address.region}, serving {b.serviceArea}. We compare plans across the major carriers and give you straight, unbiased guidance — at no cost to you.</p>
+    <p>Because we're independent, we don't work for any one insurance company. We work for you: matching your doctors, prescriptions, and budget to the right plan, then staying your local advisor for claims, appeals, and the annual review when plans change.</p>
+    <h2>Why families in the Sioux Falls area choose us</h2>
+    <ul>
+      <li><strong>Free &amp; unbiased</strong> — carriers pay us, never you.</li>
+      <li><strong>Local</strong> — we know the Sioux Falls-area networks (Sanford, Avera) and providers.</li>
+      <li><strong>Year-round</strong> — we're here after enrollment, not just during it.</li>
+      <li><strong>Data-driven</strong> — we compare the plans we offer in your county, by the numbers.</li>
+    </ul>
+    <p class="src">Not affiliated with or endorsed by the U.S. government or the federal Medicare program. Licensed insurance agency, NPN {b.npn}.</p>
+    <p><a class="btn btn-primary" href="/contact">Meet with an advisor →</a></p>
+  </div></section>
+</BaseLayout>

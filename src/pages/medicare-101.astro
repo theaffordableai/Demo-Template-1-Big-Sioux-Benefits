@@ -1,0 +1,44 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { education } from "../lib/content";
+import { site } from "../config/site.config";
+const title = "Medicare 101 — Your Complete Guide | Big Sioux Benefits";
+const description = "Plain-English Medicare guides: what Medicare is, the four parts, eligibility, enrollment, costs, and more — from your local Sioux Falls-area advisors.";
+const parts = [
+  ["Part A — Hospital", "Inpatient hospital, skilled nursing, hospice. Usually premium-free if you worked 10+ years."],
+  ["Part B — Medical", "Doctor visits, outpatient care, preventive services. Monthly premium set by income."],
+  ["Part C — Advantage", "A private all-in-one alternative bundling A, B, and usually D, often with extras."],
+  ["Part D — Drugs", "Prescription drug coverage, with a 2026 out-of-pocket cap of about $2,100."],
+];
+const breadcrumbs = [{ name: "Home", url: site.domain }, { name: "Medicare 101", url: `${site.domain}/medicare-101` }];
+const faqs = education[0].faqs.concat(education[3].faqs).slice(0, 4);
+---
+<BaseLayout {title} {description} pageType="article" path="/medicare-101" {faqs} {breadcrumbs}>
+  <section class="section"><div class="wrap">
+    <p class="eyebrow">Medicare 101</p>
+    <h1>Your complete, plain-English Medicare guide</h1>
+    <p style="font-size:1.18rem;max-width:62ch;">New to Medicare? Start here. Medicare has four parts — A, B, C, and D. Below are the basics, then dig into any topic.</p>
+    <div class="grid cols-4" style="margin-top:1.5rem;">
+      {parts.map(([t, d]) => (<div class="card"><h3 style="font-family:var(--body);font-weight:700;">{t}</h3><p class="muted" style="margin:0;">{d}</p></div>))}
+    </div>
+  </div></section>
+  <section class="section soft"><div class="wrap">
+    <h2>All Medicare 101 articles</h2>
+    <div class="grid cols-3" style="margin-top:1.25rem;">
+      {education.map((e) => (
+        <a class="card" href={`/${e.slug}`} style="text-decoration:none;color:inherit;display:block;">
+          <h3 style="font-family:var(--body);font-weight:700;font-size:1.08rem;">{e.h1}</h3>
+          <p class="muted" style="margin:0;">{e.summary}</p>
+        </a>
+      ))}
+    </div>
+  </div></section>
+  <section class="section faq"><div class="wrap" style="max-width:820px;">
+    <h2>Getting-started questions</h2>
+    {faqs.map((f) => (<details><summary>{f.q}</summary><p>{f.a}</p></details>))}
+  </div></section>
+  <section class="section soft"><div class="wrap" style="text-align:center;">
+    <h2>Still have questions?</h2><p class="muted">Ask a local advisor — it's free.</p>
+    <p><a class="btn btn-primary" href="/contact">Ask us anything →</a></p>
+  </div></section>
+</BaseLayout>

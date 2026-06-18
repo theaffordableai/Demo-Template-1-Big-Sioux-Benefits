@@ -1,0 +1,49 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { site } from "../config/site.config";
+const b = site.brand;
+const breadcrumbs = [{ name: "Home", url: site.domain }, { name: "Privacy Policy", url: `${site.domain}/privacy` }];
+const updated = "June 12, 2026";
+---
+<BaseLayout title="Privacy Policy — Big Sioux Benefits" description="How Big Sioux Benefits collects, uses, protects, and shares your information — including our HIPAA-compliant, first-party server-side tracking." pageType="service" path="/privacy" {breadcrumbs}>
+  <article class="section"><div class="wrap" style="max-width:760px;">
+    <p class="eyebrow">Legal</p>
+    <h1>Privacy Policy</h1>
+    <p class="muted">Last updated {updated}. This policy explains what {b.name} ("we," "us") collects, how we use and protect it, and the choices you have.</p>
+
+    <h2>The short version</h2>
+    <p>We collect only what we need to help you with insurance, we protect your health information under HIPAA, and <strong>nothing that tracks you runs until you consent</strong> via the banner on our site. We do share certain data with the third-party organizations that power our analytics, advertising, and our booking and chat tools — described below — so we can improve our service and reach the people who need it.</p>
+
+    <h2>Information we collect</h2>
+    <ul>
+      <li><strong>Information you give us</strong> — name, contact details, date of birth, Medicare or insurance details, prescriptions, and providers, when you contact us, request a quote, or book a consultation.</li>
+      <li><strong>Usage information</strong> — pages visited, referral source, device and browser type, and similar analytics — collected only after you accept tracking.</li>
+    </ul>
+
+    <h2>How we protect your health information (HIPAA)</h2>
+    <p>As a licensed insurance agency, the health information you share with us is Protected Health Information. <strong>We are HIPAA compliant.</strong> A deliberate part of that compliance: we use <strong>first-party, server-side tracking</strong> rather than the basic third-party browser pixels most sites use. Standard advertising pixels can quietly transmit sensitive page and form data directly from your browser to advertising networks — a practice behind a wave of healthcare privacy lawsuits. Our server controls what is shared and strips protected health information before any data leaves our systems, so analytics and advertising never receive your PHI.</p>
+
+    <h2>How we use your information</h2>
+    <p>To respond to you, compare and recommend plans, enroll you, support you after enrollment, comply with Medicare and CMS rules, and — with your consent — to measure and improve our marketing.</p>
+
+    <h2>Sharing with third-party organizations</h2>
+    <p>To run our business we share <strong>limited, non-PHI</strong> information with trusted third-party organizations that provide:</p>
+    <ul>
+      <li><strong>Analytics &amp; advertising</strong> — measurement and ad platforms that help us understand site performance and reach people who could benefit from our services. We share these only after you accept tracking, and PHI is never included.</li>
+      <li><strong>Booking, chat &amp; CRM tools</strong> — the platforms that power our scheduling, live chat, and contact records so we can serve you.</li>
+      <li><strong>Insurance carriers</strong> — when you choose to apply, the information needed to process your enrollment.</li>
+    </ul>
+    <p>We do not sell your personal information. We require our partners to protect your data and use it only for the services we engage them for.</p>
+
+    <h2>Your choices</h2>
+    <ul>
+      <li><strong>Consent</strong> — use the privacy banner to accept or reject non-essential tracking at any time.</li>
+      <li><strong>Access, correction &amp; deletion</strong> — you may request a copy of your information, ask us to correct it, or ask us to delete it (subject to legal record-keeping requirements).</li>
+      <li><strong>Do Not Sell / Share</strong> — we do not sell your data; contact us to limit sharing.</li>
+    </ul>
+
+    <h2>Contact us</h2>
+    <p>Questions about your privacy? Call <a href={`tel:${b.phoneHref}`}>{b.phone}</a> or email <a href={`mailto:${b.email}`}>{b.email}</a>. {b.name}, {b.address.street}, {b.address.city}, {b.address.region} {b.address.postal}.</p>
+    <p class="muted" style="font-size:13px;margin-top:1.5rem;">Not connected with or endorsed by the United States government or the federal Medicare program.</p>
+  </div></article>
+</BaseLayout>

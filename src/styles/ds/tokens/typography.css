@@ -1,0 +1,44 @@
+/* ============================================================
+   TYPOGRAPHY — Cormorant Garamond (display) + Hanken Grotesk (text)
+   Audience skews 60+: body never below 18px, large type is the
+   default voice — a luxury choice, not an accessibility patch.
+   ============================================================ */
+:root{
+  --font-display:"Cormorant Garamond", Georgia, "Times New Roman", serif;
+  --font-sans:"Hanken Grotesk", system-ui, -apple-system, Segoe UI, sans-serif;
+
+  --fw-regular:400;   /* @kind font */
+  --fw-medium:500;    /* @kind font */
+  --fw-semibold:600;  /* @kind font */
+  --fw-bold:700;      /* @kind font */
+
+  /* ---- Display (serif) ---- */
+  --text-display-xl:clamp(58px, 7vw, 88px);
+  --text-display-l: clamp(44px, 5.4vw, 68px);
+  --text-display-m: 40px;
+  --text-serif-h1: 34px;
+  --text-serif-h2: 27px;
+  --text-serif-h3: 22px;
+
+  /* ---- Sans (text + UI) ---- */
+  --text-headline: clamp(40px, 5vw, 72px); /* sans hero, Daylight-style */
+  --text-title:    28px;
+  --text-body-l:   21px;
+  --text-body:     18px;  /* floor */
+  --text-body-s:   16px;
+  --text-label:    13px;  /* tracked uppercase */
+  --text-label-s:  11px;
+
+  /* ---- Tracking ---- */
+  --tracking-tight:-.01em;  /* @kind other */
+  --tracking-normal:0;       /* @kind other */
+  --tracking-label:.16em;    /* @kind other */
+  --tracking-kicker:.28em;   /* @kind other */
+  --tracking-seal:.34em;     /* @kind other */
+
+  /* ---- Leading ---- */
+  --leading-display:1.03;     /* @kind other */
+  --leading-snug:1.3;          /* @kind other */
+  --leading-body:1.6;          /* @kind other */
+  --leading-tight-body:1.45;   /* @kind other */
+}

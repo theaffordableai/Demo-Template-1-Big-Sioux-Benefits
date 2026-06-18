@@ -1,0 +1,24 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { services } from "../../lib/content";
+import { site } from "../../config/site.config";
+const breadcrumbs = [{ name: "Home", url: site.domain }, { name: "Services", url: `${site.domain}/services` }];
+---
+<BaseLayout title="Our Services — Big Sioux Benefits" description="Free, local Medicare help: enrollment, plan comparison, annual reviews, claims support, and more across the Sioux Falls area." pageType="service" path="/services" {breadcrumbs}>
+  <section class="section"><div class="wrap">
+    <p class="eyebrow">Our Services</p>
+    <h1>How we help — start to finish</h1>
+    <p style="font-size:1.18rem;max-width:60ch;">From your first Medicare decision through every annual review, we're your local advisor — at no cost to you.</p>
+    <div class="grid cols-3" style="margin-top:2rem;">
+      {services.map((s) => (
+        <a class="card" href={`/services/${s.slug}`} style="text-decoration:none;color:inherit;display:block;">
+          <h3>{s.h1}</h3><p class="muted">{s.summary}</p>
+        </a>
+      ))}
+    </div>
+  </div></section>
+  <section class="section soft"><div class="wrap" style="text-align:center;">
+    <h2>Not sure where to start?</h2><p class="muted">Book a free consultation and we'll point you the right way.</p>
+    <p><a class="btn btn-primary" href="/contact">Book a free consultation →</a></p>
+  </div></section>
+</BaseLayout>

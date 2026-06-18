@@ -1,0 +1,37 @@
+---
+// GHL integration (per GHL-INTEGRATION-STANDARD.md). Tracking beacon loads
+// async; chat/voice widgets lazy-load on first interaction to protect CWV.
+import { site } from "../config/site.config";
+const g = site.ghl;
+const realTracking = g.trackingId && !g.trackingId.includes("DEMO");
+const realChat = g.enableChat && g.locationId && !g.locationId.includes("DEMO");
+---
+{realTracking && (
+  <script is:inline define:vars={{ src: `https://${g.trackingDomain}/js/external-tracking.js`, tid: g.trackingId }}>
+    const s = document.createElement("script"); s.src = src; s.async = true;
+    s.setAttribute("data-tracking-id", tid); document.body.appendChild(s);
+  </script>
+)}
+{realChat && (
+  <script is:inline define:vars={{ loc: g.locationId, voice: g.enableVoice }}>
+    let loaded = false;
+    const load = () => {
+      if (loaded) return; loaded = true;
+      const el = document.createElement("chat-widget");
+      el.setAttribute("location-id", loc);
+      el.style.setProperty("--chat-widget-primary-color", "#0e7490");
+      el.style.setProperty("--chat-widget-active-color", "#0e7490");
+      document.body.appendChild(el);
+      const s = document.createElement("script");
+      s.src = "https://widgets.leadconnectorhq.com/loader.js";
+      s.setAttribute("data-resources-url", "https://widgets.leadconnectorhq.com/chat-widget/loader.js");
+      document.body.appendChild(s);
+    };
+    ["scroll", "mousemove", "touchstart", "click"].forEach((e) =>
+      window.addEventListener(e, load, { once: true, passive: true }));
+    setTimeout(load, 6000);
+  </script>
+)}
+{!realChat && (
+  <!-- GHL chat widget: set ghl.locationId in site.config.ts to enable (demo placeholder active). -->
+)}

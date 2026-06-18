@@ -1,0 +1,42 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PlanFinder from "../components/PlanFinder.astro";
+import { site } from "../config/site.config";
+const title = "Free Medicare Tools — Plan Finder & Calculators | Big Sioux Benefits";
+const description = "Free Medicare tools: find and rank Medicare Advantage plans by ZIP, check eligibility, and estimate drug costs. Real CMS data — and callable by AI assistants via WebMCP.";
+const faqs = [
+  { q: "Are these Medicare tools really free?", a: "Yes — every tool here is free to use with no signup. They run on real CMS Plan Year 2026 data." },
+  { q: "Can an AI assistant use these tools for me?", a: "Yes. This site exposes its plan-finder as a WebMCP tool, so an AI assistant (ChatGPT, Perplexity, a browsing agent) can run the same search you do — see /llms.txt and /.well-known/mcp.json." },
+];
+const breadcrumbs = [ { name: "Home", url: site.domain }, { name: "Free Tools", url: `${site.domain}/free-tools` } ];
+const tools = [
+  ["Eligibility check", "Find your Initial Enrollment Period window."],
+  ["Part B late penalty", "Estimate the cost of enrolling late."],
+  ["Drug cost estimate", "Estimate your 2026 Part D out-of-pocket."],
+  ["Provider lookup", "Check if your doctor is in a plan's network."],
+];
+---
+<BaseLayout {title} {description} pageType="tool" path="/free-tools" {faqs} {breadcrumbs}>
+  <section class="section"><div class="wrap">
+    <p class="eyebrow">Free Tools</p>
+    <h1>Free Medicare tools — <span class="hl">real data, no signup</span></h1>
+    <p style="font-size:1.15rem;max-width:60ch;">Start with the plan finder below: type your ZIP to see every Medicare Advantage plan in your county by premium, star rating, drug deductible, and max out-of-pocket — on real public CMS data.</p>
+  </div></section>
+
+  <section class="section"><div class="wrap">
+    <PlanFinder />
+  </div></section>
+
+  <section class="section soft"><div class="wrap">
+    <h2>More free tools</h2>
+    <div class="grid cols-4" style="margin-top:1.25rem;">
+      {tools.map(([t, d]) => (<div class="card"><h3 style="font-size:1.05rem;">{t}</h3><p class="muted" style="margin:0;">{d}</p><p style="margin:.6rem 0 0;"><a href="/contact">Ask an advisor →</a></p></div>))}
+    </div>
+    <p class="muted" style="margin-top:1rem;font-size:.9rem;">More calculators coming soon. Each will be a human tool <em>and</em> an agent-callable WebMCP tool.</p>
+  </div></section>
+
+  <section class="section faq"><div class="wrap" style="max-width:820px;">
+    <h2>About these tools</h2>
+    {faqs.map((f) => (<details><summary>{f.q}</summary><p>{f.a}</p></details>))}
+  </div></section>
+</BaseLayout>

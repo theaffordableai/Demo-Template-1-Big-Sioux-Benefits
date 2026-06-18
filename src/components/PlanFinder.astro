@@ -1,0 +1,204 @@
+---
+// The human-facing widget. It calls the SAME /mcp endpoint (via tools/call) that
+// an AI agent uses — so the affordance a human clicks and the tool an agent calls
+// are literally one surface. Quick-pick ZIPs come from the loaded demo dataset.
+import { SUPPORTED_ZIPS } from "../lib/plans";
+---
+
+<section class="finder" id="finder" aria-labelledby="finder-h">
+  <div class="finder-head">
+    <h2 id="finder-h">Find your best Medicare Advantage plan</h2>
+    <p class="sub">
+      Type your ZIP. We rank every Part&nbsp;C plan with drug coverage in your county by what
+      actually matters — premium, star rating, drug deductible, and max out-of-pocket.
+    </p>
+  </div>
+
+  <form class="controls" id="finder-form" autocomplete="off">
+    <div class="field">
+      <label for="zip">ZIP code</label>
+      <input id="zip" name="zip" inputmode="numeric" pattern="\d{5}" maxlength="5"
+             placeholder="e.g. 33130" aria-describedby="zip-help" />
+    </div>
+    <div class="field">
+      <label for="sort">Rank by</label>
+      <select id="sort" name="sort">
+        <option value="premium">Lowest premium</option>
+        <option value="stars">Highest star rating</option>
+        <option value="moop">Lowest max out-of-pocket</option>
+      </select>
+    </div>
+    <button type="submit" id="go">Find plans</button>
+  </form>
+
+  <p class="chips" id="zip-help">
+    <span>Demo ZIPs:</span>
+    {SUPPORTED_ZIPS.map((z) => (
+      <button type="button" class="chip" data-zip={z.zip}>{z.zip} · {z.city}</button>
+    ))}
+  </p>
+
+  <div id="status" class="status" role="status" aria-live="polite"></div>
+  <div id="results" class="results"></div>
+
+  <!-- The "this is agent-callable" proof, shown after a search runs -->
+  <details class="agent-proof" id="agent-proof" hidden>
+    <summary>🤖 An AI agent ran the exact same call</summary>
+    <p>Your click hit <code>POST /mcp</code> with this MCP <code>tools/call</code> payload — identical to what a browsing agent sends:</p>
+    <pre id="agent-payload"></pre>
+    <p class="muted">Discovery: <code>/.well-known/mcp.json</code> · Endpoint: <code>/mcp</code></p>
+  </details>
+</section>
+
+<script>
+  import { registerWebMcpTools } from "../lib/webmcp-register.client";
+
+  // Surface C: offer the tool to any agent operating this live page.
+  registerWebMcpTools();
+
+  const form = document.getElementById("finder-form") as HTMLFormElement;
+  const zipInput = document.getElementById("zip") as HTMLInputElement;
+  const sortSel = document.getElementById("sort") as HTMLSelectElement;
+  const statusEl = document.getElementById("status")!;
+  const resultsEl = document.getElementById("results")!;
+  const proofEl = document.getElementById("agent-proof") as HTMLDetailsElement;
+  const payloadEl = document.getElementById("agent-payload")!;
+
+  const money = (n: number | null) =>
+    n === null || n === undefined ? "—" : n === 0 ? "$0" : "$" + n.toLocaleString();
+  const starStr = (s: number | null) => (s ? "★".repeat(Math.round(s)) + ` ${s}` : "N/R");
+
+  async function callTool(args: Record<string, unknown>) {
+    const payload = { jsonrpc: "2.0", id: Date.now(), method: "tools/call",
+      params: { name: "medicare_search_plans", arguments: args } };
+    payloadEl.textContent = JSON.stringify(payload, null, 2);
+    proofEl.hidden = false;
+    const res = await fetch("/mcp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const json = await res.json();
+    return json?.result?.structuredContent ?? json?.result;
+  }
+
+  function render(data: any) {
+    if (!data || data.ok === false) {
+      const zips = (data?.supported_zips || []).map((z: string) => `<code>${z}</code>`).join(" ");
+      statusEl.innerHTML = `⚠️ ${data?.message || "No data."}${zips ? `<br><span class="muted">Try: ${zips}</span>` : ""}`;
+      resultsEl.innerHTML = "";
+      return;
+    }
+    statusEl.innerHTML =
+      `<strong>${data.location}</strong> — showing <strong>${data.returned}</strong> of ` +
+      `<strong>${data.county_total_ma_pd}</strong> Medicare Advantage plans in your county. ` +
+      `<span class="muted">That overload is exactly the problem this solves.</span>`;
+
+    const rows = data.plans.map((p: any) => `
+      <tr>
+        <td class="carrier"><span class="name">${p.name}</span><span class="muted">${p.carrier}</span></td>
+        <td>${p.type}</td>
+        <td class="num">${money(p.premium)}<span class="lbl">/mo</span></td>
+        <td class="stars">${starStr(p.stars)}</td>
+        <td class="num">${money(p.drug_deductible)}</td>
+        <td class="num">${money(p.moop)}</td>
+      </tr>`).join("");
+
+    resultsEl.innerHTML = `
+      <table>
+        <thead><tr>
+          <th>Plan</th><th>Type</th><th>Premium</th><th>Stars</th><th>Drug deductible</th><th>Max out-of-pocket</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+      <p class="src">Source: <a href="${data.source_url}" target="_blank" rel="noopener">${data.source}</a></p>
+      <p class="disclaimer">${data.disclaimer}</p>`;
+  }
+
+  async function run(zip: string) {
+    statusEl.textContent = "Searching CMS plan data…";
+    resultsEl.innerHTML = "";
+    try {
+      const data = await callTool({ zip, sort: sortSel.value });
+      render(data);
+    } catch (e) {
+      statusEl.textContent = "Something went wrong calling the tool.";
+    }
+  }
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    run(zipInput.value.trim());
+  });
+  document.querySelectorAll<HTMLButtonElement>(".chip").forEach((c) =>
+    c.addEventListener("click", () => {
+      zipInput.value = c.dataset.zip!;
+      run(c.dataset.zip!);
+    })
+  );
+</script>
+
+<style>
+  .finder {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: clamp(1.25rem, 3vw, 2.25rem);
+    box-shadow: 0 24px 60px -40px rgba(11, 18, 32, 0.5);
+  }
+  .finder-head h2 { margin: 0 0 0.35rem; font-size: clamp(1.4rem, 3vw, 2rem); }
+  .sub { margin: 0 0 1.25rem; color: var(--muted); max-width: 60ch; }
+  .controls { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: end; }
+  .field { display: flex; flex-direction: column; gap: 0.35rem; }
+  .field label { font: 600 0.8rem var(--mono); letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+  input, select {
+    font: 1.05rem var(--sans); padding: 0.7rem 0.85rem; border: 1.5px solid var(--line);
+    border-radius: 10px; background: #fbfdff; min-width: 11rem;
+  }
+  input:focus, select:focus { outline: none; border-color: var(--cyan); box-shadow: 0 0 0 3px var(--cyan-soft); }
+  #go {
+    font: 700 1.05rem var(--sans); padding: 0.75rem 1.5rem; border: 0; border-radius: 10px;
+    background: var(--ink); color: #fff; cursor: pointer; transition: transform .06s, background .2s;
+  }
+  #go:hover { background: #16233b; transform: translateY(-1px); }
+  .chips { display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; margin: 0.9rem 0 0; }
+  .chips > span { font: 600 0.78rem var(--mono); color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+  .chip {
+    font: 0.85rem var(--mono); padding: 0.3rem 0.6rem; border: 1px solid var(--line);
+    background: #f3f7fc; border-radius: 999px; cursor: pointer; color: var(--ink);
+  }
+  .chip:hover { border-color: var(--cyan); background: var(--cyan-soft); }
+  .status { margin: 1.25rem 0 0.5rem; font-size: 1.02rem; line-height: 1.5; }
+  .muted { color: var(--muted); }
+  .results table { width: 100%; border-collapse: collapse; margin-top: 0.5rem; font-size: 0.96rem; }
+  thead th {
+    text-align: left; font: 600 0.74rem var(--mono); text-transform: uppercase; letter-spacing: .05em;
+    color: var(--muted); padding: 0.5rem 0.6rem; border-bottom: 2px solid var(--ink);
+  }
+  tbody td { padding: 0.7rem 0.6rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tbody tr:hover { background: #f7fbff; }
+  .carrier .name { display: block; font-weight: 650; }
+  .carrier .muted { display: block; font-size: 0.84rem; }
+  td.num { font: 1rem var(--mono); white-space: nowrap; }
+  td.num .lbl { color: var(--muted); font-size: 0.78rem; }
+  td.stars { color: #b8860b; font-size: 0.92rem; white-space: nowrap; }
+  .src { margin: 0.9rem 0 0.2rem; font-size: 0.82rem; color: var(--muted); }
+  .disclaimer { margin: 0.2rem 0 0; font-size: 0.82rem; color: var(--muted); font-style: italic; }
+  .agent-proof {
+    margin-top: 1.5rem; border: 1px dashed var(--cyan); border-radius: 12px;
+    padding: 0.6rem 1rem; background: var(--cyan-soft);
+  }
+  .agent-proof summary { cursor: pointer; font: 600 0.95rem var(--mono); color: var(--ink); }
+  .agent-proof p { font-size: 0.9rem; margin: 0.6rem 0; }
+  .agent-proof pre {
+    font: 0.82rem var(--mono); background: var(--ink); color: #d6e6ff; padding: 0.9rem;
+    border-radius: 8px; overflow-x: auto; margin: 0.4rem 0;
+  }
+  @media (max-width: 640px) {
+    .results table, thead, tbody, th, td, tr { display: block; }
+    thead { display: none; }
+    tbody tr { border: 1px solid var(--line); border-radius: 10px; margin-bottom: 0.6rem; padding: 0.3rem 0.6rem; }
+    tbody td { border: 0; padding: 0.3rem 0; }
+    td.num::before, td.stars::before { content: attr(data-l); }
+  }
+</style>

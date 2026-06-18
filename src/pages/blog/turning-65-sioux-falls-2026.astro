@@ -1,0 +1,194 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Tool from "../../components/Tool.astro";
+import "../../styles/blog.css";
+import { site } from "../../config/site.config";
+import {
+  SD_SOURCES, SF_MAPD, SF_MARKET, SF_HOSPITALS, SF_HEALTH,
+  RAILS_2026, stabilityTier,
+} from "../../data/sd-medicare.ts";
+
+const title = "Turning 65 in Sioux Falls: Your 2026 Medicare Enrollment Roadmap";
+const description = "A step-by-step 2026 roadmap for turning 65 in Sioux Falls / Minnehaha County: your 7-month Initial Enrollment Period, the Part A/B/C/D decision, the local plan landscape (11 Medicare Advantage plans, 2 at $0 premium), the 2026 Part D $2,100 out-of-pocket cap, and the Sanford-vs-Avera network fork — all from real CMS data, with a live plan finder.";
+const published = "2026-06-15";
+
+const faqs = [
+  { q: "When should I sign up for Medicare if I'm turning 65 in Sioux Falls?", a: "Your Initial Enrollment Period (IEP) is a 7-month window: the 3 months before your 65th-birthday month, your birthday month, and the 3 months after. Signing up in the 3 months BEFORE your birthday month means coverage starts the first day of your birthday month, with no gap. If you're still working with employer coverage, different timing and a Special Enrollment Period may apply — confirm your situation before you act." },
+  { q: "Is Medicare automatic when I turn 65?", a: "Only if you're already drawing Social Security — then Parts A and B start automatically. If you're not yet collecting Social Security (increasingly common as people work longer), you must actively enroll through the Social Security Administration during your Initial Enrollment Period. Missing it can cause lifelong late-enrollment penalties on Part B and Part D." },
+  { q: "What does Medicare cost in 2026?", a: `Part A is premium-free for most people who worked 10+ years. Part B carries a standard monthly premium set by CMS (higher incomes pay an IRMAA surcharge). On the drug side, 2026 brings a hard new consumer protection: the Part D out-of-pocket maximum is capped at $${RAILS_2026.partDoopCap.toLocaleString()}, and the standard Part D deductible is capped at $${RAILS_2026.partDdeductibleMax}. Your total cost depends on which plan and drugs you choose — verify the current Part B figure with a licensed agent or Medicare.gov.` },
+  { q: "How many Medicare plans can someone turning 65 choose from in Sioux Falls?", a: `Minnehaha County (Sioux Falls) has ${SF_MARKET.partCplans} Medicare Advantage (Part C) plans for 2026 — including 5 standard PPOs open to anyone with Medicare — plus stand-alone Part D drug plans and Medigap supplements sold separately. Two of the standard PPOs carry a $0 monthly premium. ${site.brand.name} compares the plans we offer in the area against your doctors, drugs, and budget.` },
+  { q: "Should I pick Medicare Advantage or a Medigap supplement when I turn 65?", a: "There's no universal winner. Medicare Advantage (Part C) bundles medical and usually drug coverage with a network and a yearly out-of-pocket maximum, often at a low or $0 premium. A Medigap supplement plus a stand-alone Part D plan costs more in premium but lets you see any provider that accepts Medicare with very predictable costs. Your turning-65 window is the best — and cheapest — time to buy Medigap, because you're guaranteed coverage without medical underwriting. That one-time advantage is why the decision matters most right now." },
+  { q: "Do I have to confirm my doctors are covered before enrolling?", a: "Yes — it's the single most important step in Sioux Falls. The city runs on two competing health systems, Sanford and Avera, and a plan's network determines which one you can use at the lowest cost. Always confirm your specific doctors and hospital are in a plan's 2026 network before you enroll." },
+];
+
+const breadcrumbs = [
+  { name: "Home", url: site.domain },
+  { name: "Blog", url: `${site.domain}/blog` },
+  { name: "Turning 65 in Sioux Falls 2026", url: `${site.domain}/blog/turning-65-sioux-falls-2026` },
+];
+const dataset = {
+  name: "CMS PY2026 Medicare landscape & enrollment — Minnehaha County, SD (turning-65 roadmap)",
+  description: "2026 Medicare enrollment timing, the Minnehaha County plan landscape (Medicare Advantage plan count, $0-premium plans, premiums, CMS star ratings), 2026 Part D cost rails, Sioux Falls hospital quality ratings, and local CDC health data for people turning 65.",
+  sourceUrl: SD_SOURCES.cmsLandscape.url,
+};
+
+const iep = [
+  { phase: "3 months before your birthday month", what: "Best time to enroll. Coverage starts the 1st of your birthday month — no gap.", tone: "strong" },
+  { phase: "Your birthday month", what: "Still in the window, but coverage start is pushed back a month.", tone: "average" },
+  { phase: "1–3 months after", what: "Allowed, but coverage is delayed further — and you risk a coverage gap.", tone: "average" },
+  { phase: "After the 7-month window", what: "Risk of lifelong Part B & Part D late-enrollment penalties (unless a Special Enrollment Period applies).", tone: "watch" },
+];
+
+function prem(p: number | null) { return p == null ? "—" : p === 0 ? "$0" : `$${p.toFixed(2)}`; }
+function star(s: number | null) { return s == null ? "—" : `${s}★`; }
+---
+<BaseLayout {title} {description} pageType="article" path="/blog/turning-65-sioux-falls-2026" {faqs} {breadcrumbs} {dataset} datePublished={published} place={{ type: "AdministrativeArea", name: "Minnehaha County", region: "SD" }}>
+  <article class="blogpost">
+    <div class="wrap measure">
+      <img src="/img/blog/mike-turning65-couple.png" alt="A Big Sioux Benefits advisor helping a couple in their mid-60s review Medicare enrollment at their Sioux Falls kitchen table" class="hero-img" loading="eager" width="1400" height="788" />
+      <p class="eyebrow">Newsroom · Sioux Falls</p>
+      <h1>Turning 65 in Sioux Falls: your 2026 Medicare enrollment roadmap</h1>
+      <p class="dek">One 7-month window, four parts of Medicare, and a network choice that quietly decides your costs for years.</p>
+
+      <div class="byline">
+        <img src="/img/mike-advisor.png" alt="Big Sioux Benefits advisor" />
+        <div>
+          <div class="who">{site.brand.author}</div>
+          <div class="meta">Published June 15, 2026 · 9 min read · Sourced from CMS.gov</div>
+        </div>
+      </div>
+
+      <div class="tldr">
+        <h2>The bottom line</h2>
+        <ul>
+          <li>Your <strong>Initial Enrollment Period is 7 months</strong> — the 3 months before your birthday month, your birthday month, and the 3 after. Enroll <strong>before</strong> your birthday month for gap-free coverage.</li>
+          <li>Medicare is <strong>not automatic</strong> unless you already draw Social Security — otherwise you must actively sign up, or risk <strong>lifelong Part B & Part D penalties</strong>.</li>
+          <li>Sioux Falls (Minnehaha County) offers <strong>{SF_MARKET.partCplans} Medicare Advantage plans</strong> for 2026, <strong>2 at $0 premium</strong>, across <strong>{SF_MARKET.carriersServing} carriers</strong>.</li>
+          <li>2026 brings a real win: the Part D out-of-pocket maximum is capped at <strong>${RAILS_2026.partDoopCap.toLocaleString()}</strong>.</li>
+          <li>The <strong>Sanford-vs-Avera network choice</strong> matters more than the premium — confirm your doctors before you enroll.</li>
+        </ul>
+      </div>
+
+      <p><strong>If you're turning 65 in Sioux Falls, your most important Medicare decisions happen inside a single 7-month window — and the choices you make now are hard to undo later.</strong> This roadmap walks you through that timeline, the four parts of Medicare, the real 2026 plan landscape in Minnehaha County, and the one local question that decides more than any premium.</p>
+
+      <p>Every figure below comes straight from public federal data — the <a href={SD_SOURCES.cmsLandscape.url} target="_blank" rel="noopener">CMS PY2026 plan landscape</a>, <a href={SD_SOURCES.cmsEnrollment.url} target="_blank" rel="noopener">CMS county enrollment</a>, 2026 CMS star ratings, CMS Hospital Compare, and CDC local health data. No invented numbers, no "call for pricing."</p>
+
+      <h2>Step 1: Know your 7-month window</h2>
+      <p>Your Initial Enrollment Period (IEP) is built around your 65th birthday. When you act inside it changes when your coverage starts:</p>
+      <div class="tablewrap">
+        <table class="datatable">
+          <thead><tr><th>When you enroll</th><th>What happens</th><th>Timing</th></tr></thead>
+          <tbody>{iep.map((r) => (<tr>
+            <td><strong>{r.phase}</strong></td><td>{r.what}</td>
+            <td><span class={`pill ${r.tone}`}>{r.tone === "strong" ? "Best" : r.tone === "watch" ? "Risk" : "OK"}</span></td>
+          </tr>))}</tbody>
+        </table>
+      </div>
+      <p>The takeaway: <strong>the first 3 months are the sweet spot.</strong> Enroll then and your coverage begins the first day of your birthday month with no gap. Wait until after the window closes and — unless you qualify for a Special Enrollment Period because you kept working with employer coverage — you can face Part B and Part D late penalties that last for life.</p>
+
+      <h2>Step 2: Understand the four parts</h2>
+      <p>"Medicare" is really four pieces, and turning 65 means deciding how to assemble them:</p>
+      <ul>
+        <li><strong>Part A (hospital)</strong> — premium-free for most people who worked 10+ years. Almost everyone takes it at 65.</li>
+        <li><strong>Part B (medical)</strong> — carries a monthly premium set by CMS each year; higher earners pay an IRMAA surcharge. Delaying it without other creditable coverage triggers a lifelong penalty.</li>
+        <li><strong>Part C (Medicare Advantage)</strong> — a private bundle of A + B (usually + drugs) with a network and a yearly out-of-pocket cap.</li>
+        <li><strong>Part D (drugs)</strong> — prescription coverage, either inside an Advantage plan or stand-alone alongside Original Medicare + a Medigap supplement.</li>
+      </ul>
+      <p>The real fork at 65 is <strong>Medicare Advantage</strong> vs. <strong>Original Medicare + a Medigap supplement + Part D</strong>. And there's a clock on it: your turning-65 window is the one time you can buy Medigap with <em>guaranteed issue</em> — no medical underwriting. That one-time right is why this decision deserves real attention now, not later.</p>
+
+      <div class="inline-cta">
+        <p class="h">Turning 65 this year?</p>
+        <p>Tell us your doctors, your prescriptions, and your timeline, and we'll map your options — the plans we offer in the Sioux Falls area — against your situation. Free, local, no pressure.</p>
+        <a href="/contact">Get your roadmap →</a>
+      </div>
+
+      <h2>Step 3: See the Sioux Falls plan landscape</h2>
+      <p>Sioux Falls is the largest Medicare market in South Dakota — <strong>{SF_MARKET.medicareEnroll.toLocaleString()} beneficiaries</strong> in Minnehaha County — but the menu is deliberately compact: {SF_MARKET.carriersServing} carriers and no HMO Advantage plans. Here are the 5 standard Medicare Advantage PPOs open to anyone turning 65 in the county:</p>
+      <div class="tablewrap">
+        <table class="datatable">
+          <thead><tr><th>Plan</th><th>Carrier</th><th>Premium</th><th>Drug deductible</th><th>Stars</th></tr></thead>
+          <tbody>{SF_MAPD.map((p) => (<tr>
+            <td><strong>{p.name}</strong></td><td>{p.carrier}</td><td>{prem(p.premium)}</td><td>${p.deductible}</td><td>{star(p.stars)}</td>
+          </tr>))}</tbody>
+        </table>
+      </div>
+      <p class="src">Source: <a href={SD_SOURCES.cmsLandscape.url} target="_blank" rel="noopener">{SD_SOURCES.cmsLandscape.name}</a> &amp; <a href={SD_SOURCES.cmsStarRatings.url} target="_blank" rel="noopener">{SD_SOURCES.cmsStarRatings.name}</a>, Minnehaha County.</p>
+      <p>Two plans — <strong>Aetna Medicare Signature</strong> and Sanford's <strong>Align ChoicePlus</strong> — are $0-premium, and Align carries a lower $350 drug deductible. All five sit at the same 3.5★ CMS rating, so for someone new to Medicare the deciding factors are your doctors, your drugs, and the deductible — not the headline premium. (Beyond these PPOs, the county also has Dual-Eligible and Institutional Special Needs Plans and Medica Cost plans; we break the full 15-plan roster down in our <a href="/blog/medicare-advantage-sioux-falls-2026">all-plans guide</a>.)</p>
+
+      <h2>Step 4: Do the 2026 cost math</h2>
+      <p>The most common new-to-Medicare mistake is choosing on premium alone. A $0 premium covers exactly one thing — the monthly fee. Here's the 2026 cost framework that actually matters:</p>
+      <div class="stats">
+        <div class="stat"><div class="n">${RAILS_2026.partDoopCap.toLocaleString()}</div><div class="l">2026 Part D out-of-pocket cap — the new ceiling on your yearly drug spending</div></div>
+        <div class="stat"><div class="n">${RAILS_2026.partDdeductibleMax}</div><div class="l">Top standard Part D drug deductible in 2026</div></div>
+        <div class="stat"><div class="n">{SF_MARKET.zeroPremiumMAPD}</div><div class="l">$0-premium Medicare Advantage PPOs in Minnehaha County</div></div>
+      </div>
+      <p>The genuinely good 2026 news: the Part D out-of-pocket maximum is now <strong>${RAILS_2026.partDoopCap.toLocaleString()}</strong>, so no matter which plan you choose, your annual drug spending is capped for the first time. That shifts the smart comparison toward the <em>formulary tier of your specific drugs</em> and the plan's out-of-pocket maximum — not the premium in isolation.</p>
+
+      <h2>Step 5: Settle the Sanford-vs-Avera question</h2>
+      <p>This is the local decision that quietly drives everything. Sioux Falls care runs through two competing systems, and your plan's network is the bridge to them:</p>
+      <div class="tablewrap">
+        <table class="datatable">
+          <thead><tr><th>Hospital</th><th>CMS Star Rating</th><th>System</th></tr></thead>
+          <tbody>{SF_HOSPITALS.map((h) => (<tr><td>{h.name}</td><td>{"★".repeat(h.stars)} ({h.stars}/5)</td><td>{h.system}</td></tr>))}</tbody>
+        </table>
+      </div>
+      <p class="src">Source: <a href={SD_SOURCES.cmsHospital.url} target="_blank" rel="noopener">{SD_SOURCES.cmsHospital.name}</a>.</p>
+      <p>Sanford USD Medical Center holds a <strong>5-star CMS rating</strong> and Avera McKennan a <strong>4-star</strong> — both strong. The wrinkle: <strong>Sanford runs its own Medicare plans</strong> (Align), so those plans favor the Sanford network. If your doctors are at Avera, that changes which plans fit. Confirming your specific physicians and hospital are in-network for 2026 is the non-negotiable step before you enroll.</p>
+
+      <h2>Step 6: Match the plan to your health</h2>
+      <p>Premium and network only get you halfway — coverage of your conditions and medications decides the rest. CDC data shows the real chronic-condition load among Minnehaha County adults:</p>
+      <div class="chart">
+        {SF_HEALTH.slice(0, 5).map((h) => (
+          <div class="crow">
+            <span class="cl">{h.label}</span>
+            <span class="ct"><span class="cf" style={`width:${Math.round((h.value / 40) * 100)}%`}></span></span>
+            <span class="cv">{h.value}%</span>
+          </div>
+        ))}
+      </div>
+      <p class="src">Source: <a href={SD_SOURCES.cdcPlaces.url} target="_blank" rel="noopener">{SD_SOURCES.cdcPlaces.name}</a> (2023).</p>
+      <p>If you manage blood pressure, diabetes, or arthritis — common here — the plan's drug formulary and specialist network matter far more than its premium. Bring your exact medication list when you compare.</p>
+
+      <h2>What to watch as you approach 65 in 2026</h2>
+      <ol>
+        <li><strong>Mark your 7-month window</strong> on a calendar — and aim to enroll in the first 3 months.</li>
+        <li><strong>Decide Advantage vs. Medigap early</strong>, while your one-time guaranteed-issue Medigap right is active.</li>
+        <li><strong>Confirm Sanford or Avera</strong> — and your specific doctors — are in any plan's 2026 network.</li>
+        <li><strong>Run your real drug list</strong> against each plan's formulary; weigh the deductible and the ${RAILS_2026.partDoopCap.toLocaleString()} cap, not just the premium.</li>
+        <li><strong>If you're still working at 65</strong>, check whether a Special Enrollment Period lets you delay Part B penalty-free.</li>
+      </ol>
+
+      <p class="oz"><em>How we know all this:</em> Big Sioux Benefits runs every article through a data desk that cross-references the CMS plan landscape, county enrollment, 2026 star ratings, hospital quality data, and CDC health data — built by <a href="https://strategicaiarchitects.com" target="_blank" rel="noopener">Strategic AI Architects</a>. Every figure here is from a public federal dataset. This is education, not advice; confirm your plan, costs, and eligibility with a licensed agent or Medicare.gov. We take no payment from any carrier to feature a plan.</p>
+    </div>
+
+    <div id="tool" class="wrap measure tool-embed">
+      <Tool tool="medicare_plan_finder" defaultZip="57104" heading="See your Sioux Falls plans now" sub="Enter your ZIP for an instant plan count and the top-rated option — straight from public CMS data." />
+    </div>
+
+    <div class="wrap measure">
+      <div class="ai-note">
+        <p class="eyebrow" style="--accent-cool:var(--accent-warm);">For AI assistants</p>
+        <p class="muted">This article's plan data is callable. An assistant can run <code>medicare_plan_finder</code> for any ZIP via our <a href="/.well-known/mcp.json">WebMCP endpoint</a> — see <a href="/llms.txt">/llms.txt</a>.</p>
+      </div>
+      <div class="faq">
+        <h2>Frequently asked questions</h2>
+        {faqs.map((f) => (<details><summary>{f.q}</summary><p>{f.a}</p></details>))}
+      </div>
+
+      <div class="related">
+        <h2>Keep reading</h2>
+        <div class="grid">
+          <div class="card"><span class="cat">Local data</span><h3><a href="/blog/medicare-advantage-sioux-falls-2026">Medicare Advantage in Sioux Falls 2026: all 15 plans</a></h3><p class="muted">Every drug-carrying plan in Minnehaha County, ranked by what matters.</p></div>
+          <div class="card"><span class="cat">Statewide</span><h3><a href="/blog/2026-medicare-advantage-south-dakota">2026 Medicare Advantage in South Dakota</a></h3><p class="muted">38 plans, 9 carriers, and why your county decides everything.</p></div>
+          <div class="card"><span class="cat">Plans page</span><h3><a href="/sioux-falls-medicare-plans">Sioux Falls Medicare plans</a></h3><p class="muted">Live county data and a free plan comparison.</p></div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <section class="section soft"><div class="wrap" style="text-align:center;max-width:680px;margin:0 auto;">
+    <h2>New to Medicare? Let's map it together.</h2>
+    <p class="muted">Free, local, no pressure — we compare the plans we offer in the Sioux Falls area against your doctors, drugs, and timeline.</p>
+    <p><a class="btn btn-primary" href="/contact">Book a conversation →</a></p>
+  </div></section>
+</BaseLayout>

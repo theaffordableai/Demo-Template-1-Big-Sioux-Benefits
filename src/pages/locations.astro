@@ -1,0 +1,30 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { site } from "../config/site.config";
+const breadcrumbs = [{ name: "Home", url: site.domain }, { name: "Locations", url: `${site.domain}/locations` }];
+const places = [
+  ["Sioux Falls, SD (Minnehaha County)", "/sioux-falls-medicare-plans", "11 plans · avg $40.73 · 3.72★"],
+  ["Sioux Center & NW Iowa (Sioux County)", "/sioux-center-medicare-plans", "21 plans · 6 at $0 premium"],
+];
+const towns = ["Brandon", "Harrisburg", "Tea", "Dell Rapids", "Hartford", "Madison (SD)", "Rock Valley", "Orange City", "Rock Rapids", "Le Mars (IA)", "Luverne (MN)"];
+---
+<BaseLayout title="Areas We Serve — Big Sioux Benefits" description="Local Medicare help across the Sioux Falls metro and Siouxland — eastern South Dakota, northwest Iowa, and southwest Minnesota." pageType="service" path="/locations" {breadcrumbs}>
+  <section class="section"><div class="wrap">
+    <p class="eyebrow">Areas We Serve</p>
+    <h1>Local Medicare help across Siouxland</h1>
+    <p style="font-size:1.18rem;max-width:62ch;">We serve {site.brand.serviceArea}. Explore plan data for your area:</p>
+    <div class="grid cols-2" style="margin-top:1.5rem;">
+      {places.map(([t, h, d]) => (
+        <a class="card" href={h} style="text-decoration:none;color:inherit;display:block;">
+          <h3>{t}</h3><p class="muted" style="margin:0;">{d}</p><p style="margin:.5rem 0 0;">See plans →</p>
+        </a>
+      ))}
+    </div>
+    <h2 style="margin-top:2.5rem;">Communities we serve</h2>
+    <p class="muted">{towns.join(" · ")} — and the surrounding First-Coast-to-Siouxland region. Don't see your town? <a href="/contact">Ask us</a> — we likely serve it.</p>
+  </div></section>
+  <section class="section soft"><div class="wrap" style="text-align:center;">
+    <h2>Get local plan help</h2><p class="muted">Free, no pressure.</p>
+    <p><a class="btn btn-primary" href="/contact">Book a free consultation →</a></p>
+  </div></section>
+</BaseLayout>

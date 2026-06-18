@@ -1,0 +1,64 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Tool from "../components/Tool.astro";
+import CountyData from "../components/CountyData.astro";
+import { siouxFalls as d, SOURCES } from "../data/sioux-falls";
+import { site } from "../config/site.config";
+
+// All numbers below come from the SAA MCP brain (CMS PY2026 Landscape, CMS
+// enrollment, CMS Hospital Compare, CDC PLACES, NPPES) via src/data/sioux-falls.ts.
+const title = "2026 Medicare Advantage Plans in Sioux Falls, SD (Minnehaha County)";
+const description = `Sioux Falls (Minnehaha County) has ${d.enrollment.minnehaha.toLocaleString()} Medicare beneficiaries and ${d.carriers.length} carriers for 2026. Real CMS plan data, local health stats, hospital ratings, and a live plan finder — from Big Sioux Benefits.`;
+const faqs = [
+  { q: "How many people are on Medicare in Sioux Falls (Minnehaha County)?", a: `About ${d.enrollment.minnehaha.toLocaleString()} Medicare beneficiaries are enrolled in Minnehaha County — ${d.enrollment.sdRankNote}. Neighboring Lincoln County adds another ${d.enrollment.lincoln.toLocaleString()}, per CMS enrollment data.` },
+  { q: "What Medicare Advantage carriers serve Sioux Falls for 2026?", a: `Sioux Falls is served by ${d.carriers.length} carriers including Aetna Medicare (CVS Health), Align powered by Sanford Health Plan, UnitedHealthcare, Wellmark/BCBS, and Medica. The highest CMS star rating offered locally is ${d.market.topRatedStars}★; most MA-PD plans carry ${d.market.standardStars}★.` },
+  { q: "Are Sanford and Avera in the Medicare Advantage networks in Sioux Falls?", a: "It depends on the plan. Sioux Falls is served by Sanford USD Medical Center (CMS 5★) and Avera McKennan (CMS 4★). One local plan — Align — is powered by Sanford Health Plan. We check each plan's network against your specific providers before you enroll." },
+  { q: "What health conditions are most common among Sioux Falls seniors?", a: `Per CDC PLACES (2023), among Minnehaha County adults high blood pressure affects ${d.health[0].value}%, obesity ${d.health[1].value}%, arthritis ${d.health[2].value}%, and diabetes ${d.health[3].value}%. That's why matching a plan's drug formulary and specialist network to your conditions matters.` },
+  { q: "Does Big Sioux Benefits charge for help choosing a plan?", a: "No. Our guidance is free — licensed agents are paid by the carriers, not by you. We compare the plans we offer in the Sioux Falls area against your needs." },
+];
+const breadcrumbs = [
+  { name: "Home", url: site.domain },
+  { name: "Locations", url: `${site.domain}/locations` },
+  { name: "Sioux Falls, SD", url: `${site.domain}/sioux-falls-medicare-plans` },
+];
+const dataset = { name: SOURCES.cmsLandscape.name + " — Minnehaha County, SD", description: "Plan counts, premiums, CMS star ratings, county enrollment, local chronic-condition prevalence, and hospital quality ratings for the Sioux Falls metro (Minnehaha County), SD.", sourceUrl: SOURCES.cmsLandscape.url };
+---
+<BaseLayout {title} {description} pageType="location" path="/sioux-falls-medicare-plans" {faqs} {breadcrumbs} {dataset}
+  place={{ type: "AdministrativeArea", name: "Minnehaha County", region: "South Dakota" }}>
+  <section class="section"><div class="wrap">
+    <p class="eyebrow">Medicare in Sioux Falls · Minnehaha County, SD</p>
+    <h1>2026 Medicare Advantage Plans in <span class="hl">Sioux Falls, SD</span></h1>
+    <p style="font-size:1.18rem;max-width:64ch;">
+      Minnehaha County is home to <strong>{d.enrollment.minnehaha.toLocaleString()} Medicare beneficiaries</strong> — {d.enrollment.sdRankNote}.
+      For 2026, <strong>{d.carriers.length} carriers</strong> compete here with <strong>{d.market.zeroPremiumCount} $0-premium</strong> options,
+      and the highest CMS rating offered locally is <strong>{d.market.topRatedStars}★</strong>. Below is the real data —
+      plans, local health stats, and hospital ratings — plus a live tool to check your ZIP. Big Sioux Benefits compares it all, free.
+    </p>
+    <p><a class="btn btn-primary" href="/contact">Get a free local plan review →</a></p>
+  </div></section>
+
+  <CountyData data={d} />
+
+  <section class="section soft"><div class="wrap"><Tool tool="medicare_plan_finder" defaultZip="57104" heading="See your Sioux Falls plans now" sub="Enter your ZIP for an instant count and the top-rated plan — then your full ranked report." /></div></section>
+
+  <section class="section"><div class="wrap" style="max-width:760px;">
+    <h2>Choosing a plan in Sioux Falls — what matters here</h2>
+    <ul>
+      <li><strong>Sanford vs. Avera</strong> — make sure your health system and doctors are in-network. Sanford USD Medical Center is a CMS 5★ hospital; Avera McKennan is 4★. One local plan, Align, is powered by Sanford Health Plan.</li>
+      <li><strong>Your prescriptions</strong> — Part D drug deductibles range from $300 to $615 across local plans; tiers differ too.</li>
+      <li><strong>CMS star rating</strong> — most local MA-PD plans sit at {d.market.standardStars}★; the {d.market.topRatedStars}★ option is a dual-eligible D-SNP. We explain which you qualify for.</li>
+      <li><strong>Cross-border options</strong> — just into Iowa there are more plans; see <a href="/sioux-center-medicare-plans">NW Iowa Medicare plans →</a></li>
+    </ul>
+  </div></section>
+
+  <section class="section soft faq"><div class="wrap" style="max-width:820px;">
+    <h2>Sioux Falls Medicare questions, answered</h2>
+    {faqs.map((f) => (<details><summary>{f.q}</summary><p>{f.a}</p></details>))}
+  </div></section>
+
+  <section class="section"><div class="wrap" style="text-align:center;">
+    <h2>Talk to a local Sioux Falls Medicare advisor</h2>
+    <p class="muted">Free, no pressure — right here in Sioux Falls.</p>
+    <p><a class="btn btn-primary" href="/contact">Book a free consultation →</a> &nbsp; <a class="btn btn-ghost" href={`tel:${site.brand.phoneHref}`}>{site.brand.phone}</a></p>
+  </div></section>
+</BaseLayout>

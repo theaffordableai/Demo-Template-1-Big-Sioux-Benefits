@@ -1,0 +1,44 @@
+---
+import { site } from "../config/site.config";
+const b = site.brand;
+const nav = [
+  { label: "Medicare 101", href: "/medicare-101" },
+  { label: "Plans & Coverage", href: "/medicare-advantage-plans" },
+  { label: "Free Tools", href: "/free-tools" },
+  { label: "Services", href: "/services" },
+  { label: "FAQ", href: "/faq" },
+  { label: "About", href: "/about" },
+];
+---
+<header class="site-header">
+  <div class="bar wrap">
+    <a class="brand" href="/" aria-label={`${b.name} home`}>
+      <img class="logo" src="/img/atx/logo.png" width="150" height="48" alt={`${b.name} logo`} />
+    </a>
+    <nav class="links" aria-label="Primary">{nav.map((n) => <a href={n.href}>{n.label}</a>)}</nav>
+    <div class="end">
+      <a class="phone" href={`tel:${b.phoneHref}`} aria-label={`Call ${b.name} at ${b.phone}`}>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92Z"/></svg>
+        <span>{b.phone}</span>
+      </a>
+      <a class="cta btn btn-accent" href="/contact">Schedule a conversation</a>
+    </div>
+  </div>
+</header>
+<style>
+  .site-header{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);box-shadow:var(--shadow-xs)}
+  .bar{display:flex;align-items:center;gap:1.5rem;padding-top:12px;padding-bottom:12px}
+  .brand{display:flex;align-items:center;flex:none}
+  .brand:hover{opacity:.9}
+  .logo{display:block;height:46px;width:auto;object-fit:contain}
+  .links{display:flex;align-items:center;gap:26px;margin:0 auto}
+  .links a{font-family:var(--font-sans);font-size:.98rem;color:var(--navy-800);font-weight:600;transition:color .2s}
+  .links a:hover{color:var(--orange-600);text-decoration:none}
+  .end{display:flex;align-items:center;gap:1.1rem;flex:none}
+  .phone{display:inline-flex;align-items:center;gap:.45rem;color:var(--navy-700);font-weight:700;font-size:.98rem;white-space:nowrap}
+  .phone:hover{color:var(--navy-900);text-decoration:none}
+  .phone svg{color:var(--teal-600)}
+  .cta{white-space:nowrap;font-size:.95rem;padding:.7rem 1.2rem;min-height:44px}
+  @media(max-width:1080px){.links{display:none}}
+  @media(max-width:640px){.phone span{display:none}.cta{padding:.7rem 1rem}}
+</style>

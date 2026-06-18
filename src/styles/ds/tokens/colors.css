@@ -1,0 +1,131 @@
+/* ============================================================
+   COLOR — Medicare ATX
+   "Soft UI Evolution + Accessible & Ethical"
+   Light-first, high-contrast, WCAG-minded. Brand colors pulled
+   from medicareatx.com: navy (#1d5082 / #143b6b) leads, gold
+   (#e5b322) is the warm signature, orange (#f2592b) is the CTA
+   spark, teal (#327c6a) threads the cool accents.
+   ============================================================ */
+:root{
+  /* ---- Navy (primary brand) ---- */
+  --navy-900:#0f2c4d;   /* deepest ink-navy */
+  --navy-800:#143b6b;   /* dark navy (brand) */
+  --navy-700:#1d5082;   /* primary navy (brand) */
+  --navy-600:#2a6098;
+  --navy-500:#3a72ac;   /* interactive */
+  --navy-400:#6f9bc4;
+  --navy-200:#bdd2e6;
+  --navy-100:#e7eef6;   /* soft tint surface */
+  --navy-050:#f2f6fb;
+
+  /* ---- Gold (warm signature) ---- */
+  --gold-800:#6e5200;
+  --gold-700:#8a6a00;   /* gold, text-safe on white (≈4.7:1) */
+  --gold-600:#b78c10;
+  --gold-500:#e5b322;   /* brand gold (decor / fills) */
+  --gold-300:#f3d271;
+  --gold-100:#fbf3d6;   /* gold wash */
+
+  /* ---- Orange (CTA spark) ---- */
+  --orange-700:#bd3d16;
+  --orange-600:#d8481c;  /* button-safe orange (white text ≈4.5:1) */
+  --orange-500:#f2592b;  /* brand orange */
+  --orange-200:#f9c3ad;
+  --orange-100:#fde7df;  /* orange wash */
+
+  /* ---- Teal (cool accent) ---- */
+  --teal-800:#1d4a3f;
+  --teal-700:#22564a;
+  --teal-600:#2a6657;   /* teal, text-safe on white (≈4.6:1) */
+  --teal-500:#327c6a;   /* brand teal */
+  --teal-200:#aed5cb;
+  --teal-100:#e2efeb;   /* teal wash */
+
+  /* ---- Neutrals (soft, slightly cool) ---- */
+  --paper:#ffffff;       /* card / raised surface */
+  --canvas:#f4f7fb;      /* page background */
+  --panel:#eaf1f8;       /* tinted section panel */
+  --mist:#fbfcfe;        /* near-white wash */
+  --ink-900:#0f2233;     /* headings ink (≈15:1 on white) */
+  --ink-800:#13283d;     /* body text (≈13:1 on white) */
+  --slate-600:#46586d;   /* muted text (≈6.5:1 on white) */
+  --slate-500:#5d6f84;   /* muted text on tint (≈4.8:1) */
+  --slate-300:#9fb0c2;
+  --white:#ffffff;
+
+  /* ---- Legacy raw aliases (keep existing components working) ---- */
+  --blue-900:var(--navy-900); --blue-800:var(--navy-800); --blue-700:var(--navy-700);
+  --blue-600:var(--navy-600); --blue-500:var(--navy-500); --blue-400:var(--navy-400);
+  --brown-700:var(--gold-800); --brown-600:var(--gold-700); --brown-500:var(--gold-600);
+  --brown-400:var(--gold-700); --brown-300:var(--gold-600); --brown-200:var(--gold-300);
+  --green-700:var(--teal-800); --green-600:var(--teal-700); --green-500:var(--teal-600);
+  --green-400:var(--teal-600); --green-300:var(--teal-500);
+  --cream-50:var(--mist); --cream-100:var(--paper); --cream-200:var(--panel); --sand-300:var(--navy-100);
+  --bluegrey-300:var(--slate-600);
+
+  /* ============ SEMANTIC ALIASES (light-first) ============ */
+  --surface-base:var(--canvas);
+  --surface-panel:var(--panel);
+  --surface-card:var(--paper);
+  --surface-inverse:var(--navy-800);     /* occasional dark section */
+  --surface-inverse-panel:var(--navy-700);
+
+  --text-primary:var(--ink-800);
+  --text-muted:var(--slate-600);
+  --text-inverse:var(--paper);           /* on navy */
+  --text-inverse-muted:var(--navy-200);
+
+  --accent-warm:var(--gold-700);         /* warm accent, text-safe */
+  --accent-warm-fill:var(--gold-500);    /* warm accent, decorative fill */
+  --accent-warm-ink:var(--gold-700);
+  --accent-cool:var(--teal-600);         /* cool accent, text-safe */
+  --accent-cool-ink:var(--teal-600);
+  --link:var(--navy-700);
+  --link-hover:var(--navy-800);
+
+  --line:#e1e9f1;                        /* soft hairline on light */
+  --line-strong:#cdd9e7;
+  --line-inverse:rgba(255,255,255,.16);  /* hairline on navy */
+
+  --focus-ring:var(--orange-500);        /* high-visibility focus */
+
+  /* button roles */
+  --btn-primary-bg:var(--navy-700);
+  --btn-primary-fg:var(--white);
+  --btn-primary-bg-hover:var(--navy-800);
+  --btn-accent-bg:var(--orange-600);     /* warm CTA */
+  --btn-accent-fg:var(--white);
+  --btn-accent-bg-hover:var(--orange-700);
+  --btn-onlight-bg:var(--navy-700);
+  --btn-onlight-fg:var(--white);
+}
+
+/* Opt-in dark scope: wrap a region in .on-cream historically meant
+   "flip onto a light surface". The base is already light, so this is
+   now a gentle no-op that just guarantees correct light-surface tokens. */
+.on-cream{
+  --text-primary:var(--ink-800);
+  --text-muted:var(--slate-600);
+  --accent-warm:var(--gold-700);
+  --accent-cool:var(--teal-600);
+  --line:var(--line);
+  --line-strong:var(--line-strong);
+  --surface-card:var(--paper);
+  color:var(--ink-800);
+}
+
+/* Dark navy section scope: opt-in for an inverted band when a page
+   wants contrast rhythm (apply class="section invert"). */
+.invert{
+  --surface-base:var(--navy-800);
+  --surface-card:var(--navy-700);
+  --text-primary:var(--paper);
+  --text-muted:var(--navy-200);
+  --accent-warm:var(--gold-500);
+  --accent-cool:var(--teal-200);
+  --line:var(--line-inverse);
+  --line-strong:rgba(255,255,255,.26);
+  --link:var(--gold-300);
+  color:var(--paper);
+  background:var(--navy-800);
+}

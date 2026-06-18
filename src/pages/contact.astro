@@ -1,0 +1,38 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { site } from "../config/site.config";
+const b = site.brand; const g = site.ghl;
+const title = "Contact Big Sioux Benefits — Book a Free Medicare Consultation";
+const description = `Book a free Medicare consultation with ${b.name}. Call ${b.phone} or schedule online. Serving ${b.serviceArea}.`;
+const breadcrumbs = [ { name: "Home", url: site.domain }, { name: "Contact", url: `${site.domain}/contact` } ];
+const realCal = g.calendarId && !g.calendarId.includes("DEMO");
+---
+<BaseLayout {title} {description} pageType="service" path="/contact" {breadcrumbs}>
+  <section class="section"><div class="wrap">
+    <p class="eyebrow">Contact</p>
+    <h1>Book your <span class="hl">free</span> Medicare consultation</h1>
+    <div class="grid cols-2" style="gap:2rem;margin-top:1.5rem;align-items:start;">
+      <div>
+        <p style="font-size:1.1rem;">No cost, no pressure. Pick a time that works, or call us directly — a local licensed advisor will help you compare your options.</p>
+        <p><strong>Call:</strong> <a href={`tel:${b.phoneHref}`}>{b.phone}</a><br />
+           <strong>Email:</strong> <a href={`mailto:${b.email}`}>{b.email}</a><br />
+           <strong>Hours:</strong> {b.hours}<br />
+           <strong>Serving:</strong> {b.serviceArea}</p>
+        <p class="muted">{b.address.street}, {b.address.city}, {b.address.region} {b.address.postal}</p>
+      </div>
+      <div>
+        {realCal ? (
+          <div>
+            <iframe src={`https://api.leadconnectorhq.com/widget/booking/${g.calendarId}`} style="width:100%;min-height:680px;border:none;overflow:hidden;" scrolling="no" id={`${g.calendarId}_cal`} loading="lazy" title="Book a consultation"></iframe>
+            <script is:inline src="https://link.msgsndr.com/js/form_embed.js"></script>
+          </div>
+        ) : (
+          <div class="card">
+            <h3>Online booking</h3>
+            <p class="muted">The GoHighLevel booking calendar embeds here once <code>ghl.calendarId</code> is set in <code>site.config.ts</code> (demo placeholder active). For now, call <a href={`tel:${b.phoneHref}`}>{b.phone}</a> to schedule.</p>
+          </div>
+        )}
+      </div>
+    </div>
+  </div></section>
+</BaseLayout>

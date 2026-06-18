@@ -1,0 +1,19 @@
+/* ============================================================
+   BASE — gentle element defaults so consumers get the voice
+   for free. Scoped to opt-in where it could fight a host app.
+   ============================================================ */
+*{box-sizing:border-box;}
+
+body{
+  font-family:var(--font-sans);
+  font-size:var(--text-body);
+  line-height:var(--leading-body);
+  color:var(--text-primary);
+  background:var(--surface-base);
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+
+::selection{background:var(--brown-400);color:var(--blue-900);}
+
+:focus-visible{outline:2px solid var(--focus-ring);outline-offset:2px;}

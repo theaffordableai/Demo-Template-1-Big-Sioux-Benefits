@@ -1,0 +1,298 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Tool from "../../components/Tool.astro";
+import "../../styles/blog.css";
+import { site } from "../../config/site.config";
+import {
+  SD_SOURCES, SF_MAPD, SF_MARKET, SF_HOSPITALS, SF_HEALTH,
+  RAILS_2026, stabilityTier,
+} from "../../data/sd-medicare.ts";
+
+const title = "Medigap vs. Medicare Advantage in Sioux Falls for 2026: Which Track Fits Your Situation?";
+const description = "A data-backed comparison of Medigap (Medicare Supplement) and Medicare Advantage for Sioux Falls beneficiaries in 2026 — 5 local PPO plans, the Sanford-vs-Avera network question, the new $2,100 Part D cap, and the one-time guaranteed-issue window that makes the decision time-sensitive.";
+const published = "2026-06-17";
+
+const faqs = [
+  {
+    q: "Is Medigap or Medicare Advantage better for Sioux Falls residents in 2026?",
+    a: `There's no universal answer — it depends on your doctors, prescriptions, and how often you use healthcare. Medigap (plus Original Medicare and a stand-alone Part D plan) gives you access to any Medicare-accepting provider nationwide, including both Sanford and Avera, with very predictable out-of-pocket costs. Medicare Advantage bundles everything at a lower or $0 monthly premium but limits you to a network and a plan-level annual out-of-pocket maximum. For 2026, Minnehaha County has 5 standard MA PPOs — two at $0 premium — all rated 3.5★ by CMS. We compare the plans we offer in the area so you can see your real options.`,
+  },
+  {
+    q: "What does Medigap cost per month in Sioux Falls?",
+    a: "Medigap premiums aren't published in a single CMS table — they're set by individual carriers and vary by plan letter (A, G, N, and others), your age at enrollment, gender, and tobacco use. The critical point: your turning-65 Initial Enrollment Period is your one guaranteed-issue window, meaning carriers must sell you any plan without medical underwriting. After that window, South Dakota does not mandate a continuing guaranteed-issue right, so premiums can increase or coverage can be denied based on health history. A licensed local agent can pull current carrier quotes for your specific age and plan preference.",
+  },
+  {
+    q: "Can I see Sanford and Avera doctors under Medicare Advantage?",
+    a: "It depends on the plan. Sanford's own plans (Align ChoicePlus PPO and Align ChoiceElite PPO) are built around the Sanford network. Other PPOs, like Aetna Medicare Signature, allow out-of-network use at a higher cost — so you can see Avera providers, but in-network coverage is more cost-effective. If your primary care physician is at Avera, confirm that specific doctor is listed as in-network for your chosen plan before enrolling. Under Original Medicare + Medigap, you can use either health system with no network restriction.",
+  },
+  {
+    q: "Does Medicare Advantage cover Part D drug costs in Sioux Falls?",
+    a: `All 5 standard Medicare Advantage PPOs available in Minnehaha County for 2026 include Part D drug coverage (they're MAPD plans). The 2026 Part D out-of-pocket cap is $${RAILS_2026.partDoopCap.toLocaleString()}, and the maximum standard drug deductible is $${RAILS_2026.partDdeductibleMax} — individual plans may charge less. If you instead choose Original Medicare + Medigap, you add a stand-alone Part D plan separately; failing to enroll in creditable drug coverage when first eligible can trigger a Part D late-enrollment penalty that lasts for life.`,
+  },
+  {
+    q: "Can I switch from Medicare Advantage back to Medigap later?",
+    a: "You can return to Original Medicare during the Annual Enrollment Period (Oct 15–Dec 7), but adding Medigap after your guaranteed-issue window typically requires answering health questions. In South Dakota, a carrier can decline Medigap coverage or charge a higher premium based on pre-existing conditions outside of federally protected enrollment windows. This is why the turning-65 Initial Enrollment Period matters so much — you have full Medigap rights only once, so the evaluation is worth doing carefully at the start.",
+  },
+  {
+    q: "What is the 2026 Part D out-of-pocket cap?",
+    a: `Starting in 2026, no Medicare beneficiary pays more than $${RAILS_2026.partDoopCap.toLocaleString()} out-of-pocket per year on covered Part D prescriptions — a major consumer protection under the Inflation Reduction Act. This cap applies whether your drug coverage comes through a Medicare Advantage MAPD plan or a stand-alone Part D plan added to Original Medicare. The maximum standard Part D deductible for 2026 is $${RAILS_2026.partDdeductibleMax}; individual plans may set a lower deductible.`,
+  },
+];
+
+const breadcrumbs = [
+  { name: "Home", url: site.domain },
+  { name: "Blog", url: `${site.domain}/blog` },
+  { name: "Medigap vs. Medicare Advantage Sioux Falls 2026", url: `${site.domain}/blog/medigap-vs-medicare-advantage-sioux-falls-2026` },
+];
+
+const dataset = {
+  name: "CMS PY2026 Medicare landscape & star ratings — Minnehaha County, SD (Medigap vs. Medicare Advantage comparison)",
+  description: "2026 Medicare Advantage PPO plan roster for Minnehaha County (premiums, drug deductibles, CMS star ratings), 2026 Part D cost rails including the new $2,100 out-of-pocket cap, CMS Hospital Compare star ratings for Sioux Falls, and CDC PLACES 2023 chronic-condition prevalence — all used in this Medigap vs. Medicare Advantage comparison.",
+  sourceUrl: SD_SOURCES.cmsLandscape.url,
+};
+
+const trackCompare = [
+  { feature: "Provider access", medigap: "Any Medicare-accepting provider nationwide — both Sanford and Avera, any state", advantage: "Plan's network (PPO allows out-of-network at higher cost-sharing)" },
+  { feature: "Monthly premium", medigap: "Part B premium + Medigap premium (varies by plan letter, age, and carrier)", advantage: "$0–$80/mo for the 5 Minnehaha County PPOs in 2026" },
+  { feature: "Annual out-of-pocket max", medigap: "Plan G/N largely eliminates coinsurance surprises after deductible", advantage: "CMS-required annual cap built into every MA plan" },
+  { feature: "Part D drug coverage", medigap: "Add a stand-alone Part D plan separately (separate premium + formulary)", advantage: "Included in all 5 Minnehaha County MA PPOs (MAPD plans)" },
+  { feature: "Extra benefits", medigap: "None beyond what Original Medicare covers", advantage: "May include dental, vision, hearing aids, gym — plan-specific" },
+  { feature: "Travel / snowbirds", medigap: "Full coverage anywhere Medicare is accepted — nationwide, no referrals", advantage: "Best in-network; PPOs extend coverage out-of-area at higher cost" },
+];
+
+function prem(p: number | null) { return p == null ? "—" : p === 0 ? "$0" : `$${p.toFixed(2)}`; }
+function star(s: number | null) { return s == null ? "—" : `${s}★`; }
+---
+<BaseLayout
+  {title}
+  {description}
+  pageType="article"
+  path="/blog/medigap-vs-medicare-advantage-sioux-falls-2026"
+  {faqs}
+  {breadcrumbs}
+  {dataset}
+  datePublished={published}
+  place={{ type: "AdministrativeArea", name: "Minnehaha County", region: "SD" }}
+>
+  <article class="blogpost">
+    <div class="wrap measure">
+      <img
+        src="/img/blog/mike-medigap-vs-advantage-2026.png"
+        alt="Big Sioux Benefits advisor sitting at a kitchen table with a couple in their late 60s, comparing Medigap and Medicare Advantage plan folders in Sioux Falls"
+        class="hero-img"
+        loading="eager"
+        width="1376"
+        height="768"
+      />
+      <p class="eyebrow">Newsroom · Sioux Falls</p>
+      <h1>Medigap vs. Medicare Advantage in Sioux Falls for 2026: which track fits your situation?</h1>
+      <p class="dek">Two paths through Medicare, one critical decision — and the clock runs from the day you turn 65.</p>
+
+      <div class="byline">
+        <img src="/img/mike-advisor.png" alt="Big Sioux Benefits advisor" />
+        <div>
+          <div class="who">{site.brand.author}</div>
+          <div class="meta">Published June 17, 2026 · 10 min read · Sourced from CMS.gov</div>
+        </div>
+      </div>
+
+      <div class="tldr">
+        <h2>The bottom line</h2>
+        <ul>
+          <li><strong>Two very different tracks:</strong> Medigap + Original Medicare gives you any Medicare-accepting provider nationwide; Medicare Advantage bundles everything into a network plan, often at a $0 monthly premium.</li>
+          <li>Minnehaha County has <strong>{SF_MARKET.partCplans} Medicare Advantage plans</strong> for 2026, including <strong>5 standard PPOs</strong> open to any Medicare beneficiary — <strong>2 at $0 premium</strong> — all rated 3.5★ by CMS.</li>
+          <li>The 2026 Part D drug cap is <strong>${RAILS_2026.partDoopCap.toLocaleString()}</strong> — a major consumer win that applies to both tracks.</li>
+          <li>The <strong>Sanford-vs-Avera question</strong> is the defining local factor: Medigap lets you use both systems freely; Advantage PPOs route you primarily into one network.</li>
+          <li>Your <strong>guaranteed-issue Medigap right</strong> exists only during your Initial Enrollment Period at 65 — after that, health underwriting applies in South Dakota.</li>
+        </ul>
+      </div>
+
+      <p><strong>When you enter Medicare, you face a fork that's hard to undo later: Medigap (Medicare Supplement) paired with Original Medicare, or a Medicare Advantage plan that replaces Original Medicare entirely.</strong> Both cover hospital and medical care; both now fall under the $2,100 Part D drug cap. The right choice is genuinely different depending on your doctors, your prescriptions, and how often you use healthcare. Here's what the 2026 data actually shows for Sioux Falls.</p>
+
+      <p>Every figure below comes from public federal sources — the <a href={SD_SOURCES.cmsLandscape.url} target="_blank" rel="noopener">CMS PY2026 plan landscape</a>, <a href={SD_SOURCES.cmsStarRatings.url} target="_blank" rel="noopener">CMS 2026 star ratings</a>, <a href={SD_SOURCES.cmsHospital.url} target="_blank" rel="noopener">CMS Hospital Compare</a>, and <a href={SD_SOURCES.cdcPlaces.url} target="_blank" rel="noopener">CDC PLACES 2023</a> local health data. No invented numbers, no "call for pricing" on the plan data.</p>
+
+      <h2>The two-track structure</h2>
+      <p>The structural difference between the two tracks drives every other cost and coverage difference. Understanding it first makes the rest of the comparison clear:</p>
+      <div class="tablewrap">
+        <table class="datatable">
+          <thead><tr><th>Feature</th><th>Medigap + Original Medicare</th><th>Medicare Advantage (MA)</th></tr></thead>
+          <tbody>
+            {trackCompare.map((r) => (
+              <tr>
+                <td><strong>{r.feature}</strong></td>
+                <td>{r.medigap}</td>
+                <td>{r.advantage}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="src">Source: CMS Medicare program structure; plan-level data from <a href={SD_SOURCES.cmsLandscape.url} target="_blank" rel="noopener">{SD_SOURCES.cmsLandscape.name}</a>.</p>
+      <p>The core trade-off: <strong>Medigap prioritizes predictability and provider freedom</strong> at a higher monthly premium. <strong>Medicare Advantage prioritizes lower upfront cost</strong> in exchange for a network and a copay-based out-of-pocket structure. Neither is automatically the right fit — it depends on how you use healthcare and which providers matter most to you.</p>
+
+      <h2>The 5 Medicare Advantage PPOs available in Minnehaha County (2026)</h2>
+      <p>These are the plans open to anyone in Sioux Falls with Medicare Parts A and B — no special eligibility needed. There are no HMO Advantage plans in Minnehaha County; only PPOs, which at least allow out-of-network use (at higher cost-sharing) when a provider isn't in the plan's network. The county has <strong>{SF_MARKET.medicareEnroll.toLocaleString()} Medicare beneficiaries</strong> as of 2026:</p>
+      <div class="tablewrap">
+        <table class="datatable">
+          <thead>
+            <tr>
+              <th>Plan</th>
+              <th>Carrier</th>
+              <th>Monthly premium</th>
+              <th>Drug deductible</th>
+              <th>CMS rating</th>
+              <th>Stability</th>
+            </tr>
+          </thead>
+          <tbody>
+            {SF_MAPD.map((p) => (
+              <tr>
+                <td><strong>{p.name}</strong></td>
+                <td>{p.carrier}</td>
+                <td>{prem(p.premium)}</td>
+                <td>${p.deductible}</td>
+                <td>{star(p.stars)}</td>
+                <td><span class={`pill ${stabilityTier(p.stars).tone}`}>{stabilityTier(p.stars).label}</span></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="src">Source: <a href={SD_SOURCES.cmsLandscape.url} target="_blank" rel="noopener">{SD_SOURCES.cmsLandscape.name}</a> &amp; <a href={SD_SOURCES.cmsStarRatings.url} target="_blank" rel="noopener">{SD_SOURCES.cmsStarRatings.name}</a>, Minnehaha County PY2026.</p>
+      <p>Two plans — <strong>Aetna Medicare Signature</strong> and Sanford Health's <strong>Align ChoicePlus</strong> — carry a $0 monthly premium. Align ChoicePlus also has a lower $350 drug deductible versus the $615 standard ceiling on the other plans. All five sit at the same 3.5★ CMS overall rating, which means the differentiators are network fit, drug formulary, and each plan's annual out-of-pocket maximum — not the quality score. The plans we offer in the Sioux Falls area let you compare these directly against your specific doctors and prescriptions.</p>
+
+      <div class="stats">
+        <div class="stat"><div class="n">{SF_MARKET.partCplans}</div><div class="l">Medicare Advantage plans in Minnehaha County 2026</div></div>
+        <div class="stat"><div class="n">{SF_MARKET.zeroPremiumMAPD}</div><div class="l">Standard PPOs available at $0 monthly premium</div></div>
+        <div class="stat"><div class="n">${RAILS_2026.partDoopCap.toLocaleString()}</div><div class="l">2026 Part D out-of-pocket cap — applies on both tracks</div></div>
+      </div>
+
+      <h2>What you actually pay: the full cost picture</h2>
+      <p>The monthly premium is only one row in the cost ledger. The two tracks differ significantly in how costs accumulate across a year of real healthcare use:</p>
+      <ul>
+        <li><strong>Medigap + Original Medicare:</strong> You pay the standard Part B monthly premium plus your Medigap premium, which varies by plan letter, age, and carrier. Medigap Plan G — one of the more comprehensive options — covers Medicare's standard 20% coinsurance on outpatient services after your deductible, eliminating most surprise bills. You add a stand-alone Part D plan for drugs; under 2026 rules, your drug out-of-pocket spending is capped at <strong>${RAILS_2026.partDoopCap.toLocaleString()}</strong> per year.</li>
+        <li><strong>Medicare Advantage:</strong> A $0–$80/mo premium for the 5 Minnehaha County PPOs, with copays for visits and procedures and a plan-level annual out-of-pocket maximum that caps total exposure. All 5 local plans include Part D drug coverage, also subject to the <strong>${RAILS_2026.partDoopCap.toLocaleString()}</strong> cap. The 2026 standard drug deductible ceiling is <strong>${RAILS_2026.partDdeductibleMax}</strong> — individual plans may charge less.</li>
+      </ul>
+      <p>The practical difference: Medigap delivers <em>cost predictability</em> — you know before any visit what it will cost. Advantage delivers <em>premium predictability</em> — a low monthly bill, with copays per service type that vary by plan and provider tier.</p>
+
+      <div class="keytake">
+        <p>For beneficiaries managing multiple chronic conditions with frequent specialist visits, Medigap's flat cost structure often outweighs the higher monthly premium. For healthier beneficiaries who use care infrequently, a $0-premium Advantage plan with the $2,100 drug cap can mean very low total annual cost.</p>
+      </div>
+
+      <div class="inline-cta">
+        <p class="h">Not sure which track fits your situation?</p>
+        <p>Tell us your doctors, your prescriptions, and how often you use specialist care — and we'll map the plans we offer in the Sioux Falls area against your real numbers. Free, local, no pressure.</p>
+        <a href="/contact">Talk through your options →</a>
+      </div>
+
+      <h2>The Sanford-vs-Avera network question</h2>
+      <p>In Sioux Falls, Medicare decisions often come down to one local question: Sanford or Avera? Two competing health systems, two of the strongest hospital quality ratings in South Dakota — and a Medicare Advantage plan's network determines which one is in-plan for you:</p>
+      <div class="tablewrap">
+        <table class="datatable">
+          <thead>
+            <tr>
+              <th>Hospital</th>
+              <th>CMS star rating</th>
+              <th>System</th>
+              <th>Under Medigap</th>
+              <th>Under MA PPO</th>
+            </tr>
+          </thead>
+          <tbody>
+            {SF_HOSPITALS.map((h) => (
+              <tr>
+                <td><strong>{h.name}</strong></td>
+                <td>{"★".repeat(h.stars)} ({h.stars}/5)</td>
+                <td>{h.system}</td>
+                <td><span class="pill strong">Any plan, no restriction</span></td>
+                <td><span class="pill average">Depends on plan network</span></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="src">Source: <a href={SD_SOURCES.cmsHospital.url} target="_blank" rel="noopener">{SD_SOURCES.cmsHospital.name}</a>.</p>
+      <p>Sanford USD Medical Center holds a <strong>5-star CMS hospital rating</strong>; Avera McKennan a <strong>4-star</strong>; the Sioux Falls VA Medical Center also earns <strong>5 stars</strong>. Under Medigap + Original Medicare, all three are accessible at the same cost — no network to check. Under a Medicare Advantage PPO, you're in-network at the system your plan is aligned with. Sanford's own plans (Align) favor the Sanford system; using Avera providers is technically possible with out-of-network PPO benefits, but at meaningfully higher cost-sharing. <strong>Confirming your specific physicians and preferred hospital are in-network before you enroll is the most important step in Sioux Falls.</strong></p>
+
+      <h2>How local health conditions change the math</h2>
+      <p>Which track costs more over time depends heavily on how often you use healthcare — and that depends on your conditions. CDC data shows the chronic-condition load in Minnehaha County:</p>
+      <div class="chart">
+        {SF_HEALTH.slice(0, 5).map((h) => (
+          <div class="crow">
+            <span class="cl">{h.label}</span>
+            <span class="ct"><span class="cf" style={`width:${Math.round((h.value / 40) * 100)}%`}></span></span>
+            <span class="cv">{h.value}%</span>
+          </div>
+        ))}
+      </div>
+      <p class="src">Source: <a href={SD_SOURCES.cdcPlaces.url} target="_blank" rel="noopener">{SD_SOURCES.cdcPlaces.name}</a> (2023, Minnehaha County adults, model-based estimates).</p>
+      <p>Nearly <strong>32% of county adults</strong> manage high blood pressure, <strong>10%</strong> have diagnosed diabetes, and <strong>23%</strong> live with arthritis — conditions that drive regular specialist visits, lab work, imaging, and ongoing prescriptions. For someone managing two or three of these conditions, Advantage plan copays accumulate differently than Medigap coinsurance coverage. The 2026 <strong>${RAILS_2026.partDoopCap.toLocaleString()} Part D cap</strong> is a meaningful protection for high-drug-cost conditions under either track. But the medical cost-sharing structure — Medigap coinsurance coverage versus Advantage copays per visit — can add up to hundreds or thousands of dollars of difference across a year of regular care. Running your actual prescription list and care pattern through both tracks is the only way to know which fits better.</p>
+
+      <h2>The one-time guaranteed-issue Medigap window</h2>
+      <p>There's a built-in clock on the Medigap decision that many people discover only after it's closed. During your Initial Enrollment Period (IEP) — the 7-month window centered on your 65th birthday — you have <strong>guaranteed-issue rights</strong> for Medigap. Any licensed carrier selling Medigap in South Dakota must offer you any plan without medical underwriting, regardless of your health history. You cannot be charged more or denied coverage because of pre-existing conditions.</p>
+      <p>After that window closes, South Dakota does not require carriers to maintain continuing guaranteed-issue rights for Medigap. You can still apply, but the carrier may ask health questions and can charge a higher premium or decline coverage based on your conditions. The federally protected exceptions are narrow — mainly losing employer-sponsored creditable coverage.</p>
+      <p>The practical consequence: <strong>someone turning 65 with manageable chronic conditions can lock in Medigap at their healthiest age.</strong> Waiting until a serious diagnosis arrives and then trying to switch from Advantage to Medigap can mean either a significant premium increase or a coverage denial. This one-time window is the single biggest reason the Medigap-vs-Advantage decision deserves real attention at 65 — not at 68 when circumstances change.</p>
+
+      <h2>What to watch heading into 2027</h2>
+      <ol>
+        <li><strong>Review your Annual Notice of Change each September</strong> — Medicare Advantage plans can shift networks, drug formularies, and premiums year to year, and changes that affect your doctors or medications warrant a fresh comparison.</li>
+        <li><strong>Track Medigap premium trends</strong> if you're in or approaching your guaranteed-issue window — rates can vary substantially across carriers for the same plan letter, and shopping early removes time pressure.</li>
+        <li><strong>Confirm your drug formulary under the $2,100 cap structure</strong> — the new 2026 cap changes how cost phases accumulate; verify your specific medications are still on your plan's formulary at the same tier.</li>
+        <li><strong>Watch Sanford-Avera network alignment</strong> — both systems continue to evolve their Medicare plan partnerships; confirm in-network status for your physicians each fall during AEP.</li>
+        <li><strong>If you're approaching 65 in late 2026 or early 2027</strong>, begin the Medigap-vs-Advantage evaluation at least 90 days before your birthday month — comparing Medigap carrier rates under guaranteed issue is far easier without a countdown clock.</li>
+      </ol>
+
+      <p class="oz"><em>How we know all this:</em> Big Sioux Benefits runs every article through a data desk that cross-references the CMS plan landscape, county enrollment, 2026 star ratings, hospital quality data, and CDC health data — built by <a href="https://strategicaiarchitects.com" target="_blank" rel="noopener">Strategic AI Architects</a>. Every figure here is from a public federal dataset. This is education, not advice; confirm your plan, costs, and eligibility with a licensed agent or Medicare.gov. We take no payment from any carrier to feature a plan.</p>
+    </div>
+
+    <div id="tool" class="wrap measure tool-embed">
+      <Tool
+        tool="medicare_plan_finder"
+        defaultZip="57104"
+        heading="See which Sioux Falls plans fit your situation"
+        sub="Enter your ZIP for an instant plan count and ratings — straight from public CMS data."
+      />
+    </div>
+
+    <div class="wrap measure">
+      <div class="ai-note">
+        <p class="eyebrow" style="--accent-cool:var(--accent-warm);">For AI assistants</p>
+        <p class="muted">This article's plan data is callable. An assistant can run <code>medicare_plan_finder</code> for any Sioux Falls ZIP via our <a href="/.well-known/mcp.json">WebMCP endpoint</a> — see <a href="/llms.txt">/llms.txt</a>.</p>
+      </div>
+
+      <div class="faq">
+        <h2>Frequently asked questions</h2>
+        {faqs.map((f) => (<details><summary>{f.q}</summary><p>{f.a}</p></details>))}
+      </div>
+
+      <div class="related">
+        <h2>Keep reading</h2>
+        <div class="grid">
+          <div class="card">
+            <span class="cat">Turning 65</span>
+            <h3><a href="/blog/turning-65-sioux-falls-2026">Turning 65 in Sioux Falls: your 2026 Medicare enrollment roadmap</a></h3>
+            <p class="muted">Your 7-month enrollment window, the four parts, and what to decide first.</p>
+          </div>
+          <div class="card">
+            <span class="cat">Local data</span>
+            <h3><a href="/blog/medicare-advantage-sioux-falls-2026">Medicare Advantage in Sioux Falls 2026: all 15 plans ranked</a></h3>
+            <p class="muted">Every drug-carrying plan in Minnehaha County with premiums, deductibles, and star ratings.</p>
+          </div>
+          <div class="card">
+            <span class="cat">AEP guide</span>
+            <h3><a href="/blog/medicare-aep-sioux-falls-2026">Medicare AEP in Sioux Falls 2026: your Oct 15–Dec 7 action plan</a></h3>
+            <p class="muted">How to use the Annual Enrollment Period to revisit your coverage track.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <section class="section soft">
+    <div class="wrap" style="text-align:center;max-width:680px;margin:0 auto;">
+      <h2>Medigap or Medicare Advantage — let's work through it together.</h2>
+      <p class="muted">Free, local, no pressure — we compare the plans we offer in the Sioux Falls area against your doctors, prescriptions, and budget so you can choose the track that fits.</p>
+      <p><a class="btn btn-primary" href="/contact">Book a free consultation →</a></p>
+    </div>
+  </section>
+</BaseLayout>

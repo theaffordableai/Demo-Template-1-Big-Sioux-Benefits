@@ -1,0 +1,121 @@
+---
+// Rich, brain-backed data block for every location page.
+// Renders: Quick Facts · chronic-condition chart (CDC PLACES) · plan table with
+// CMS-star stability flags · carrier mix · hospitals (CMS stars) + provider
+// counts · sources. All values come from a typed county dataset (real brain data
+// — never invented). Pair with <Tool tool="medicare_plan_finder"> for the live tool.
+import { stabilityTier, SOURCES } from "../data/sioux-falls";
+
+interface Props { data: any; }
+const { data } = Astro.props as Props;
+const d = data;
+const maxHealth = Math.max(...d.health.map((h: any) => h.value));
+const sortedPlans = [...d.plans].sort((a, b) => (b.stars ?? 0) - (a.stars ?? 0) || a.premium - b.premium);
+const fmt = (n: number) => n.toLocaleString("en-US");
+---
+<!-- QUICK FACTS -->
+<section class="section soft">
+  <div class="wrap">
+    <p class="eyebrow">By the numbers · {d.county} County</p>
+    <h2>Quick facts for {d.county} County Medicare</h2>
+    <div class="qfacts">
+      <div class="qf"><span class="qn">{fmt(d.enrollment.primary)}</span><span class="ql">Medicare beneficiaries enrolled — {d.enrollment.note}</span></div>
+      <div class="qf"><span class="qn">{d.carriers.length}</span><span class="ql">insurance carriers competing in the metro</span></div>
+      <div class="qf"><span class="qn">{d.market.zeroPremiumCount}</span><span class="ql">$0-premium Medicare Advantage plans available</span></div>
+      <div class="qf"><span class="qn">{d.market.topRatedStars}★</span><span class="ql">highest CMS star rating offered locally</span></div>
+    </div>
+    <p class="src">Source: <a href={SOURCES.cmsEnrollment.url} target="_blank" rel="noopener">{SOURCES.cmsEnrollment.name}</a> &amp; <a href={SOURCES.cmsLandscape.url} target="_blank" rel="noopener">{SOURCES.cmsLandscape.name}</a>.</p>
+  </div>
+</section>
+
+<!-- CHRONIC CONDITIONS / HEALTH PROFILE -->
+<section class="section">
+  <div class="wrap">
+    <p class="eyebrow">Health profile · why coverage choice matters here</p>
+    <h2>Chronic conditions among {d.county} County adults</h2>
+    <p class="muted" style="max-width:62ch;">The right Medicare plan depends on your health. Here's how common key conditions are locally (CDC PLACES, model-based prevalence among {fmt(d.healthPopulation)} adults) — a reason to check each plan's drug formulary and specialist network before you enroll.</p>
+    <div class="hbars">
+      {d.health.map((h: any) => (
+        <div class="hbar">
+          <span class="hl">{h.label}</span>
+          <span class="htrack"><span class="hfill" style={`width:${Math.round((h.value / maxHealth) * 100)}%`}></span></span>
+          <span class="hv">{h.value}%</span>
+        </div>
+      ))}
+    </div>
+    <p class="src">Source: <a href={SOURCES.cdcPlaces.url} target="_blank" rel="noopener">{SOURCES.cdcPlaces.name}</a> (2023).</p>
+  </div>
+</section>
+
+<!-- PLAN TABLE + STABILITY -->
+<section class="section soft">
+  <div class="wrap">
+    <p class="eyebrow">Plans &amp; stability</p>
+    <h2>Medicare Advantage plans in {d.county} County (2026)</h2>
+    <p class="muted" style="max-width:62ch;">Representative MA-PD plans with drug coverage, by CMS star rating. "Stability" is each plan's published <strong>CMS Overall Star Rating</strong> — a federal quality measure, not our opinion. We never call a plan best or worst; we show the data and help you compare.</p>
+    <div class="tablewrap">
+      <table class="datatable">
+        <thead><tr><th>Plan</th><th>Carrier</th><th>Premium</th><th>Drug deductible</th><th>CMS rating</th><th>Stability</th></tr></thead>
+        <tbody>
+          {sortedPlans.map((p: any) => {
+            const t = stabilityTier(p.stars);
+            return (<tr>
+              <td>{p.name}</td>
+              <td class="muted">{p.carrier}</td>
+              <td>{p.premium === 0 ? "$0" : `$${p.premium}`}</td>
+              <td>${p.drugDeductible}</td>
+              <td>{p.stars ? `${p.stars}★` : "—"}</td>
+              <td><span class={`pill ${t.tone}`}>{t.label}</span></td>
+            </tr>);
+          })}
+        </tbody>
+      </table>
+    </div>
+    <p class="src">Source: <a href={SOURCES.cmsLandscape.url} target="_blank" rel="noopener">{SOURCES.cmsLandscape.name}</a>. Premiums shown are consolidated monthly premiums; full plans vary — compare with the tool below.</p>
+  </div>
+</section>
+
+<!-- CARRIERS + HOSPITALS + PROVIDERS -->
+<section class="section">
+  <div class="wrap">
+    <div class="grid cols-2" style="gap:clamp(1.6rem,4vw,3.4rem);">
+      <div>
+        <p class="eyebrow">Who covers you</p>
+        <h3>Carriers in the {d.county} metro</h3>
+        <ul class="clean">
+          {d.carriers.map((c: any) => (<li><strong>{c.name}</strong> — {c.plans} plan{c.plans === 1 ? "" : "s"} · <span class="muted">{c.note}</span></li>))}
+        </ul>
+      </div>
+      <div>
+        <p class="eyebrow">Where you get care</p>
+        <h3>Hospitals &amp; providers nearby</h3>
+        <ul class="clean">
+          {d.hospitals.map((h: any) => (<li><strong>{h.name}</strong> — <span class="muted">{h.city} · CMS {h.stars}★ hospital rating</span></li>))}
+        </ul>
+        <p class="muted" style="margin-top:1rem;">Plus roughly <strong>{d.providers.familyMedicine}</strong> family-medicine providers and <strong>{d.providers.pharmacies}</strong> pharmacies in the {d.cityName} area — check that yours are in-network before you enroll.</p>
+      </div>
+    </div>
+    <p class="src">Sources: <a href={SOURCES.cmsHospital.url} target="_blank" rel="noopener">{SOURCES.cmsHospital.name}</a> · <a href={SOURCES.nppes.url} target="_blank" rel="noopener">{SOURCES.nppes.name}</a>.</p>
+  </div>
+</section>
+
+<style>
+  .qfacts{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(1rem,2.5vw,2rem);margin:1.8rem 0 1rem}
+  .qf{display:flex;flex-direction:column;gap:.5rem;border-left:2px solid var(--accent-warm);padding-left:1.1rem}
+  .qf .qn{font-family:var(--font-display);font-weight:500;font-size:clamp(34px,4vw,52px);line-height:1;color:var(--accent-warm)}
+  .qf .ql{font-size:13px;color:var(--text-muted);line-height:1.4}
+  .hbars{display:flex;flex-direction:column;gap:.9rem;margin:1.8rem 0 1rem}
+  .hbar{display:grid;grid-template-columns:180px 1fr 52px;align-items:center;gap:1rem}
+  .hl{font-size:14px;font-weight:600}
+  .htrack{height:14px;background:var(--surface-card);border:1px solid var(--line);border-radius:99px;overflow:hidden}
+  .hfill{display:block;height:100%;background:linear-gradient(90deg,var(--accent-cool),var(--accent-warm));border-radius:99px}
+  .hv{font-family:var(--font-display);font-size:1.25rem;color:var(--accent-warm);text-align:right}
+  .tablewrap{overflow-x:auto;margin:1.6rem 0 1rem}
+  .pill{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:.25rem .6rem;border-radius:99px;white-space:nowrap}
+  .pill.strong{background:rgba(94,122,87,.16);color:var(--green-500,#5E7A57);border:1px solid rgba(94,122,87,.4)}
+  .pill.average{background:rgba(194,147,94,.14);color:var(--brown-600,#8A6440);border:1px solid rgba(194,147,94,.4)}
+  .pill.watch{background:rgba(180,83,59,.12);color:#b4533b;border:1px solid rgba(180,83,59,.35)}
+  ul.clean{list-style:none;padding:0;margin:1rem 0 0;display:flex;flex-direction:column;gap:.8rem}
+  ul.clean li{border-top:1px solid var(--line);padding-top:.8rem;font-size:15px;line-height:1.5}
+  @media(max-width:760px){.qfacts{grid-template-columns:1fr 1fr}.hbar{grid-template-columns:120px 1fr 44px;gap:.6rem}.hl{font-size:12.5px}}
+</style>

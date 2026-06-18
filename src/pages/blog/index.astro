@@ -1,0 +1,38 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { site } from "../../config/site.config";
+import { posts } from "../../lib/posts";
+const breadcrumbs = [{ name: "Home", url: site.domain }, { name: "Blog", url: `${site.domain}/blog` }];
+---
+<BaseLayout title="Blog & Resources — Big Sioux Benefits" description="Plain-English Medicare guidance and South Dakota plan data from your local Sioux Falls advisors." pageType="service" path="/blog" {breadcrumbs}>
+  <section class="section"><div class="wrap">
+    <p class="eyebrow">Newsroom</p>
+    <h1>Blog &amp; resources</h1>
+    <p style="font-size:var(--text-body-l);color:var(--text-muted);max-width:52ch;">Plain-English Medicare guidance and real South Dakota plan data — written for the people we serve, not for search engines.</p>
+    <div class="posts">
+      {posts.map((p) => (
+        <a class="post" href={`/blog/${p.slug}`}>
+          <div class="thumb"><img src={p.img} alt="" loading="lazy" /></div>
+          <div class="body">
+            <span class="date">{p.date}</span>
+            <h2>{p.title}</h2>
+            <p class="muted">{p.excerpt}</p>
+            <span class="read">Read →</span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div></section>
+  <style>
+    .posts{margin-top:2.5rem;display:flex;flex-direction:column}
+    .post{display:grid;grid-template-columns:300px 1fr;gap:2.5rem;align-items:center;padding:2.5rem 0;border-top:1px solid var(--line);color:inherit;transition:padding-left .4s}
+    .post:last-child{border-bottom:1px solid var(--line)}
+    .post:hover{padding-left:14px;opacity:1}
+    .thumb{overflow:hidden;border-radius:3px;border:1px solid var(--line-strong)}
+    .thumb img{display:block;width:100%;aspect-ratio:3/2;object-fit:cover}
+    .post .date{font:700 11px var(--font-sans);letter-spacing:.2em;text-transform:uppercase;color:var(--accent-cool)}
+    .post h2{font-family:var(--font-display);font-weight:500;font-size:clamp(28px,3vw,40px);margin:.5rem 0 .5rem;line-height:1.08}
+    .post .read{font:700 12px var(--font-sans);letter-spacing:.18em;text-transform:uppercase;color:var(--accent-warm)}
+    @media(max-width:720px){.post{grid-template-columns:1fr;gap:1.2rem}}
+  </style>
+</BaseLayout>

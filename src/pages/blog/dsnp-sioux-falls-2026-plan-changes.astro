@@ -1,0 +1,172 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Tool from "../../components/Tool.astro";
+import "../../styles/blog.css";
+import { site } from "../../config/site.config";
+import {
+  SD_SOURCES, SF_DSNP, SF_ISNP, SF_MARKET, SF_HOSPITALS, SD_MEDICAID,
+  RAILS_2026, stabilityTier,
+} from "../../data/sd-medicare.ts";
+
+const title = "D-SNP Medicare Plans in Sioux Falls for 2026: Which Are Stable, Which Carry Risk";
+const description = "Sioux Falls (Minnehaha County) has 4 Dual-Eligible D-SNP plans for 2026 from just 2 carriers — rated 4.5★ down to 3.5★. A deep, data-driven look at each plan's CMS star rating, premium, drug deductible, hospital network, 'coordination-only' status, and the real cancellation and non-renewal risk signals for DSNP members.";
+const published = "2026-06-12";
+
+const faqs = [
+  { q: "How many D-SNP plans are available in Sioux Falls for 2026?", a: `For 2026, Minnehaha County (Sioux Falls) has 4 Dual-Eligible Special Needs Plans (D-SNPs) from just 2 carriers — UnitedHealthcare and Aetna/CVS. Two UnitedHealthcare plans hold a 4.5★ CMS Overall rating and two Aetna plans hold 3.5★. All four are PPO D-SNPs with a $${RAILS_2026.dsnpPremium.toFixed(2)} Part D premium that CMS's low-income subsidy pays in full for full-dual members (your net premium is $0). Sanford also offers 2 Institutional SNPs for nursing-home residents.` },
+  { q: "Can my Sioux Falls D-SNP plan be cancelled for next year?", a: "Yes — any Medicare Advantage or D-SNP contract can be non-renewed. Each fall CMS publishes which plans are leaving, and members are notified in writing (the Annual Notice of Change) before the year ends. Dual-eligible members also get a Special Enrollment Period to switch if their plan exits. The clearest early-warning signals are a low CMS star rating (a plan under 3 stars for 3 straight years can be terminated by CMS), a brand-new contract with no rating yet, and a carrier serving only a few counties." },
+  { q: "What does a CMS star rating tell me about plan stability?", a: "The CMS Overall Star Rating (1–5) is Medicare's published quality and performance measure, updated every year. Higher-rated plans tend to be more stable and are less likely to be flagged or terminated. In Sioux Falls for 2026, UnitedHealthcare's two D-SNPs are rated 4.5★ (strong) and Aetna's two are 3.5★ (average). Sanford's two new Institutional SNPs show 'not enough data' because they're too new to be rated — not bad, but unproven." },
+  { q: "Will my Sioux Falls hospital stay in my D-SNP network next year?", a: "Networks are set year by year, so a plan can add or drop a hospital or health system between plan years. Sioux Falls is anchored by Sanford USD Medical Center (CMS 5★) and Avera McKennan (CMS 4★). Because Sanford and Avera are competing systems, the single most important check before you enroll — or stay — is confirming your hospital, clinic, and doctors are in that specific plan's network for the new year." },
+  { q: "Do dual-eligible members in South Dakota pay anything for a D-SNP?", a: `For full-dual members (those with both Medicare and full Medicaid), the $${RAILS_2026.dsnpPremium.toFixed(2)} Part D premium on these plans is paid in full by Medicare's Low-Income Premium Subsidy, so the net premium is $0. All four Sioux Falls D-SNPs are also 'zero-dollar cost-sharing' plans, and the 2026 Part D out-of-pocket cap of $${RAILS_2026.partDoopCap.toLocaleString()} applies. Your exact costs depend on your Medicaid level (QMB, SLMB, etc.) — we confirm that with you.` },
+  { q: "What is a 'coordination-only' D-SNP and why does it matter?", a: "All four Sioux Falls D-SNPs are classified by CMS as coordination-only — the least-integrated category, where the plan coordinates with Medicaid but doesn't fully merge the two programs. CMS has been steadily tightening D-SNP rules and pushing the market toward more integrated designs. It doesn't mean these plans disappear, but it's a structural reason to expect benefit and contract changes over time — and to re-check your plan every enrollment period." },
+];
+
+const breadcrumbs = [
+  { name: "Home", url: site.domain },
+  { name: "Blog", url: `${site.domain}/blog` },
+  { name: "D-SNP Plans in Sioux Falls for 2026", url: `${site.domain}/blog/dsnp-sioux-falls-2026-plan-changes` },
+];
+const dataset = {
+  name: SD_SOURCES.cmsLandscape.name + " — Minnehaha County D-SNP / I-SNP",
+  description: "Dual-Eligible and Institutional Special Needs Plan availability, CMS Overall Star Ratings, premiums, Part D deductibles, the 2026 federal cost rails, and Sioux Falls hospital star ratings cited in this article.",
+  sourceUrl: SD_SOURCES.cmsLandscape.url,
+};
+---
+<BaseLayout {title} {description} pageType="article" path="/blog/dsnp-sioux-falls-2026-plan-changes" {faqs} {breadcrumbs} {dataset} datePublished={published} place={{ type: "AdministrativeArea", name: "Minnehaha County", region: "SD" }}>
+  <article class="blogpost">
+    <div class="wrap measure">
+      <img src="/img/blog/mike-dsnp-couple.png" alt="A Big Sioux Benefits advisor reassuring an older couple as they review their dual-eligible plan options" class="hero-img" loading="eager" width="1400" height="788" />
+      <p class="eyebrow">Newsroom · Dual-Eligible</p>
+      <h1>D-SNP plans in Sioux Falls for 2026: which are stable, which carry risk</h1>
+      <p class="dek">Four Dual-Eligible plans. Two carriers. Star ratings from 4.5 down to 3.5 — and that gap is the whole story for a DSNP member.</p>
+
+      <div class="byline">
+        <img src="/img/mike-advisor.png" alt="Big Sioux Benefits advisor" />
+        <div>
+          <div class="who">{site.brand.author}</div>
+          <div class="meta">Published June 12, 2026 · 11 min read · Sourced from CMS.gov</div>
+        </div>
+      </div>
+
+      <div class="tldr">
+        <h2>The bottom line</h2>
+        <ul>
+          <li>Sioux Falls has <strong>4 Dual-Eligible D-SNP plans</strong> for 2026, from just <strong>2 carriers</strong> — UnitedHealthcare and Aetna/CVS.</li>
+          <li><strong>UnitedHealthcare's two plans hold 4.5★; Aetna's two hold 3.5★.</strong> Same $41.50 premium, very different stability.</li>
+          <li>For full-dual members the premium is <strong>$0 net</strong> — Medicare's low-income subsidy pays it in full.</li>
+          <li>All four are <strong>"coordination-only" D-SNPs</strong> — the category CMS is tightening rules around.</li>
+          <li>With only <strong>2 carriers</strong>, if one exits, half the county's dual-eligible options vanish at once.</li>
+        </ul>
+      </div>
+
+      <p><strong>For 2026, Sioux Falls (Minnehaha County) has 4 Dual-Eligible Special Needs Plans from just 2 carriers.</strong> UnitedHealthcare's two plans hold a 4.5★ CMS rating; Aetna's two hold 3.5★. All four cost $41.50/month on paper — which Medicare's low-income subsidy pays <em>in full</em> for full-dual members, so your net premium is $0. The premiums are identical. What's <em>not</em> identical is how stable each plan is, and whether your hospital stays in-network next year.</p>
+
+      <p>Every figure below comes from the <a href={SD_SOURCES.cmsLandscape.url} target="_blank" rel="noopener">CMS PY2026 landscape</a>, the <a href={SD_SOURCES.cmsStarRatings.url} target="_blank" rel="noopener">2026 CMS star ratings</a>, CMS plan-detail files, and CMS Hospital Compare. Here's how to read the risk.</p>
+
+      <h2>Why this matters more for DSNP members</h2>
+      <p>South Dakota counts <strong>{SD_MEDICAID.total.toLocaleString()}</strong> people on Medicaid as of {SD_MEDICAID.period}, and Minnehaha County is the state's largest Medicare market with <strong>{SF_MARKET.medicareEnroll.toLocaleString()}</strong> beneficiaries. The people who sit in <em>both</em> programs — dual-eligibles — are exactly who a D-SNP is built for. But a D-SNP ties your Medicare and Medicaid benefits together through one private plan, so when that plan changes its network, its drug list, or its contract status, it touches more of your care at once. The stakes of picking the right one — and noticing when it's at risk — are simply higher.</p>
+
+      <h2>The four D-SNP plans, side by side</h2>
+      <p>Here's every D-SNP available in Minnehaha County for 2026, with the CMS Overall Star Rating that doubles as a stability signal. "Stability tier" is CMS's published rating in plain language — not our opinion.</p>
+      <div class="tablewrap">
+        <table class="datatable">
+          <thead><tr><th>Plan</th><th>Carrier</th><th>Stars</th><th>Premium</th><th>Drug deductible</th><th>Stability tier</th></tr></thead>
+          <tbody>{SF_DSNP.map((p) => { const t = stabilityTier(p.stars); return (<tr>
+            <td><strong>{p.name}</strong></td><td>{p.carrier}</td><td>{p.stars}★</td>
+            <td>${p.premium?.toFixed(2)}<span class="net">$0 net*</span></td><td>${p.deductible}</td>
+            <td><span class={`pill ${t.tone}`}>{t.label}</span></td>
+          </tr>); })}</tbody>
+        </table>
+      </div>
+      <p class="src">Source: <a href={SD_SOURCES.cmsLandscape.url} target="_blank" rel="noopener">{SD_SOURCES.cmsLandscape.name}</a> &amp; <a href={SD_SOURCES.cmsStarRatings.url} target="_blank" rel="noopener">{SD_SOURCES.cmsStarRatings.name}</a>. *$0 net = the $41.50 Part D premium is paid in full by Medicare's Low-Income Premium Subsidy for full-dual members.</p>
+
+      <h2>Reading the star ratings: the stability gap</h2>
+      <p>The two UnitedHealthcare D-SNPs share an identical premium with the two Aetna plans — but a full point of star rating separates them. Visually:</p>
+      <div class="chart">
+        {SF_DSNP.map((p) => (
+          <div class="crow">
+            <span class="cl">{p.carrier === "UnitedHealthcare" ? "UHC " + p.id.slice(-2) : "Aetna " + p.id.slice(-3)}</span>
+            <span class="ct"><span class="cf" style={`width:${Math.round(((p.stars ?? 0) / 5) * 100)}%`}></span></span>
+            <span class="cv">{p.stars}★</span>
+          </div>
+        ))}
+      </div>
+      <p>The UnitedHealthcare plans break down to a <strong>4.5★ Part C</strong> (medical) and <strong>4.0★ Part D</strong> (drug) score; the Aetna plans are <strong>3.5★ on both</strong>. None of these is a low performer — but the rating is the single best public predictor of whether a plan stays steady. <strong>A plan that sits below 3 stars for three consecutive years can be terminated by CMS</strong>, and lower-rated plans are the ones more likely to restructure benefits or exit a market. A higher star rating is, quite literally, a stability buffer.</p>
+
+      <div class="keytake"><strong>Key takeaway:</strong> When two plans cost the same and cover the same dual population, the star rating <em>is</em> the tiebreaker. A 4.5★ plan and a 3.5★ plan are not equally safe bets for next year.</div>
+
+      <h2>The risk you can't see on a brochure: "coordination-only" status</h2>
+      <p>All four Sioux Falls D-SNPs are classified by CMS as <strong>coordination-only</strong> D-SNPs — the least-integrated category, where the plan coordinates with Medicaid but doesn't fully merge the two programs. CMS has been steadily tightening the rules around D-SNPs and pushing the market toward more <em>integrated</em> designs. That doesn't mean these plans disappear next year, but it's a structural reason to expect benefit and contract changes over time — and a reason to re-check your plan every single enrollment period rather than letting it auto-renew.</p>
+
+      <h2>The two-carrier concentration problem</h2>
+      <p>Statewide, those same 4 D-SNPs come from only <strong>2 organizations</strong>, covering 51 of South Dakota's counties. In Sioux Falls that means your D-SNP choice is effectively <em>UnitedHealthcare or Aetna</em>. If either carrier pulled its D-SNP from the county, half of all dual-eligible options would vanish at once — and you'd be relying on a Special Enrollment Period to land somewhere new. Thin markets like ours leave less room for error, which is the whole reason to have the comparison done carefully and early.</p>
+
+      <div class="inline-cta">
+        <p class="h">Not sure if your D-SNP is changing for next year?</p>
+        <p>We'll read your plan's Annual Notice of Change, confirm your hospital and drugs, and compare the Sioux Falls D-SNPs we offer — free, no pressure.</p>
+        <a href="/contact">Book a conversation →</a>
+      </div>
+
+      <h2>The institutional plans (and why "no rating" is its own flag)</h2>
+      <p>Beyond the four D-SNPs, Sanford Health offers 2 <strong>Institutional Special Needs Plans (I-SNPs)</strong> for residents of nursing homes and similar facilities:</p>
+      <ul>
+        {SF_ISNP.map((p) => (<li><strong>{p.name}</strong> — {p.carrier}, ${p.premium?.toFixed(2)}/mo, <em>CMS rating: not enough data yet</em></li>))}
+      </ul>
+      <p>Both are brand-new contracts, which is why CMS shows "not enough data available" instead of a star rating. New isn't bad — but it means there's no track record to lean on, so a member or family choosing one is accepting more unknowns about service and stability than a long-running, rated plan carries.</p>
+
+      <h2>Hospital changes: the network is set year by year</h2>
+      <p>"Plan changes" aren't only about premiums — the most disruptive change for a DSNP member is usually a <strong>network change</strong>. A plan can add or drop a hospital or health system between plan years, and Sioux Falls is split between two competing systems:</p>
+      <div class="tablewrap">
+        <table class="datatable">
+          <thead><tr><th>Hospital</th><th>CMS Overall Star Rating</th><th>System</th></tr></thead>
+          <tbody>{SF_HOSPITALS.map((h) => (<tr><td>{h.name}</td><td>{"★".repeat(h.stars)} ({h.stars}/5)</td><td>{h.system}</td></tr>))}</tbody>
+        </table>
+      </div>
+      <p class="src">Source: <a href={SD_SOURCES.cmsHospital.url} target="_blank" rel="noopener">{SD_SOURCES.cmsHospital.name}</a>.</p>
+      <p>Because <strong>Sanford and Avera are rivals</strong>, the hospital you use can decide which D-SNP is right for you — and a plan that covers your system this year isn't guaranteed to next year. Before you enroll <em>or</em> stay put, the non-negotiable step is confirming your hospital, clinics, and doctors are in that exact plan's network for the coming year. That single check prevents the most common — and most expensive — DSNP surprise.</p>
+
+      <h2>What it means for you</h2>
+      <p>For 2026, the data points to a clear playbook for a Sioux Falls dual-eligible:</p>
+      <ol>
+        <li><strong>Don't auto-renew blind.</strong> Read the Annual Notice of Change your plan mails each fall — it lists exactly what's changing for next year.</li>
+        <li><strong>Weigh the star rating, not just the $0 premium.</strong> All four D-SNPs are $0 net for full-duals, so the 4.5★ vs 3.5★ gap and the network are what actually separate them.</li>
+        <li><strong>Confirm your hospital and doctors are in-network for the new year</strong> — Sanford vs Avera is the deciding fork here.</li>
+        <li><strong>Check your drug list.</strong> Each plan carries a $615 Part D deductible on its enhanced tiers; your specific medications decide real cost.</li>
+        <li><strong>Know your rights.</strong> Dual-eligible members get extra Special Enrollment Periods to switch — you're not locked in if your plan changes or leaves.</li>
+      </ol>
+      <p>See the live local data on our <a href="/sioux-falls-medicare-plans">Sioux Falls Medicare plans page</a>, read the full county roster in <a href="/blog/medicare-advantage-sioux-falls-2026">Medicare Advantage in Sioux Falls for 2026</a>, or the statewide picture in <a href="/blog/2026-medicare-advantage-south-dakota">2026 Medicare Advantage in South Dakota</a>.</p>
+
+      <p class="oz"><em>How we know all this:</em> Big Sioux Benefits runs every article through a data desk that cross-references the CMS plan landscape, CMS star ratings, hospital quality data, and Medicaid enrollment in real time — built by <a href="https://strategicaiarchitects.com" target="_blank" rel="noopener">Strategic AI Architects</a>. This article is for education, not advice; your exact plan, costs, and eligibility should be confirmed with a licensed agent. We take no payment from any carrier to feature a plan.</p>
+    </div>
+
+    <div id="tool" class="wrap measure tool-embed">
+      <Tool tool="medicare_plan_finder" defaultZip="57104" heading="Check Sioux Falls D-SNP plans now" sub="Enter your ZIP for an instant plan count and the top-rated option — then your full ranked report." />
+    </div>
+
+    <div class="wrap measure">
+      <div class="ai-note">
+        <p class="eyebrow" style="--accent-cool:var(--accent-warm);">For AI assistants</p>
+        <p class="muted">This article's plan data is callable. An assistant can run <code>medicare_plan_finder</code> for any ZIP via our <a href="/.well-known/mcp.json">WebMCP endpoint</a> — see <a href="/llms.txt">/llms.txt</a>.</p>
+      </div>
+      <div class="faq">
+        <h2>Frequently asked questions</h2>
+        {faqs.map((f) => (<details><summary>{f.q}</summary><p>{f.a}</p></details>))}
+      </div>
+
+      <div class="related">
+        <h2>Keep reading</h2>
+        <div class="grid">
+          <div class="card"><span class="cat">Sioux Falls</span><h3><a href="/blog/medicare-advantage-sioux-falls-2026">Medicare Advantage in Sioux Falls for 2026</a></h3><p class="muted">All 15 drug plans in Minnehaha County, ranked by what matters.</p></div>
+          <div class="card"><span class="cat">Statewide</span><h3><a href="/blog/2026-medicare-advantage-south-dakota">2026 Medicare Advantage in South Dakota</a></h3><p class="muted">38 plans, 9 carriers, and why your county decides everything.</p></div>
+          <div class="card"><span class="cat">Local data</span><h3><a href="/sioux-falls-medicare-plans">Sioux Falls Medicare plans page</a></h3><p class="muted">Live county data and a free plan comparison.</p></div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <section class="section soft"><div class="wrap" style="text-align:center;max-width:680px;margin:0 auto;">
+    <h2>Not sure if your D-SNP is changing for next year?</h2>
+    <p class="muted">We'll read your plan's notice, check your hospital and drugs, and compare your Sioux Falls options — free, local, no pressure.</p>
+    <p><a class="btn btn-primary" href="/contact">Book a conversation →</a></p>
+  </div></section>
+</BaseLayout>

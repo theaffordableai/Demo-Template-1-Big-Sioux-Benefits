@@ -1,0 +1,36 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { services, type Entry } from "../../lib/content";
+import { site } from "../../config/site.config";
+
+export function getStaticPaths() {
+  return services.map((e) => ({ params: { slug: e.slug }, props: { entry: e } }));
+}
+const { entry } = Astro.props as { entry: Entry };
+const breadcrumbs = [
+  { name: "Home", url: site.domain },
+  { name: "Services", url: `${site.domain}/services` },
+  { name: entry.h1, url: `${site.domain}/services/${entry.slug}` },
+];
+---
+<BaseLayout title={entry.title} description={entry.summary} pageType="service" path={`/services/${entry.slug}`} faqs={entry.faqs} {breadcrumbs}>
+  <section class="section"><div class="wrap" style="max-width:820px;">
+    <p class="eyebrow">Our Services</p>
+    <h1>{entry.h1}</h1>
+    <p style="font-size:1.18rem;">{entry.intro}</p>
+    <p><a class="btn btn-primary" href="/contact">Get started — free →</a></p>
+  </div></section>
+  {entry.sections.length > 0 && (
+    <section class="section soft"><div class="wrap" style="max-width:820px;">
+      {entry.sections.map((s) => (<div style="margin-bottom:1.5rem;"><h2>{s.h}</h2><p>{s.body}</p></div>))}
+    </div></section>
+  )}
+  <section class="section faq"><div class="wrap" style="max-width:820px;">
+    <h2>Questions, answered</h2>
+    {entry.faqs.map((f) => (<details><summary>{f.q}</summary><p>{f.a}</p></details>))}
+  </div></section>
+  <section class="section soft"><div class="wrap" style="text-align:center;">
+    <h2>Ready to get help?</h2><p class="muted">Free, local, no pressure.</p>
+    <p><a class="btn btn-primary" href="/contact">Book a free consultation →</a></p>
+  </div></section>
+</BaseLayout>

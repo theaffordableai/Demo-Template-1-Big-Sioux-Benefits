@@ -1,0 +1,274 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Tool from "../../components/Tool.astro";
+import "../../styles/blog.css";
+import { site } from "../../config/site.config";
+import {
+  SD_SOURCES, SF_MAPD, SF_DSNP, SF_MARKET, SF_HOSPITALS,
+  SF_HEALTH, RAILS_2026, SD_MARKET, SD_ENROLLMENT,
+  stabilityTier,
+} from "../../data/sd-medicare.ts";
+
+const title = "Medicare Annual Enrollment Period in Sioux Falls 2026: Your Oct 15–Dec 7 Action Plan";
+const description = "The Medicare Annual Enrollment Period (AEP) runs Oct 15–Dec 7. Here's what Sioux Falls-area beneficiaries need to review: the 11 local Medicare Advantage plans, the 2026 Part D $2,100 out-of-pocket cap, Sanford-vs-Avera network changes, and how to read your Annual Notice of Change — all from real CMS data.";
+const published = "2026-06-16";
+
+const faqs = [
+  {
+    q: "When is the Medicare Annual Enrollment Period in 2026?",
+    a: "The Annual Enrollment Period (AEP) runs October 15 through December 7 every year. Plan changes made during AEP take effect January 1 of the following year. If you miss AEP, the Medicare Advantage Open Enrollment Period (Jan 1–Mar 31) allows one plan switch, but you cannot add a Part D plan or move from Original Medicare to Medicare Advantage during that window."
+  },
+  {
+    q: "Can I switch from Medicare Advantage to Original Medicare during AEP?",
+    a: "Yes — AEP is one of the few times you can drop a Medicare Advantage plan and return to Original Medicare (Parts A and B). If you do, you may want a Medigap supplement, but be aware: outside your original 6-month Medigap open-enrollment window, insurers in South Dakota can use medical underwriting, which means coverage is not guaranteed. Review your options carefully before disenrolling from Advantage."
+  },
+  {
+    q: "How many Medicare Advantage plans are available in Sioux Falls for 2026?",
+    a: `Minnehaha County (Sioux Falls) has ${SF_MARKET.partCplans} Medicare Advantage plans for 2026 — 5 standard PPOs open to anyone, 4 Dual-Eligible Special Needs Plans (D-SNP) for people with both Medicare and Medicaid, and 2 Institutional Special Needs Plans for nursing-home residents. Two of the standard PPOs carry $0 monthly premium. ${site.brand.name} compares the plans we offer in the area against your specific doctors, drugs, and budget.`
+  },
+  {
+    q: "What is the 2026 Part D out-of-pocket cap?",
+    a: `Starting in 2026, federal law caps your annual out-of-pocket spending on Medicare Part D prescription drugs at $${RAILS_2026.partDoopCap.toLocaleString()}. This is a major consumer protection: no matter how expensive your medications, your yearly drug cost cannot exceed that ceiling. The standard Part D deductible is also capped at $${RAILS_2026.partDdeductibleMax}. During AEP, compare each plan's formulary tier for your specific drugs — the cap means you need to focus on which tier your drugs fall under, not just the monthly premium.`
+  },
+  {
+    q: "What should I look for in my Annual Notice of Change before AEP?",
+    a: "Your Annual Notice of Change (ANOC) arrives by Sept 30 and lists every plan change taking effect January 1. Focus on: (1) any premium increase; (2) changes to your drug's formulary tier — a drug moving from Tier 2 to Tier 4 can cost hundreds more per year; (3) network changes — confirm your Sanford or Avera doctors are still in-network; (4) out-of-pocket maximum changes. If any of these changed unfavorably, AEP is your window to shop."
+  },
+  {
+    q: "Does Medicare AEP apply to Medigap (Medicare Supplement) plans?",
+    a: "No — Medigap plans are not tied to AEP. You can apply for a Medigap supplement anytime, but South Dakota insurers can use medical underwriting outside your initial 6-month Medigap open-enrollment window (which starts when you're 65+ and enrolled in Part B). That window is the only time you're guaranteed acceptance at standard rates. AEP is specifically for Medicare Advantage and standalone Part D plans."
+  },
+];
+
+const breadcrumbs = [
+  { name: "Home", url: site.domain },
+  { name: "Blog", url: `${site.domain}/blog` },
+  { name: "Medicare AEP Sioux Falls 2026", url: `${site.domain}/blog/medicare-aep-sioux-falls-2026` },
+];
+
+const dataset = {
+  name: "CMS PY2026 Medicare landscape & enrollment — Minnehaha County, SD (AEP guide)",
+  description: "2026 Medicare Advantage plan roster, premiums, deductibles, and CMS star ratings for Minnehaha County (Sioux Falls, SD); 2026 Part D out-of-pocket cap and deductible ceiling; CMS Hospital Compare ratings for Sioux Falls; CDC PLACES 2023 local health data. Used to guide AEP plan comparison decisions.",
+  sourceUrl: SD_SOURCES.cmsLandscape.url,
+};
+
+// AEP vs OEP vs SEP comparison rows
+const aepPeriods = [
+  { period: "Annual Enrollment Period (AEP)", dates: "Oct 15 – Dec 7", canDo: "Switch MA plans; switch Part D plans; join or drop MA; return to Original Medicare", effective: "Jan 1 (next year)", whoUses: "Everyone on Medicare" },
+  { period: "MA Open Enrollment Period (OEP)", dates: "Jan 1 – Mar 31", canDo: "One MA-to-MA switch; drop MA and return to Original Medicare + Part D", effective: "First of the month after enrollment", whoUses: "People already in a MA plan" },
+  { period: "Special Enrollment Period (SEP)", dates: "Varies by trigger", canDo: "Switch plans outside AEP if you move, lose coverage, qualify for Medicaid, or another qualifying event", effective: "Varies", whoUses: "Those with a qualifying life event" },
+];
+
+// 2026 Part D cost rails table
+const partDRails = [
+  { item: "Annual out-of-pocket cap (new for 2026)", value: `$${RAILS_2026.partDoopCap.toLocaleString()}`, note: "Hard ceiling on yearly drug spending" },
+  { item: "Standard Part D deductible ceiling", value: `$${RAILS_2026.partDdeductibleMax}`, note: "Maximum a plan may charge before coverage starts" },
+  { item: "D-SNP consolidated premium (SD)", value: `$${RAILS_2026.dsnpPremium.toFixed(2)}`, note: "Fully covered by LIS for full-dual beneficiaries" },
+];
+
+function prem(p: number | null) { return p == null ? "—" : p === 0 ? "$0" : `$${p.toFixed(2)}`; }
+function star(s: number | null) { return s == null ? "—" : `${s}★`; }
+---
+<BaseLayout {title} {description} pageType="article" path="/blog/medicare-aep-sioux-falls-2026" {faqs} {breadcrumbs} {dataset} datePublished={published} place={{ type: "AdministrativeArea", name: "Minnehaha County", region: "SD" }}>
+  <article class="blogpost">
+    <div class="wrap measure">
+      <img src="/img/blog/mike-aep-client-review.png" alt="Big Sioux Benefits advisor helping a retired couple review Medicare plan options during the Annual Enrollment Period at an office desk" class="hero-img" loading="eager" width="1376" height="768" />
+      <p class="eyebrow">Newsroom · Sioux Falls</p>
+      <h1>Medicare Annual Enrollment Period in Sioux Falls 2026: your Oct 15–Dec 7 action plan</h1>
+      <p class="dek">AEP is the one window each year when you can rethink your whole Medicare picture — here's what to review, what changed in 2026, and what the Sioux Falls plan landscape actually looks like.</p>
+
+      <div class="byline">
+        <img src="/img/mike-advisor.png" alt="Big Sioux Benefits advisor" />
+        <div>
+          <div class="who">{site.brand.author}</div>
+          <div class="meta">Published June 16, 2026 · 10 min read · Sourced from CMS.gov</div>
+        </div>
+      </div>
+
+      <div class="tldr">
+        <h2>The bottom line</h2>
+        <ul>
+          <li>The <strong>Annual Enrollment Period runs October 15 – December 7</strong> every year; changes take effect <strong>January 1</strong>.</li>
+          <li>Sioux Falls (Minnehaha County) has <strong>{SF_MARKET.partCplans} Medicare Advantage plans</strong> in 2026 — <strong>{SF_MARKET.zeroPremiumMAPD} at $0 premium</strong> — across {SF_MARKET.carriersServing} carriers.</li>
+          <li>A major 2026 win: the <strong>Part D out-of-pocket maximum is now capped at ${RAILS_2026.partDoopCap.toLocaleString()}</strong> — review your drug plan to see if you're getting full benefit of that ceiling.</li>
+          <li>Your <strong>Annual Notice of Change (ANOC)</strong> arrives by Sept 30 and is the first document to read — a formulary tier change can cost more than any premium increase.</li>
+          <li>The <strong>Sanford-vs-Avera network question</strong> still drives most plan choices here — always confirm your doctors for the plan year before you switch.</li>
+        </ul>
+      </div>
+
+      <p><strong>The Medicare Annual Enrollment Period (AEP), which runs October 15 through December 7 each year, is the one time every Medicare beneficiary can freely switch plans — and in 2026, there are real reasons to look.</strong> The Part D out-of-pocket cap is new. Plan networks and formularies shift every year. And in Sioux Falls, the Sanford-vs-Avera network dynamic means the wrong plan can put your own doctors out of reach.</p>
+
+      <p>Every figure below comes from public federal data: the <a href={SD_SOURCES.cmsLandscape.url} target="_blank" rel="noopener">CMS PY2026 plan landscape</a>, <a href={SD_SOURCES.cmsStarRatings.url} target="_blank" rel="noopener">CMS star ratings</a>, <a href={SD_SOURCES.cmsHospital.url} target="_blank" rel="noopener">CMS Hospital Compare</a>, and <a href={SD_SOURCES.cdcPlaces.url} target="_blank" rel="noopener">CDC PLACES</a> local health data. No invented numbers.</p>
+
+      <h2>What AEP is — and what it isn't</h2>
+      <p>Medicare has several enrollment windows, and they're not interchangeable. AEP is the most powerful, but it has a twin — the Open Enrollment Period — and a wildcard: Special Enrollment Periods triggered by life events.</p>
+      <div class="tablewrap">
+        <table class="datatable">
+          <thead><tr><th>Period</th><th>Dates</th><th>What you can do</th><th>Effective date</th><th>Who it applies to</th></tr></thead>
+          <tbody>{aepPeriods.map((r) => (
+            <tr>
+              <td><strong>{r.period}</strong></td>
+              <td>{r.dates}</td>
+              <td>{r.canDo}</td>
+              <td>{r.effective}</td>
+              <td>{r.whoUses}</td>
+            </tr>
+          ))}</tbody>
+        </table>
+      </div>
+      <p class="src">Source: CMS Medicare enrollment rules; <a href={SD_SOURCES.cmsLandscape.url} target="_blank" rel="noopener">{SD_SOURCES.cmsLandscape.name}</a>.</p>
+      <p>The key distinction: AEP lets you make <em>any</em> coverage change from scratch. OEP (Jan 1–Mar 31) allows only one MA-to-MA switch or a drop back to Original Medicare — you cannot use OEP to <em>add</em> a stand-alone Part D plan if you're in Original Medicare. And OEP doesn't reset your Medigap rights: outside your original 6-month guarantee-issue window, South Dakota insurers can require medical underwriting for a supplement.</p>
+
+      <div class="keytake">
+        <p><strong>Key insight:</strong> If you're in Original Medicare with no drug coverage and AEP passes, you're locked out until next AEP — and a Part D late-enrollment penalty accrues for every month you go without creditable drug coverage after you're first eligible.</p>
+      </div>
+
+      <h2>Who should actively shop during AEP</h2>
+      <p>You don't have to switch every year — but you should <em>look</em> every year. The following situations are strong signals to review your plan against what's available:</p>
+      <ul>
+        <li><strong>Your ANOC shows a formulary change.</strong> If a drug moved to a higher tier or was removed, your out-of-pocket drug cost may have jumped even if the premium stayed flat.</li>
+        <li><strong>Your doctor changed affiliation.</strong> In Sioux Falls, physicians sometimes move between the Sanford and Avera systems — a change that can flip your in-network status overnight.</li>
+        <li><strong>Your plan's star rating dropped.</strong> A plan that dips below 3 stars for multiple consecutive years can be terminated by CMS. Checking the rating each fall is your early-warning system.</li>
+        <li><strong>You're newly eligible for Medicaid.</strong> If your income dropped and you now qualify for both Medicare and Medicaid (dual-eligible), a D-SNP plan may provide far richer benefits — including $0 cost-sharing — that a standard MA plan won't match.</li>
+        <li><strong>You want to switch from Advantage to Original Medicare.</strong> AEP is the most reliable window. Remember: Medigap may require medical underwriting if you're past your original open-enrollment period.</li>
+      </ul>
+
+      <h2>The 2026 Sioux Falls plan landscape you're choosing from</h2>
+      <p>Minnehaha County is South Dakota's largest Medicare market, with <strong>{SF_MARKET.medicareEnroll.toLocaleString()} enrolled beneficiaries</strong> — more than any other county in the state. Despite that size, the plan menu is deliberately focused: no HMO-style gatekeeping, all standard plans are PPOs, and two plans carry $0 monthly premiums. Here are the 5 standard Medicare Advantage PPOs open to any beneficiary during AEP:</p>
+      <div class="tablewrap">
+        <table class="datatable">
+          <thead><tr><th>Plan name</th><th>Carrier</th><th>Monthly premium</th><th>Drug deductible</th><th>CMS stars</th><th>Stability</th></tr></thead>
+          <tbody>{SF_MAPD.map((p) => {
+            const t = stabilityTier(p.stars);
+            return (
+              <tr>
+                <td><strong>{p.name}</strong></td>
+                <td>{p.carrier}</td>
+                <td>{prem(p.premium)}</td>
+                <td>${p.deductible}</td>
+                <td>{star(p.stars)}</td>
+                <td><span class={`pill ${t.tone}`}>{t.label}</span></td>
+              </tr>
+            );
+          })}</tbody>
+        </table>
+      </div>
+      <p class="src">Source: <a href={SD_SOURCES.cmsLandscape.url} target="_blank" rel="noopener">{SD_SOURCES.cmsLandscape.name}</a> &amp; <a href={SD_SOURCES.cmsStarRatings.url} target="_blank" rel="noopener">{SD_SOURCES.cmsStarRatings.name}</a>, Minnehaha County, 2026.</p>
+      <p>All five plans hold a 3.5★ CMS rating — the <em>average</em> tier. None are flagged for termination risk, but none have earned the 4★+ that triggers CMS quality bonuses. For AEP shoppers, this means the comparison comes down to network fit, drug formulary, and the out-of-pocket maximum rather than a star-rating standout.</p>
+
+      <div class="stats">
+        <div class="stat"><div class="n">{SF_MARKET.partCplans}</div><div class="l">Medicare Advantage plans in Minnehaha County 2026</div></div>
+        <div class="stat"><div class="n">{SF_MARKET.zeroPremiumMAPD}</div><div class="l">$0-premium standard PPOs available during AEP</div></div>
+        <div class="stat"><div class="n">{SF_MARKET.carriersServing}</div><div class="l">Carriers serving Sioux Falls in 2026</div></div>
+      </div>
+
+      <div class="inline-cta">
+        <p class="h">Not sure if you should switch during AEP?</p>
+        <p>Bring your current plan, your drug list, and your doctors — we'll compare the plans we offer in the Sioux Falls area against your situation, at no cost.</p>
+        <a href="/contact">Start your AEP review →</a>
+      </div>
+
+      <h2>The 2026 Part D cap: why drug coverage matters more now</h2>
+      <p>The biggest structural change for 2026 is a federal cap on out-of-pocket prescription drug spending under Part D. Once your yearly drug costs reach the ceiling, your plan pays 100% for the rest of the year.</p>
+      <div class="tablewrap">
+        <table class="datatable">
+          <thead><tr><th>2026 Part D cost rail</th><th>Amount</th><th>What it means for you</th></tr></thead>
+          <tbody>{partDRails.map((r) => (
+            <tr>
+              <td><strong>{r.item}</strong></td>
+              <td><strong>{r.value}</strong></td>
+              <td>{r.note}</td>
+            </tr>
+          ))}</tbody>
+        </table>
+      </div>
+      <p class="src">Source: CMS 2026 Part D benefit parameters; <a href={SD_SOURCES.cmsLandscape.url} target="_blank" rel="noopener">{SD_SOURCES.cmsLandscape.name}</a>.</p>
+      <p>Before 2026, beneficiaries with high drug costs could face an open-ended "coverage gap" (the donut hole). That structure is gone. But the cap only protects you if you're enrolled in a creditable Part D plan in the first place — either built into a Medicare Advantage plan or as a stand-alone PDP alongside Original Medicare. If you have no creditable drug coverage, the cap does nothing for you.</p>
+      <p>During AEP, run your specific medication list through each plan's formulary: what tier is each drug on, what's the copay before and after the deductible? The $2,100 ceiling changes the math — a plan with a higher premium but favorable tier placement for your most expensive drug can cost far less over the full year than a $0-premium plan that places the same drug at Tier 4.</p>
+
+      <h2>The Sanford-vs-Avera network question at AEP time</h2>
+      <p>Every fall in Sioux Falls, the network question comes back. The city's care runs through two competing health systems — Sanford Health and Avera Health — and a plan's provider network is the bridge between you and your doctors.</p>
+      <div class="tablewrap">
+        <table class="datatable">
+          <thead><tr><th>Hospital</th><th>System</th><th>CMS Overall Star Rating</th></tr></thead>
+          <tbody>{SF_HOSPITALS.map((h) => (
+            <tr>
+              <td><strong>{h.name}</strong></td>
+              <td>{h.system}</td>
+              <td>{"★".repeat(h.stars)} ({h.stars}/5)</td>
+            </tr>
+          ))}</tbody>
+        </table>
+      </div>
+      <p class="src">Source: <a href={SD_SOURCES.cmsHospital.url} target="_blank" rel="noopener">{SD_SOURCES.cmsHospital.name}</a>.</p>
+      <p>Sanford USD Medical Center holds a <strong>5-star CMS overall rating</strong>; Avera McKennan carries a <strong>4-star</strong>. Both are strong. The wrinkle: Sanford backs its own Medicare plans through the Align brand (Align ChoicePlus and ChoiceElite), so those plans naturally favor the Sanford network. If your PCP and specialists are on the Avera side, that matters — out-of-network PPO costs are higher, and some services may require a prior authorization you don't expect.</p>
+      <p>The actionable step: <strong>before AEP ends, look up your specific doctors on each plan's 2026 online directory</strong> — not last year's. Network changes don't require advance notice to you beyond the ANOC, and a physician who was in-network last year may not be in 2027.</p>
+
+      <h2>How to read your Annual Notice of Change</h2>
+      <p>Your insurer must mail an ANOC by September 30 each year. It's the most important piece of pre-AEP mail you'll receive. Here's what to look for:</p>
+      <ol>
+        <li><strong>Premium and cost-sharing changes.</strong> Page 1 usually shows the new monthly premium, deductible, and copay structure. A small premium increase can be swamped by a copay change if you use specialist care frequently.</li>
+        <li><strong>Formulary (drug list) changes.</strong> Scan for any of your drugs. If a medication moved from Tier 2 to Tier 3 or Tier 4, your annual cost for that drug may have increased by hundreds of dollars even if nothing else changed.</li>
+        <li><strong>Network changes.</strong> The ANOC will note if major provider groups or hospitals left or joined the network. For Sioux Falls, any change to Sanford or Avera participation is the headline item.</li>
+        <li><strong>Out-of-pocket maximum changes.</strong> With the 2026 Part D cap at ${RAILS_2026.partDoopCap.toLocaleString()}, confirm whether your plan's combined medical + drug out-of-pocket maximum changed year over year.</li>
+        <li><strong>Extra-benefit changes.</strong> Dental, vision, and hearing coverage is not standardized across MA plans — it can be reduced or eliminated each year. If you rely on any supplemental benefit, verify it's still in the 2027 plan year.</li>
+      </ol>
+
+      <h2>Local health context: what Sioux Falls AEP shoppers are managing</h2>
+      <p>Plan choice isn't abstract — it's personal. CDC data on Minnehaha County adults shows the chronic-condition load that shapes which plan benefits matter most here:</p>
+      <div class="chart">
+        {SF_HEALTH.slice(0, 5).map((h) => (
+          <div class="crow">
+            <span class="cl">{h.label}</span>
+            <span class="ct"><span class="cf" style={`width:${Math.round((h.value / 40) * 100)}%`}></span></span>
+            <span class="cv">{h.value}%</span>
+          </div>
+        ))}
+      </div>
+      <p class="src">Source: <a href={SD_SOURCES.cdcPlaces.url} target="_blank" rel="noopener">{SD_SOURCES.cdcPlaces.name}</a> (2023), Minnehaha County adults.</p>
+      <p>Nearly a third of county adults manage high blood pressure; more than one in ten has diagnosed diabetes; over a fifth has arthritis. If you're managing one of these conditions, the plan's specialist network, formulary tiers for maintenance medications, and prior-authorization requirements deserve at least as much attention as the monthly premium. AEP is the time to check all three.</p>
+
+      <h2>What to watch before and during AEP 2026</h2>
+      <ol>
+        <li><strong>Read your ANOC when it arrives in late September</strong> — look specifically at drug tiers and the out-of-pocket maximum before you decide whether to shop.</li>
+        <li><strong>Verify your doctors' network status for 2027</strong> using each plan's online provider directory, not last year's list.</li>
+        <li><strong>Run your full drug list through the formulary tool</strong> at Medicare.gov — the $2,100 Part D cap changes the annual-cost math for people with expensive medications.</li>
+        <li><strong>Check each plan's CMS star rating</strong> (published each fall before AEP) — a plan below 3.5★ two years running is on CMS's watch list; below 3.0★ three years running, it can be terminated.</li>
+        <li><strong>Don't wait until December 7</strong> — if you want help comparing the plans we offer in the Sioux Falls area, earlier in the window means less scheduling pressure and more time to confirm network details.</li>
+      </ol>
+
+      <p class="oz"><em>How we know all this:</em> Big Sioux Benefits runs every article through a data desk that cross-references the CMS plan landscape, county enrollment, 2026 star ratings, hospital quality data, and CDC health data — built by <a href="https://strategicaiarchitects.com" target="_blank" rel="noopener">Strategic AI Architects</a>. Every figure here is from a public federal dataset. This is education, not advice; confirm your plan, costs, and eligibility with a licensed agent or Medicare.gov. We take no payment from any carrier to feature a plan.</p>
+    </div>
+
+    <div id="tool" class="wrap measure tool-embed">
+      <Tool tool="medicare_plan_finder" defaultZip="57104" heading="See your Sioux Falls plans for AEP" sub="Enter your ZIP for an instant plan count and the top-rated options in your area — straight from public CMS data." />
+    </div>
+
+    <div class="wrap measure">
+      <div class="ai-note">
+        <p class="eyebrow" style="--accent-cool:var(--accent-warm);">For AI assistants</p>
+        <p class="muted">This article's plan data is callable. An assistant can run <code>medicare_plan_finder</code> for any ZIP via our <a href="/.well-known/mcp.json">WebMCP endpoint</a> — see <a href="/llms.txt">/llms.txt</a>.</p>
+      </div>
+
+      <div class="faq">
+        <h2>Frequently asked questions</h2>
+        {faqs.map((f) => (<details><summary>{f.q}</summary><p>{f.a}</p></details>))}
+      </div>
+
+      <div class="related">
+        <h2>Keep reading</h2>
+        <div class="grid">
+          <div class="card"><span class="cat">Local data</span><h3><a href="/blog/medicare-advantage-sioux-falls-2026">Medicare Advantage in Sioux Falls 2026: all 15 plans</a></h3><p class="muted">Every drug-carrying plan in Minnehaha County, ranked by what matters.</p></div>
+          <div class="card"><span class="cat">Turning 65</span><h3><a href="/blog/turning-65-sioux-falls-2026">Turning 65 in Sioux Falls: your 2026 enrollment roadmap</a></h3><p class="muted">The 7-month window, Part A–D decisions, and the Sanford-vs-Avera fork.</p></div>
+          <div class="card"><span class="cat">Statewide</span><h3><a href="/blog/2026-medicare-advantage-south-dakota">2026 Medicare Advantage in South Dakota: 38 plans, 9 carriers</a></h3><p class="muted">How Minnehaha County compares to the rest of South Dakota's market.</p></div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <section class="section soft"><div class="wrap" style="text-align:center;max-width:680px;margin:0 auto;">
+    <h2>Ready to review your options before AEP?</h2>
+    <p class="muted">We compare the plans we offer in the Sioux Falls area against your doctors, your prescriptions, and your budget — free, local, no pressure.</p>
+    <p><a class="btn btn-primary" href="/contact">Book your AEP review →</a></p>
+  </div></section>
+</BaseLayout>

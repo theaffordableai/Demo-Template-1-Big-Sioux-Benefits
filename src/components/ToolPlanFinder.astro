@@ -1,0 +1,83 @@
+---
+// Interactive Medicare plan-finder tool. The human widget below calls the SAME
+// /mcp endpoint (tools/call medicare_search_plans) that AI agents call via WebMCP —
+// one brain-loaded tool, two front doors. Embed on location pages + blog posts.
+import { SUPPORTED_ZIPS } from "../lib/plans";
+interface Props { defaultZip?: string; heading?: string; }
+const { defaultZip = "", heading = "Check Medicare plans in your area" } = Astro.props;
+---
+<section class="tool" data-default-zip={defaultZip} aria-labelledby="tool-h">
+  <div class="tool-head">
+    <span class="kicker">Live tool · CMS data</span>
+    <h3 id="tool-h">{heading}</h3>
+    <p class="sub">Enter a ZIP to see every Medicare Advantage plan in that county — premium, star rating, drug deductible, and max out-of-pocket — straight from public CMS PY2026 data.</p>
+  </div>
+  <form class="row" id="tf-form" autocomplete="off">
+    <input id="tf-zip" name="zip" inputmode="numeric" maxlength="5" pattern="\d{5}" placeholder="ZIP code" aria-label="ZIP code" />
+    <select id="tf-sort" aria-label="Sort by">
+      <option value="premium">Lowest premium</option>
+      <option value="stars">Highest stars</option>
+      <option value="moop">Lowest max out-of-pocket</option>
+    </select>
+    <button type="submit" class="btn btn-primary">Find plans</button>
+  </form>
+  <p class="chips">{SUPPORTED_ZIPS.map((z) => (<button type="button" class="chip" data-zip={z.zip}>{z.zip} · {z.city}</button>))}</p>
+  <div id="tf-status" class="status" role="status" aria-live="polite"></div>
+  <div id="tf-out"></div>
+  <p class="agent">An AI assistant can run this exact search via our <a href="/.well-known/mcp.json">WebMCP endpoint</a> (<code>medicare_search_plans</code>).</p>
+</section>
+<script>
+  const root = document.currentScript ? null : null;
+  const form = document.getElementById("tf-form") as HTMLFormElement;
+  const zip = document.getElementById("tf-zip") as HTMLInputElement;
+  const sort = document.getElementById("tf-sort") as HTMLSelectElement;
+  const status = document.getElementById("tf-status")!;
+  const out = document.getElementById("tf-out")!;
+  const def = (document.querySelector(".tool") as HTMLElement)?.dataset.defaultZip || "";
+  if (def) zip.value = def;
+  const money = (n: number | null) => (n == null ? "—" : n === 0 ? "$0" : "$" + n.toLocaleString());
+  const stars = (s: number | null) => (s ? "★".repeat(Math.round(s)) + " " + s : "N/R");
+  async function callTool(args: Record<string, unknown>) {
+    const res = await fetch("/mcp", { method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ jsonrpc: "2.0", id: Date.now(), method: "tools/call", params: { name: "medicare_search_plans", arguments: args } }) });
+    const j = await res.json();
+    return j?.result?.structuredContent ?? j?.result;
+  }
+  function render(d: any) {
+    if (!d || d.ok === false) {
+      const z = (d?.supported_zips || []).map((s: string) => `<code>${s}</code>`).join(" ");
+      status.innerHTML = `${d?.message || "No data."}${z ? `<br><span class="m">Try: ${z}</span>` : ""}`; out.innerHTML = ""; return;
+    }
+    status.innerHTML = `<strong>${d.location}</strong> — ${d.returned} of ${d.county_total_ma_pd} Medicare Advantage plans.`;
+    out.innerHTML = `<table class="datatable"><thead><tr><th>Plan</th><th>Premium</th><th>Stars</th><th>Drug ded.</th><th>Max OOP</th></tr></thead><tbody>${
+      d.plans.map((p: any) => `<tr><td><span class="pn">${p.name}</span><span class="pc">${p.carrier}</span></td><td>${money(p.premium)}</td><td class="st">${stars(p.stars)}</td><td>${money(p.drug_deductible)}</td><td>${money(p.moop)}</td></tr>`).join("")
+    }</tbody></table><p class="src">Source: <a href="${d.source_url}" target="_blank" rel="noopener">CMS PY2026 Landscape</a> · ${d.disclaimer}</p>`;
+  }
+  async function run(z: string) { status.textContent = "Searching CMS data…"; out.innerHTML = ""; try { render(await callTool({ zip: z, sort: sort.value })); } catch { status.textContent = "Could not reach the tool."; } }
+  form.addEventListener("submit", (e) => { e.preventDefault(); run(zip.value.trim()); });
+  document.querySelectorAll<HTMLButtonElement>(".chip").forEach((c) => c.addEventListener("click", () => { zip.value = c.dataset.zip!; run(c.dataset.zip!); }));
+  if (def) run(def);
+</script>
+<style>
+  .tool{border:1px solid var(--line-strong);border-radius:3px;padding:clamp(1.4rem,3vw,2.2rem);background:rgba(241,236,221,.025)}
+  .section.soft .tool{background:rgba(22,36,58,.03)}
+  .kicker{font:700 11px var(--font-sans);letter-spacing:.24em;text-transform:uppercase;color:var(--accent-cool)}
+  .tool-head h3{font-family:var(--font-display);font-weight:500;font-size:clamp(26px,3vw,38px);margin:.4rem 0 .3rem}
+  .tool .sub{color:var(--text-muted);max-width:60ch;font-size:var(--text-body)}
+  .tool .row{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:1.2rem}
+  .tool input,.tool select{font:18px var(--font-sans);color:var(--text-primary);background:transparent;border:0;border-bottom:1px solid var(--line-strong);padding:.6rem .2rem;min-width:11rem}
+  .section.soft .tool input,.section.soft .tool select{color:var(--ink-800)}
+  .tool input:focus,.tool select:focus{outline:none;border-bottom-color:var(--accent-warm)}
+  .tool select option{color:#000}
+  .tool .chips{display:flex;flex-wrap:wrap;gap:.4rem;margin:1rem 0 0}
+  .chip{font:12px var(--font-sans);letter-spacing:.04em;padding:.35rem .7rem;border:1px solid var(--line);background:transparent;color:var(--text-muted);cursor:pointer;border-radius:2px}
+  .chip:hover{border-color:var(--accent-warm);color:var(--accent-warm)}
+  .status{margin:1.3rem 0 .4rem;font-size:var(--text-body)}
+  .status .m{color:var(--text-muted)}
+  .tool .pn{display:block;font-family:var(--font-display);font-size:18px}
+  .tool .pc{display:block;font-size:12px;color:var(--text-muted);font-family:var(--font-sans)}
+  .tool .st{color:var(--accent-warm);white-space:nowrap}
+  .tool .src{font-size:11.5px;color:var(--text-muted);margin-top:.8rem;line-height:1.5}
+  .agent{margin:1.2rem 0 0;font-size:12px;color:var(--text-muted)}
+  .agent code{font-family:var(--font-sans);color:var(--accent-warm)}
+</style>

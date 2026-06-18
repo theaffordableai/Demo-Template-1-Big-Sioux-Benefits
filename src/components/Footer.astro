@@ -1,0 +1,70 @@
+---
+import { site } from "../config/site.config";
+import { coverage, education, tools } from "../lib/content";
+const b = site.brand;
+const company = [
+  ["About Us", "/about"], ["Meet the Team", "/meet-the-team"], ["Services", "/services"],
+  ["Locations", "/locations"], ["Blog & Resources", "/blog"], ["Reviews", "/reviews"], ["FAQ", "/faq"], ["Contact", "/contact"], ["Privacy Policy", "/privacy"],
+];
+---
+<footer class="site-foot">
+  <div class="advisor wrap">
+    <img src="/img/atx/martin-frey.jpg" alt={`${b.advisorName} — ${b.advisorTitle}, ${b.name}`} loading="lazy" width="76" height="76" />
+    <div class="advisor-txt">
+      <span class="ak">Your local advisor</span>
+      <strong>{b.advisorName}</strong>
+      <span class="al">{b.advisorTitle} · {b.foundedCity}, {b.state}</span>
+    </div>
+    <a class="advisor-cta btn btn-accent" href="/contact">Schedule a conversation →</a>
+  </div>
+
+  <div class="cols wrap">
+    <div><div class="fh">Company</div>{company.map(([t, h]) => <a href={h}>{t}</a>)}</div>
+    <div><div class="fh">Medicare 101</div><a href="/medicare-101">Medicare Guide</a>{education.slice(0,6).map((e) => <a href={`/${e.slug}`}>{e.h1}</a>)}</div>
+    <div><div class="fh">Plans & Coverage</div>{coverage.slice(0,9).map((e) => <a href={`/${e.slug}`}>{e.h1.replace(' (Part C)','')}</a>)}</div>
+    <div><div class="fh">Free Tools</div>{tools.map((e) => <a href={`/${e.slug}`}>{e.h1}</a>)}</div>
+    <div class="contact">
+      <div class="fh">Contact</div>
+      <a href={`tel:${b.phoneHref}`}>{b.phone}</a>
+      <a href={`mailto:${b.email}`}>{b.email}</a>
+      <span class="addr">{b.foundedCity}, {b.address.region} {b.address.postal}</span>
+      <span class="addr">{b.hours}</span>
+    </div>
+  </div>
+
+  <div class="wordmark wrap"><span>Medicare <em>ATX</em></span></div>
+
+  <div class="legal wrap">
+    <p>We do not offer every plan available in your area. Any information we provide is limited to those plans we do offer in your area. Please contact Medicare.gov, 1‑800‑MEDICARE, or your local State Health Insurance Program (SHIP) to get information on all of your options. {b.name} is a licensed independent insurance agency (NPN {b.npn}). Not connected with or endorsed by the United States government or the federal Medicare program.</p>
+    <div class="meta">
+      <span>© {b.name} — {b.foundedCity}, {b.state}</span>
+      <span>30.3672° N / 97.9789° W</span>
+      <span><a href="/llms.txt">llms.txt</a> · <a href="/.well-known/mcp.json">mcp.json</a></span>
+    </div>
+  </div>
+</footer>
+<style>
+  .site-foot{background:var(--navy-800);padding:clamp(3rem,6vw,72px) 0 28px;color:var(--navy-200)}
+  .site-foot a{display:block;color:var(--navy-200);font-size:.95rem;margin-bottom:.5rem;transition:color .2s}
+  .site-foot a:hover{color:#fff;text-decoration:none}
+  .advisor{display:flex;align-items:center;gap:1.2rem;padding-bottom:2.2rem;margin-bottom:2.2rem;border-bottom:1px solid var(--line-inverse)}
+  .advisor img{width:76px;height:76px;border-radius:var(--r-pill);object-fit:cover;object-position:top center;border:3px solid var(--gold-500);flex:none;box-shadow:var(--shadow-md)}
+  .advisor-txt{display:flex;flex-direction:column;line-height:1.35}
+  .advisor-txt .ak{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-300);font-weight:700}
+  .advisor-txt strong{font-family:var(--font-display);font-weight:700;font-size:1.5rem;color:#fff}
+  .advisor-txt .al{font-size:.9rem;color:var(--navy-200)}
+  .advisor-cta{margin-left:auto;white-space:nowrap;color:#fff!important}
+  .advisor-cta:hover{color:#fff!important}
+  @media(max-width:640px){.advisor{flex-wrap:wrap}.advisor-cta{margin-left:0}}
+  .cols{display:grid;grid-template-columns:1fr 1.1fr 1.2fr 1fr 1.1fr;gap:2rem;padding-bottom:2.6rem}
+  .fh{font-family:var(--font-display);font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;color:#fff;font-weight:700;margin:0 0 1rem}
+  .contact .addr{display:block;color:var(--navy-200);font-size:.9rem;margin-top:.5rem;line-height:1.5}
+  .wordmark{padding:1.6rem 0 1.2rem;border-top:1px solid var(--line-inverse)}
+  .wordmark span{font-family:var(--font-display);font-weight:700;font-size:clamp(44px,8vw,116px);line-height:1;letter-spacing:-.02em;color:#fff;display:block;white-space:nowrap;overflow:hidden}
+  .wordmark em{font-style:normal;color:var(--gold-500)}
+  .legal{border-top:1px solid var(--line-inverse);padding-top:1.4rem}
+  .legal p{font-size:.78rem;line-height:1.65;color:var(--navy-200);max-width:none;margin:0 0 1rem}
+  .meta{display:flex;justify-content:space-between;gap:1.5rem;flex-wrap:wrap;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+  .meta a{display:inline;color:var(--navy-200)}
+  @media(max-width:900px){.cols{grid-template-columns:1fr 1fr}}
+</style>

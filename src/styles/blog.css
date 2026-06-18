@@ -1,0 +1,116 @@
+/* ---------------------------------------------------------------------------
+   Big Sioux Benefits — long-form data-journalism article chrome.
+   Shared by every blog post. SeniorWire-depth layout on the BSB design tokens
+   (--accent-warm, --accent-cool, --line, --surface-card, --text-muted, fonts).
+   Imported in each post's frontmatter; scoped under .blogpost.
+--------------------------------------------------------------------------- */
+
+.blogpost { padding: clamp(40px, 6vw, 80px) 0; }
+.blogpost .measure { max-width: 820px; margin-left: auto; margin-right: auto; }
+.blogpost .hero-img {
+  display: block; width: 100%; aspect-ratio: 3/2; object-fit: cover;
+  border-radius: 4px; border: 1px solid var(--line-strong); margin-bottom: 1.6rem;
+}
+.blogpost .eyebrow { font: 700 11px var(--font-sans); letter-spacing: .2em; text-transform: uppercase; color: var(--accent-cool); }
+.blogpost h1 { font-size: clamp(32px, 4.6vw, 56px); line-height: 1.05; margin: .3rem 0 1rem; }
+.blogpost .dek {
+  font-family: var(--font-display); font-size: clamp(19px, 2.4vw, 27px); font-style: italic;
+  color: var(--accent-warm); line-height: 1.3; margin: 0 0 1.8rem; max-width: 36ch;
+}
+.blogpost .byline {
+  display: flex; align-items: center; gap: 14px; margin: 0 0 1.8rem;
+  padding: 14px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+}
+.blogpost .byline img { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent-warm); }
+.blogpost .byline .who { font-weight: 700; font-size: .98rem; }
+.blogpost .byline .meta { font-size: .8rem; color: var(--text-muted); }
+
+.blogpost h2 { font-size: clamp(25px, 3vw, 36px); margin: 2.6rem 0 .8rem; line-height: 1.12; }
+.blogpost h3 { font-size: clamp(18px, 2vw, 22px); margin: 1.8rem 0 .6rem; }
+.blogpost p { font-size: 1.06rem; line-height: 1.75; margin: 0 0 1.1rem; max-width: 70ch; }
+.blogpost ul, .blogpost ol { max-width: 70ch; font-size: 1.06rem; line-height: 1.75; padding-left: 1.3rem; }
+.blogpost li { margin: 0 0 .6rem; }
+.blogpost a { color: var(--accent-cool); }
+.blogpost .src { font-size: 12.5px; color: var(--text-muted); margin-top: -.2rem; }
+
+/* TL;DR / Bottom Line box */
+.blogpost .tldr {
+  background: var(--surface-card); border: 1px solid var(--line);
+  border-left: 4px solid var(--accent-warm); border-radius: 6px;
+  padding: 1.4rem 1.6rem; margin: 0 0 2rem;
+}
+.blogpost .tldr h2 { font-size: 1.05rem !important; margin: 0 0 .8rem; text-transform: uppercase; letter-spacing: .08em; font-family: var(--font-sans); }
+.blogpost .tldr ul { margin: 0; font-size: 1rem; }
+.blogpost .tldr li { margin-bottom: .5rem; }
+
+/* Data tables */
+.blogpost .tablewrap { overflow-x: auto; margin: 1.2rem 0 .4rem; }
+.blogpost .datatable { width: 100%; border-collapse: collapse; font-size: .92rem; }
+.blogpost .datatable th {
+  text-align: left; font: 700 12px var(--font-sans); letter-spacing: .04em; text-transform: uppercase;
+  color: var(--text-muted); padding: .6rem .7rem; border-bottom: 2px solid var(--line-strong); white-space: nowrap;
+}
+.blogpost .datatable td { padding: .6rem .7rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+.blogpost .datatable tbody tr:hover { background: color-mix(in srgb, var(--accent-warm) 6%, transparent); }
+.blogpost .datatable .net { display: block; font-size: 11px; color: var(--accent-cool); font-weight: 600; }
+
+/* Star-rating / stability pills */
+.blogpost .pill { display: inline-block; font-size: 11.5px; font-weight: 600; padding: .16rem .55rem; border-radius: 99px; border: 1px solid var(--line-strong); white-space: nowrap; }
+.blogpost .pill.strong { color: var(--accent-cool); border-color: var(--accent-cool); }
+.blogpost .pill.average { color: var(--text-muted); }
+.blogpost .pill.watch { color: var(--accent-warm); border-color: var(--accent-warm); }
+
+/* Inline horizontal bar chart */
+.blogpost .chart { display: flex; flex-direction: column; gap: .7rem; margin: 1.4rem 0 .6rem; }
+.blogpost .crow { display: grid; grid-template-columns: 190px 1fr 70px; align-items: center; gap: .9rem; }
+.blogpost .cl { font-size: 13px; font-weight: 600; }
+.blogpost .ct { height: 14px; background: var(--surface-card); border: 1px solid var(--line); border-radius: 99px; overflow: hidden; }
+.blogpost .cf { display: block; height: 100%; background: linear-gradient(90deg, var(--accent-cool), var(--accent-warm)); }
+.blogpost .cv { font-family: var(--font-display); font-size: 1.1rem; color: var(--accent-warm); text-align: right; }
+
+/* Pull-stat row */
+.blogpost .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin: 1.6rem 0; }
+.blogpost .stat { border: 1px solid var(--line); border-radius: 6px; padding: 1rem 1.1rem; background: var(--surface-card); }
+.blogpost .stat .n { font-family: var(--font-display); font-size: 2rem; line-height: 1; color: var(--accent-warm); }
+.blogpost .stat .l { font-size: .82rem; color: var(--text-muted); margin-top: .35rem; }
+
+/* Inline CTA band */
+.blogpost .inline-cta {
+  background: var(--ink); color: var(--paper); border-radius: 10px; padding: 1.5rem 1.7rem;
+  margin: 2rem 0; border-left: 4px solid var(--accent-warm);
+}
+.blogpost .inline-cta p { color: var(--paper); opacity: .92; margin: 0 0 .9rem; max-width: none; }
+.blogpost .inline-cta .h { font-weight: 700; font-size: 1.1rem; opacity: 1; margin-bottom: .5rem; }
+.blogpost .inline-cta a {
+  display: inline-block; background: var(--accent-warm); color: var(--ink); padding: .6rem 1.3rem;
+  border-radius: 7px; text-decoration: none; font-weight: 700; font-size: .9rem;
+}
+
+/* "Why we know this" methodology + capsule note */
+.blogpost .oz { font-size: 14px; border-left: 2px solid var(--accent-warm); padding-left: 1.1rem; margin-top: 2.4rem; color: var(--text-muted); }
+.blogpost .keytake { border: 1px dashed var(--line-strong); border-radius: 6px; padding: 1rem 1.2rem; margin: 1.6rem 0; font-size: .98rem; }
+.blogpost .keytake strong { color: var(--accent-warm); }
+
+/* AI / WebMCP note */
+.blogpost .ai-note { border-top: 1px solid var(--line); padding-top: 1.4rem; margin-top: 2.4rem; }
+
+/* FAQ */
+.blogpost .faq { margin-top: 2rem; }
+.blogpost .faq details { border-bottom: 1px solid var(--line); padding: .9rem 0; }
+.blogpost .faq summary { font-weight: 600; cursor: pointer; font-size: 1.04rem; }
+.blogpost .faq p { margin: .7rem 0 0; }
+
+/* Related */
+.blogpost .related { margin-top: 2.6rem; }
+.blogpost .related .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.2rem; margin-top: 1rem; }
+.blogpost .related .card { border: 1px solid var(--line); border-radius: 6px; padding: 1.1rem; }
+.blogpost .related .card .cat { font: 700 10px var(--font-sans); letter-spacing: .16em; text-transform: uppercase; color: var(--accent-cool); }
+.blogpost .related .card h3 { font-size: 1.02rem; margin: .4rem 0; }
+
+.blogpost .tool-embed { margin: 2.6rem auto; }
+
+@media (max-width: 600px) {
+  .blogpost .crow { grid-template-columns: 120px 1fr 54px; gap: .5rem; }
+  .blogpost .cl { font-size: 12px; }
+  .blogpost .datatable { font-size: .84rem; }
+}

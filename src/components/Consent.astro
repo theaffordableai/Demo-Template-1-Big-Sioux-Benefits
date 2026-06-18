@@ -1,0 +1,31 @@
+---
+// Tracking-consent gate. Tracking/marketing pixels (GHL/GA/Meta) must not fire
+// until the visitor accepts — sets window.__consent + a flag GHL.astro checks.
+---
+<div class="consent" id="consent" role="dialog" aria-modal="false" aria-label="Privacy and tracking consent">
+  <div class="ttl">We value your privacy</div>
+  <p>We use cookies and tracking (analytics plus our booking and chat tools) to improve your experience. Nothing that tracks you runs until you choose. Read our <a href="/privacy">Privacy Policy</a>.</p>
+  <div class="row">
+    <button class="btn btn-primary" id="consentAccept">Accept all</button>
+    <button class="btn btn-ghost" id="consentReject">Reject non-essential</button>
+  </div>
+</div>
+<script is:inline>
+(function(){
+  var KEY='consent-v1', el=document.getElementById('consent');
+  var saved=null; try{saved=localStorage.getItem(KEY)}catch(e){}
+  function hide(){el.style.display='none';}
+  function set(v){try{localStorage.setItem(KEY,v)}catch(e){}; window.__consent=v;
+    if(v==='accept' && typeof window.__loadTracking==='function'){window.__loadTracking();} hide();}
+  if(saved){window.__consent=saved; hide(); if(saved==='accept'&&typeof window.__loadTracking==='function'){window.__loadTracking();}}
+  document.getElementById('consentAccept').addEventListener('click',function(){set('accept');});
+  document.getElementById('consentReject').addEventListener('click',function(){set('reject');});
+})();
+</script>
+<style>
+  .consent{position:fixed;left:1rem;right:1rem;bottom:1rem;z-index:300;max-width:760px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 30px 70px -20px rgba(10,34,51,.5);padding:1.2rem 1.4rem}
+  .consent .ttl{font-weight:700;margin-bottom:.3rem}
+  .consent p{font-size:.88rem;color:var(--muted);margin:0 0 .9rem}
+  .consent .row{display:flex;gap:.6rem;flex-wrap:wrap}
+  .consent .btn{padding:.6rem 1.1rem;font-size:.92rem}
+</style>
