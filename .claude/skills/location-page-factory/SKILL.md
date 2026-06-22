@@ -1,63 +1,74 @@
 ---
 name: location-page-factory
 description: >-
-  Self-contained skill to generate programmatic local-SEO LOCATION / geo pages for an insurance/Medicare agency site at scale — one page per city/county service area — each backed by REAL .gov/Brain data and the full geo-schema stack: LocalBusiness + GovernmentService + Place + FAQPage + BreadcrumbList + Dataset. Builds answer-first, locally-grounded pages (real county figures: plan counts, enrollment, CDC PLACES health load, uninsured rate, hospitals with CMS stars) with the advisor in-context hero, unique image per page, and all FOUR PILLARS baked in. Ported from the location/blog page-factory pattern. Use to add or batch-generate location pages. Trigger on: "location pages", "geo pages", "add a <city> Medicare page", "service-area pages", "programmatic local SEO", "location factory", "city pages for <client>".
+  Self-contained skill to generate high-quality, COMPLIANT local-SEO location pages for an insurance agency site (one page per city/county/service-area) on Astro — each page genuinely localized with REAL local data (county health, plan counts, demographics) from THE BRAIN, the full SAA FOUR-PILLAR AI Citation Standard, and the right geo schema stack (LocalBusiness + GovernmentService + Place + FAQPage + BreadcrumbList + Dataset). Avoids thin/doorway/templated-near-duplicate pages. Trigger on: "location pages", "city pages", "service-area pages", "local SEO pages", "programmatic location pages for <brand>".
 ---
 
-# Location Page Factory (geo · brain-connected) — self-contained
+# Location Page Factory (USA · Astro · Four-Pillar) — self-contained
 
-Generates programmatic **local-SEO location pages** — one per city/county the agency serves — that earn AI citations because every local claim is backed by real .gov/Brain data and wrapped in the full geo-schema stack. Ported from the page-factory pattern. Single page, a batch, or a service-area sweep.
+Generates location pages that actually rank and don't trip doorway/duplicate penalties. Each page = ONE real place, with REAL local data. Insurance is **YMYL**: cite real `.gov`/Brain figures, include disclaimers, never fabricate.
 
 > A location page that says "we serve the Sioux Falls area" is invisible. One that says "Minnehaha County has 38 Medicare Advantage plans across 7 carriers (CMS, 2026); 9.5% of adults have diagnosed diabetes (CDC PLACES, 2023)" gets quoted by AI answer engines and ranks locally.
 
 ---
 
-## The geo-schema stack (REQUIRED on every location page)
-**LocalBusiness + GovernmentService + Place + BreadcrumbList + FAQPage + Dataset** (one Dataset per cited .gov source). This matches the enrollmedicare geo-page recipe — NOT just `LocalBusiness`.
+## Workflow (do in order)
 
-## The SAA Four-Pillar AI Citation Standard — on every location page
-1. **WebPage/Article** with Org-level author `{"@type":"Organization","name":"<Site> Data Desk","url":"https://<site>/about"}` — **single-Person authors BANNED for YMYL**; named human is a visible byline / `reviewedBy`; `datePublished` + `dateModified` present.
-2. **FAQPage** — 3–5 Q&As phrased as real local search queries ("How many Medicare plans are in <County>?").
-3. **Dataset (the moat)** — one block per .gov/authoritative source cited: `{"@context":"https://schema.org","@type":"Dataset","name":"<source dataset name>","description":"<1 sentence on what was pulled>","creator":{"@type":"Organization","name":"<source name>","url":"<EXACT endpoint — e.g. cdc.gov/places, census.gov, cms.gov>"},"license":"https://creativecommons.org/publicdomain/zero/1.0/","isAccessibleForFree":true}`.
-4. **Agentic Readiness (site-level)** — valid `/llms.txt` with a "Tools (agent-callable)" section; AI crawlers NOT blocked (GPTBot, OAI-SearchBot, ChatGPT-User, PerplexityBot, Google-Extended, ClaudeBot, Bingbot); data-driven sites expose WebMCP (`/.well-known/mcp.json` + `/mcp` proxy + in-page `navigator.modelContext`).
+### STEP 0 — Read brand + existing pages
+- Read `BRAND.md` / `src/config/site.config.ts` (brand, advisor, domain, CTA, disclaimers, colors, imagery rule). If no brand kit, run `brand-design-kit` first.
+- List existing location slugs so you do NOT duplicate a place.
+
+### STEP 1 — Pick the place + intent
+- One page per **real** city/county in the service area. One place = one page. Don't generate places the agency doesn't serve.
+
+### STEP 2 — Pull REAL local data (THE BRAIN — never fabricate)
+- Via `ambrose-insurance-data` (`brain_catalog → brain_tool_schema → brain_execute`): local plan landscape (`aca_marketplace_plans` / `medicare_enrollment`), county health (`cdc_county_health` — diabetes/BP/obesity), market snapshot (`census_market_snapshot` — population, median income, uninsured rate), providers (`provider_density`, `cms_hospitals`). Each figure: value + year + exact `.gov` endpoint.
+- The local data is what makes the page non-thin and non-duplicate — it MUST be genuinely different per place.
+
+### STEP 3 — Write the page (localized, not templated)
+- Answer-first localized intro (name the city/county + who it's for). One H1.
+- Real **stat row + bar chart + comparison table** from Brain data, each with a source line.
+- Local context: who in this place needs this coverage and why (grounded in the data).
+- Question-style H2s (AEO). FAQ (3–5 real local queries) → FAQPage.
+- Compliant CTA (compare plans / talk to a licensed agent) + the advisor as the local face.
+- **Avoid templated near-duplicates:** substantive copy genuinely rewritten per place (unique data, examples, framing) — not the same text with the city name swapped.
+
+### STEP 4 — FOUR-PILLAR + geo schema (every page)
+Inject in `<head>`:
+1. **`LocalBusiness`** (NAP, hours, geo) **+ `GovernmentService`** (the program served) **+ `Place`** — and **`author` = Organization "<Site> Data Desk"** on any article/WebPage portion (single-Person YMYL authors BANNED; advisor = visible byline / `reviewedBy`). `datePublished` + `dateModified`.
+2. **FAQPage** — local Q&As.
+3. **Dataset** — wrap every Brain/`.gov` figure (`creator.url` = exact endpoint, e.g. `cdc.gov/places`, `census.gov`).
+4. **`BreadcrumbList`** + site-level **Agentic Readiness**: `/llms.txt` lists the location pages; AI crawlers unblocked; data-driven sites expose **WebMCP** (`/.well-known/mcp.json` + `/mcp`) so an agent can run a local plan-finder/subsidy tool.
+
+### STEP 5 — Images (NO Higgsfield required)
+- Hero source order: (1) **real photo of the advisor** (optionally in/near the location); (2) **generation only if a generator is connected** (e.g. Higgsfield) — composite the advisor over a REAL local landmark photo (`media_import_url`), never a fully AI-faked landmark; (3) **brand graphic** with the place name. NEVER anonymous stock; NEVER block on a missing image.
+
+### STEP 6 — Build, TEST, audit
+1. `DEPLOY_TARGET=cloudflare npm run build` clean; canonical = production domain; leak-check `grep -rEl "pages\.dev|netlify\.app|vercel\.app|workers\.dev|localhost" dist | wc -l` = 0.
+2. Desktop + mobile test: spacing, no overflow, alt text, contrast, brand colors.
+3. Run **`seo-aeo-page-audit`** — resolve every 🔴, especially **Part D (duplicate/doorway)**, **Part H (Four-Pillar P0)**, **Part J (insurance compliance)**.
 
 ---
 
-## Workflow (in order)
+## Checklist
+- [ ] 🔴 One page per REAL place in the service area; no duplicate slug; not a place we don't serve
+- [ ] 🔴 REAL local data from the Brain (plan counts, county health, demographics) — figure + year + exact endpoint
+- [ ] 🔴 Genuinely localized copy (NOT the same text with the city swapped); stat row + chart + table with source lines
+- [ ] 🔴 Geo schema: LocalBusiness + GovernmentService + Place + BreadcrumbList + FAQPage + **Dataset** + **Org "Data Desk" author**
+- [ ] 🔴 Site-level Pillar 4: /llms.txt lists location pages, AI crawlers unblocked, WebMCP on data-driven sites
+- [ ] 🔴 Compliance: no banned superlatives / "all plans" / "free" misuse; niche disclaimers + TPMO (Medicare); informational-only; TCPA on CTAs
+- [ ] 🔴 Hero = real advisor photo → optional generation → brand graphic; NEVER anonymous stock; no Higgsfield dependency
+- [ ] 🔴 Build clean; canonical = production domain; leak-check 0; desktop + mobile tested; `seo-aeo-page-audit` Parts D/H/J pass
 
-### STEP 0 — Brand + service area
-- Read the brand tokens/voice + advisor asset (from `brand-design-kit` / `site.config.ts`). List the cities/counties to generate; check the existing location index so you don't duplicate (no cannibalization — distinct keyword + intent per page).
-
-### STEP 1 — Pull REAL local data (the spine)
-- Use `ambrose-insurance-data` (the Brain): per county pull plan counts/carriers/enrollment (CMS), CDC PLACES health load (diabetes, BP, obesity, CHD, uninsured), census market snapshot (population, median income, uninsured rate), hospitals with CMS stars. Save every figure to `src/data/<location>.ts` with a `SOURCES` map — never inline-invent a number; if you can't source it, cut it.
-
-### STEP 2 — Build the page
-- Answer-first intro (answer the local question in the first 2 sentences) → why coverage matters *here* (local health load) → plan landscape (data table with carriers + CMS stars) → cost angle → local FAQ → CTA.
-- Name **real local entities** (carriers, plans with CMS stars, hospitals, health systems) — never "local providers". Place/county named 8+ times.
-- Inject the geo-schema stack + Four Pillars via `src/lib/schema.ts` (pass `place`, `faqs`, `breadcrumbs`, `dataset`, `datePublished`).
-
-### STEP 3 — Imagery (advisor hero + unique per page)
-- Hero **features the advisor in-context** (helping a local couple/family, or presenting data) — **no anonymous stock b-roll**. **Unique image per page** — never reuse across location pages (grep the location index first). **Real landmark = real photo** composited with the advisor (never AI-generate a famous landmark — it looks fake). Generate at ≥2k; descriptive filename + real alt text; let the build optimizer downscale.
-
-### STEP 4 — Compliance
-- No banned superlatives ("best/#1/cheapest"); present published CMS star ratings + a neutral stability label, never a ranking claim; no "every/all plans" overclaim (TPMO: you do NOT offer every plan); no implied government affiliation; no "free" for $0 plans; TPMO + non-affiliation disclaimers present; "education, not advice — verify with a licensed agent".
-
-### STEP 5 — Build, audit, deploy
-- Build green; run `seo-aeo-page-audit` on a representative location page — pass **Part H (Four Pillars)** and **Part J (compliance)**; verify the full geo-schema stack parses with zero errors. Batch/calendar: generate progressively.
+## Notes
+- The #1 risk for location pages is thin/doorway/templated-near-duplicate — real per-place Brain data is the defense.
+- No image-generation dependency. Pair with `brand-design-kit`, `insurance-website-builder`, `ambrose-insurance-data`.
 
 ---
 
-## Location-page checklist (embedded — per page)
-- [ ] 🔴 Geo-schema stack: LocalBusiness + GovernmentService + Place + BreadcrumbList + FAQPage (+ Dataset per cited source) — NOT just LocalBusiness
-- [ ] 🔴 Pillar 1: WebPage/Article with Org "Data Desk" author (NOT a single Person for YMYL); reviewedBy Person (visible byline); datePublished + dateModified present
-- [ ] 🔴 Pillar 2: FAQPage, 3–5 real local-query Q&As
-- [ ] 🔴 Pillar 3: Dataset for every .gov/authoritative source cited; creator.url = exact endpoint
-- [ ] 🔴 Pillar 4 (site-level): /llms.txt with "Tools (agent-callable)" section; AI crawlers not blocked; data-driven sites expose WebMCP
-- [ ] 🔴 Every figure traced to a Brain/.gov pull (no fabrication); real local entities named (carriers/plans/hospitals with CMS stars)
-- [ ] 🔴 Hero features the advisor in-context (no anonymous stock); unique image per page (never reused); real landmark = composite over a real photo
-- [ ] 🔴 No banned superlatives / ranking claims / "every-plan" overclaim / "free" misuse / implied gov affiliation; TPMO + non-affiliation present
-- [ ] 🟡 Distinct keyword + intent (no cannibalization); place/county named 8+ times; answer-first intro
-- [ ] 🟡 Built green; `seo-aeo-page-audit` run — Part H + Part J pass; geo-schema validates
-
-## Related
-Pulls data via `ambrose-insurance-data`; reads brand from `brand-design-kit`; built into the site by `insurance-website-builder`; gated by `seo-aeo-page-audit` (Part H + Part J).
+## Implementation notes — data storage & schema wiring (reference build)
+- **Save figures, don't inline-invent:** write each county's pulled figures to `src/data/<location>.ts` with a `SOURCES` map (figure → exact endpoint + year). If you can't source a number, cut it.
+- **Name real local entities** — carriers, plans with their published CMS star ratings, hospitals, health systems — never "local providers". Name the place/county **8+ times** naturally.
+- **Present, don't rank:** show published CMS star ratings + a neutral stability label; never a "best/top-rated" ranking claim.
+- **Schema wiring:** inject the geo stack + Four Pillars via `src/lib/schema.ts`, passing `place`, `faqs`, `breadcrumbs`, `dataset`, `datePublished` — don't hand-roll JSON-LD in the page.
+- **No cannibalization:** distinct keyword + intent per page; grep the location index before generating so two pages don't compete for the same query.

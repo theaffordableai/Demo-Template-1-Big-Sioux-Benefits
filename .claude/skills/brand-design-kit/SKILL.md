@@ -1,63 +1,69 @@
 ---
 name: brand-design-kit
 description: >-
-  Self-contained skill to generate the complete BRAND SYSTEM for an insurance/Medicare agency site — color palette + theme tokens, font pairing, logo system, advisor photo direction, component patterns, animation language, and brand voice — and emit it as the design tokens + config the website builder and blog writers read in STEP 0. Ported from the Big Sioux Benefits design DNA. Produces a portable brand kit (design-tokens.css + site.config.ts brand block + voice profile) so every page and article looks premium, on-brand, and consistent. Use to create a brand from scratch, reskin for a new client, or document an existing brand. Trigger on: "create the brand kit", "brand system", "design tokens", "pick fonts/colors for <client>", "brand voice", "reskin the brand", "logo system".
+  Self-contained skill to generate a complete brand + design system for an insurance agency website — brand name treatment, color palette (with accessible contrast), typography (heading + body), logo direction, spacing scale, and the core UI component set (buttons, cards, stat row, chart, FAQ accordion, CTA band) — written into a single source of truth (BRAND.md + src/config/site.config.ts design tokens) that the website builder and the blog writers all read. Tone/voice guide included. No image-generation dependency (logo/photos are bring-your-own; generation is optional). Trigger on: "brand kit", "design system", "brand tokens", "set up the brand", "colors and fonts for <brand>", "site design system".
 ---
 
-# Brand Design Kit (insurance agency) — self-contained
+# Brand Design Kit (insurance · design tokens) — self-contained
 
-Generates ONE complete, premium brand system and emits it as the **design tokens + config the website builder and blog writers consume in their STEP 0**. Ported from the Big Sioux Benefits design DNA — the "$25k look": premium, trustworthy, depth, generous whitespace; not flat, not busy.
-
-The output is portable: `reference/design-tokens.css` + the brand block of `src/config/site.config.ts` + a short `voice-profile`. Swap these to reskin a site without touching page templates.
-
----
-
-## What the brand kit defines
-
-### 1. Palette (theme tokens)
-- **ink** (deep navy), **primary** (brand color), **primary-dark**, **accent** (CTA, e.g. gold), **soft** (tint bg), **line** (borders), **muted** (secondary text).
-- Emit as CSS custom properties in `design-tokens.css` AND mirror in `site.config.ts`. **Never hardcode hex in components** — everything references the tokens. WCAG AA contrast on all text/CTA pairs.
-
-### 2. Fonts (pairing)
-- **Display/headings** — an elegant serif (e.g. Fraunces) for trust + warmth.
-- **Body** — a clean sans (e.g. Inter) for readability (senior audience).
-- **Eyebrows/labels** — a mono (e.g. IBM Plex Mono).
-- Self-host or use a performant font strategy; set explicit fallbacks; avoid CLS.
-
-### 3. Logo system
-- A **minimal symbolic mark** tied to the locale/brand meaning (e.g. flowing water for a river city). **NEVER a letters-only mark.** Provide light/dark variants + favicon + a clear-space rule. Asset in `assets/logo.*`.
-
-### 4. Advisor photo direction
-- **Chest-up portrait, plain shirt, no logo**, friendly/approachable. This is the recurring human across the site. Define how to generate consistent variants (same person, in-context scenes). The advisor — not anonymous stock — is the hero of every page/post.
-
-### 5. Component patterns
-- Hero (gradient + texture + advisor + floating stat card), trust bar, dark data band (stat numbers), services grid (icon cards), 3-step how-it-works, testimonial, CTA band, premium multi-column footer. Rounded 14–22px, soft shadows.
-
-### 6. Animation language
-- Scroll-reveal fade-ups, hero entrance, **count-up** on stats, hover lifts. **Always respect `prefers-reduced-motion`** + an a11y "pause motion" toggle.
-
-### 7. Brand voice (`voice-profile`)
-- Tone (e.g. warm, local, plain-spoken, no-pressure, independent), reading level (senior audience → ~6th–8th grade), do/don't word lists, banned terms (no superlatives, no "free" for $0 plans, no implied government affiliation). The blog writers read this in their STEP 0.
+Produces ONE brand + design system as the single source of truth every other skill reads (STEP 0 of the website builder and the blog writers). No hard dependency on any image/logo generator.
 
 ---
 
-## Compliance note (the brand can't break the rules)
-The brand system must support, never undermine, insurance-marketing compliance: footer space for TPMO + non-affiliation disclaimers, no imagery implying government endorsement (no Medicare card / federal seal motifs), voice rules that ban superlatives and "every/all plans" overclaims. Flag any brand request that would create a compliance risk.
+## Workflow (do in order)
 
-## Note on AI-citation pillars (brand serves the moat)
-The brand kit doesn't emit schema, but it MUST leave room for it: the article template needs a **visible human byline** (the brand's advisor) even though the **schema author is the Organization "<Site> Data Desk"** (Pillar 1, YMYL). Provide a byline component spec (advisor photo + name + "reviewed by" + Org "Data Desk" line) so the writers render it consistently.
+### STEP 1 — Brand intake
+- Capture: brand name, niche, the licensed advisor (name + NPN), production domain, phone, address, service area, positioning, and any existing assets (logo, colors, photos).
+- If assets exist, **honor them** — extract palette/type from the real logo, don't reinvent.
+
+### STEP 2 — Color palette (accessible)
+- Define tokens: `--brand`, `--brand-ink`, `--accent`, `--bg`, `--surface`, `--text`, `--muted`, `--success`, `--warning`.
+- **Contrast must pass WCAG AA** (4.5:1 body, 3:1 large). Provide a dark-mode-friendly variant.
+- Insurance trust palette guidance: calm, credible (blues/greens/ink) — avoid circus/neon. Match the niche (e.g. Medicare = trustworthy/clinical; life = warm/protective).
+
+### STEP 3 — Typography
+- One **heading** family + one **body** family (web-safe or self-hosted; declare `font-display: swap`). Define a type scale (h1→small) and line-heights for readability (Medicare audience is 60+ → larger base size, generous line-height).
+
+### STEP 4 — Logo direction (bring-your-own first)
+- **Logo source order:** (1) client-provided logo; (2) a clean **wordmark built from the chosen typography** (no generator needed); (3) image/logo generation **only if a generator is connected** (optional). NEVER block on a missing logo — ship the wordmark.
+
+### STEP 5 — Component set (tokens, not hardcoded)
+- Define the reusable components the builder/writers use: button (primary/secondary), card, **stat row** (`.stats`), **accessible bar chart** (`.chart`, `role="img"`/`aria-label`), **FAQ accordion** (maps to FAQPage schema), CTA band, source-line caption. All driven by tokens — never hardcode hex.
+
+### STEP 6 — Imagery rules (NO Higgsfield required)
+- Hero/imagery source order: (1) **real photo of the advisor** (best for E-E-A-T); (2) **generation only if a generator is connected** (e.g. Higgsfield) for composites/unique images; (3) **brand graphic/illustration** (colors + type, no faces). NEVER anonymous stock as a hero. Document this rule in BRAND.md so every downstream skill follows it.
+
+### STEP 7 — Voice & compliance tone
+- Define tone (plain, credible, reassuring; answer-first). Bake in the niche compliance posture so copy never drifts: no banned superlatives ("best", "#1"), no "we offer all/every plan", no "free" misuse, no guaranteed savings/returns; informational-only; state-regulated/varies-by-plan.
+
+### STEP 8 — Write the source of truth
+- Output **`BRAND.md`** (human-readable brand book) + **`src/config/site.config.ts`** (machine-readable tokens: colors, fonts, brand facts, advisor, CTA, disclaimers, imagery rule). These are what `insurance-website-builder`, `location-page-factory`, and the blog writers read in their STEP 0.
 
 ---
 
-## Brand-kit checklist (embedded)
-- [ ] 🔴 Palette as theme tokens (ink/primary/accent/soft/line/muted); WCAG AA contrast; mirrored in design-tokens.css + site.config.ts; no hardcoded hex
-- [ ] 🔴 Font pairing (display serif + body sans + mono eyebrow) with fallbacks; CLS-safe
-- [ ] 🔴 Logo system — symbolic mark (NOT letters-only), light/dark + favicon + clear-space
-- [ ] 🔴 Advisor photo direction (chest-up, plain shirt, no logo) — the recurring human; never anonymous stock; unique-image-per-page rule documented for the builder/writers
-- [ ] 🔴 Byline component spec: visible advisor byline + reviewedBy, with schema author = Org "<Site> Data Desk" (YMYL Pillar 1)
-- [ ] 🔴 Voice profile (tone, reading level, banned terms: no superlatives / "free"-misuse / government-affiliation / "every-plan")
-- [ ] 🟡 Component patterns (hero/trust bar/data band/services/how-it-works/testimonial/CTA/footer) + animation language (reduced-motion safe)
-- [ ] 🟡 Footer leaves room for TPMO + non-affiliation disclaimers
+## Checklist
+- [ ] 🔴 Color tokens defined + WCAG AA contrast verified + dark-mode variant
+- [ ] 🔴 Heading + body type families + readable scale (60+ friendly)
+- [ ] 🔴 Logo present (client logo OR typographic wordmark — never blocked)
+- [ ] 🔴 Component set defined via tokens (button/card/stat row/chart/FAQ/CTA/source caption)
+- [ ] 🔴 Imagery rule documented: real advisor photo → optional generation → brand graphic; NEVER anonymous stock; no Higgsfield dependency
+- [ ] 🔴 Voice + compliance tone documented (no banned superlatives / "all plans" / "free" / guaranteed savings)
+- [ ] 🔴 `BRAND.md` + `src/config/site.config.ts` written as the single source of truth
 
-## Related
-Feeds `insurance-website-builder` (reads tokens + config) and the 4 blog writers (read brand colors/fonts/voice + byline spec in STEP 0). Pairs with `location-page-factory` and `seo-aeo-page-audit`.
+## Notes
+- This kit carries NO image-generation dependency. Generation (Higgsfield, etc.) is strictly optional and only used if already connected.
+- Downstream: `insurance-website-builder` (consumes tokens), the niche blog writers (STEP 0), `location-page-factory`.
+
+---
+
+## Pillar-1 byline spec (brand serves the AI-citation moat)
+The brand kit doesn't emit schema, but it MUST leave room for it. The article/page template needs a **visible human byline** (the advisor) even though the **schema `author` is the Organization "<Site> Data Desk"** (Pillar 1, YMYL). Ship a **byline component spec**: advisor photo + name + "reviewed by" + the Org "Data Desk" line, so every writer renders authorship consistently. Footer must leave room for the TPMO + non-affiliation disclaimers; no imagery implying government endorsement (no Medicare-card / federal-seal motifs).
+
+## Implementation notes — Big Sioux gold-standard design DNA (the "$25k look")
+Optional richer system when reskinning the gold-standard template:
+- **Palette tokens:** `ink` (deep navy) / `primary` / `primary-dark` / `accent` (e.g. gold or tan) / `soft` (tint bg) / `line` (borders) / `muted` (secondary text) — mirrored in `design-tokens.css` + `site.config.ts`.
+- **Font pairing:** elegant display serif (e.g. Fraunces / Cormorant) + clean body sans (e.g. Inter / Hanken Grotesk) + mono eyebrow (e.g. IBM Plex Mono); explicit fallbacks, CLS-safe.
+- **Logo:** prefer a **minimal symbolic mark** tied to locale/brand meaning (e.g. flowing water for a river city) with light/dark + favicon + clear-space — but never block on it (typographic wordmark is the fallback).
+- **Advisor photo direction:** chest-up portrait, plain shirt, no logo, approachable; the recurring human across the whole site; define consistent in-context variants. Document the **unique-image-per-page** rule for the builder/writers.
+- **Component patterns:** hero (gradient + texture + advisor + floating stat card), trust bar, dark data band (stat numbers), services grid (icon cards), 3-step how-it-works, testimonial, CTA band, premium multi-column footer; 14–22px radii, soft shadows.
+- **Animation language:** scroll-reveal fade-ups, hero entrance, count-up on stats, hover lifts — always `prefers-reduced-motion`-safe + an a11y "pause motion" toggle.
