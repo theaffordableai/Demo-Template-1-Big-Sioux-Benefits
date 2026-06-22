@@ -126,6 +126,19 @@ the `blog-chart` skill.)
 **Comparison table** is the highest-quoted block in AI answers — use it for hospital star ratings
 (`cms_hospitals`), plan premiums (`aca_premium_rates`), or metal-tier costs.
 
+**Wrap every Brain figure in a Dataset (Pillar 3 — the citation moat).** Every Brain figure used on a page
+MUST also be wrapped in a `Dataset` JSON-LD block, with `creator.url` = the underlying authority endpoint
+(CDC PLACES → `cdc.gov/places`, Census → `census.gov`, BLS → `bls.gov`, CMS → `cms.gov`/`medicare.gov`,
+marketplace → `healthcare.gov`). The stat callout is the **visible** layer; the `Dataset` block is the
+**citation moat** that earns the AI citation. Template:
+```json
+{"@context":"https://schema.org","@type":"Dataset","name":"<source dataset name>","description":"<1 sentence on what was pulled>","creator":{"@type":"Organization","name":"<source name>","url":"<exact endpoint URL>"},"license":"https://creativecommons.org/publicdomain/zero/1.0/","isAccessibleForFree":true}
+```
+
+**WebMCP (Pillar 4) — for data-driven sites.** The same Brain tools should also be exposed to agents via the
+site's `/mcp` proxy (`/.well-known/mcp.json` + in-page `navigator.modelContext`), not just rendered as text —
+so an AI agent can *call* the data, not only read it.
+
 ## Citation pattern (do this every time)
 - Quote the exact figure **and the year** the Brain returned ("28.0%", "2023") — vague years read as stale.
 - Link the underlying authority, not the Brain UI: CDC PLACES → `cdc.gov/places`, Census →

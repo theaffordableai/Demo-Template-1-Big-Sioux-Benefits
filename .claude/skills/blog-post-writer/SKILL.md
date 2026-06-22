@@ -17,7 +17,7 @@ Produces ONE complete, verified, well-tested article and prepares it for publish
 
 ### STEP 0 — Learn the site & brand (never hardcode)
 - Read brand source (`site.ts` / `BRAND.md` / theme tokens): **brand colors, fonts, components, tone/voice**.
-- Pick a **real, credentialed author** from the author data (E-E-A-T). For YMYL niches, show a qualified author/reviewer.
+- Pick a **real, credentialed human as the visible byline / reviewer** from the author data (E-E-A-T). The **schema author is the Organization** ("<Site> Data Desk"); the human is shown on-page and may be `reviewedBy`. For YMYL niches (Medicare, ACA, life, health, finance) single-Person schema authors are **banned** — show the qualified human on-page, Org as schema author.
 - Inspect the existing post collection: copy the **exact frontmatter shape, slug pattern, categories/tags, and MDX components** in use; match them. List existing slugs so you do NOT duplicate a topic.
 
 ### STEP 1 — Pick a topic from real demand
@@ -53,12 +53,15 @@ In brand voice, plain accessible language. Include ALL:
 ### STEP 5 — Charts, graphs & stats (must render)
 - Use the site's existing chart components/library (inline SVG preferred). Reuse the project pattern; don't invent UI.
 - Each chart: title, labeled axes/legend, **source caption with year**, accessible markup (`role="img"`, `aria-label`). Verified data only.
+- **Hero image:** features the **advisor in-context** (no anonymous stock b-roll). Use a **unique image per post** — never reuse a hero across articles. For a real landmark/location, composite the advisor over a real photo (don't AI-generate the landmark).
 
 ### STEP 6 — SEO + AEO essentials (bake in while writing)
 - **SEO:** unique meta title + description, self-referencing **canonical**, clean headings, internal + authoritative external links, descriptive **image alt text**, compressed images with width/height, fast/CLS-safe.
 - **AEO:** answer-first passages that stand alone, FAQ, entity clarity, citable sourced facts, liftable tables/step-lists.
 - **Open Graph + Twitter Card:** `og:title`, `og:description`, `og:url` (this page), `og:image` (~1200×630), `og:type`; `twitter:card=summary_large_image`.
-- **JSON-LD schema:** `Article` (or `BlogPosting`) + author `Person` + publisher `Organization` + `BreadcrumbList` + `FAQPage` (and `HowTo` for tutorials). Markup must match visible content.
+- **JSON-LD schema:** `Article` (or `BlogPosting`) + author `Organization` ("<Site> Data Desk") + publisher `Organization` + `reviewedBy` `Person` (visible byline) + `BreadcrumbList` + `FAQPage` + `Dataset` (per the Dataset bullet below) (and `HowTo` for tutorials). `datePublished` + `dateModified` always present. Markup must match visible content.
+- **Dataset schema (Pillar 3 — the moat):** inject one `Dataset` block per authoritative/.gov source cited (Brain-sourced figures included). `creator.url` = the **exact endpoint** (e.g. `cdc.gov/places`, `census.gov`, `cms.gov`), NOT the homepage. Use the JSON template: `{"@context":"https://schema.org","@type":"Dataset","name":"<source dataset name>","description":"<1 sentence on what was pulled>","creator":{"@type":"Organization","name":"<source name>","url":"<exact endpoint URL>"},"license":"https://creativecommons.org/publicdomain/zero/1.0/","isAccessibleForFree":true}`. Skip ONLY if no external data is cited.
+- **Pillar 4 (site-level) reminder:** confirm the site serves a valid `/llms.txt` (with a "Tools (agent-callable)" section), does **not** block AI crawlers, and (data-driven sites) exposes WebMCP (`/.well-known/mcp.json` + `/mcp` proxy + in-page `navigator.modelContext`). If missing, flag it — the `seo-aeo-page-audit` will gate on it.
 
 ### STEP 7 — Branding & UI consistency
 - Use brand colors/fonts/components via the site's tokens (never hardcode hex). Use existing section/MDX components. **Do not change global UI/CSS** — author within existing components.
@@ -85,14 +88,16 @@ In brand voice, plain accessible language. Include ALL:
 - [ ] 1–3 rendering charts/graphs (source caption + aria) + comparison table where relevant
 - [ ] FAQ (+ FAQPage schema)
 - [ ] Open Graph + Twitter Card tags
-- [ ] JSON-LD: Article + Person + Organization + BreadcrumbList + FAQPage (HowTo if tutorial)
+- [ ] JSON-LD: Article + author Organization ("<Site> Data Desk", NOT a single Person for YMYL) + publisher Organization + reviewedBy Person (visible byline) + BreadcrumbList + FAQPage (HowTo if tutorial); datePublished + dateModified present
+- [ ] Dataset schema present for every .gov/authoritative source cited (creator.url = exact endpoint)
+- [ ] Hero features the advisor in-context (no anonymous stock); unique image per post (never reused)
 - [ ] All images have descriptive alt text
 - [ ] Author bio + credentials; published + updated dates
 - [ ] Sources/References section
 - [ ] 3–5 internal links + authoritative external links; no broken links
 - [ ] Related Articles section
 - [ ] Brand colors/fonts/components; no global UI changes
-- [ ] Category rotated (not same as recent); topic not duplicated
+- [ ] Category rotated (not same as recent); topic not duplicated (no cannibalization); if site is one of several templated sites, copy is genuinely rewritten per site (not a templated near-duplicate)
 - [ ] Built + previewed; charts/stats render; UI spacing tested desktop + mobile
 - [ ] `seo-aeo-page-audit` run — all 🔴 resolved
 

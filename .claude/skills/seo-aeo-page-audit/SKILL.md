@@ -12,8 +12,9 @@ A generic, reusable audit for **a single web page or article**. Works on any sta
 1. **Identify the target.** Determine the exact file(s) for the page/article being checked (source file and, if available, the built/rendered HTML). If unclear, ask which page/URL to audit.
 2. **Inspect, don't assume.** Read the page source and, where possible, the rendered `<head>` and body. Measure real values (character counts, heading order, link targets, image alts).
 3. **Score every item** in Parts A–G below as ✅ pass, ⚠️ needs work, or ❌ fail. Use the severity tags: 🔴 must-fix (blocks publish), 🟡 should-fix, 🟢 nice-to-have.
-4. **Report** using the Output Format at the end: a short verdict, then issues grouped by severity with a one-line fix each. A page is "ready" only when every 🔴 passes.
-5. **Apply or recommend fixes** per the user's preference. Validate any structured data you add.
+4. **Run the P0 gates:** **Part H** (Four-Pillar AI Citation Standard) and **Part J** (Insurance Compliance — reason through the copy). Then **reason through Part I** (Readability & Engageability) as a human.
+5. **Report** using the Output Format at the end: two scores (AEO/AI Readiness, P0-gated on Part H; and Human Experience) + a READY / NEAR / NOT-READY verdict, then issues grouped by severity with a one-line fix each. **A page is NOT READY if any Part H pillar fails or Part J is FIX-REQUIRED — even if Parts A–G all pass.**
+6. **Apply or recommend fixes** per the user's preference. Validate any structured data you add.
 
 Use these character targets: **title 50–60 chars**, **meta description 140–160 chars**.
 
@@ -133,10 +134,11 @@ Add and validate the schema appropriate to the page (validate at a Rich Results 
 |---|---|
 | Site-wide | `Organization` (or `LocalBusiness`), `WebSite` |
 | Home | `Organization` + `WebSite` |
-| Article / news / post | `Article` (or `NewsArticle`) + author `Person` + publisher `Organization` + `BreadcrumbList` (+ `FAQPage` if an FAQ exists) |
+| Article / news / post | `Article` (or `NewsArticle`) + author `Organization` ("<Site> Data Desk", NOT a single `Person` for YMYL) + `reviewedBy` `Person` (visible byline) + publisher `Organization` + `BreadcrumbList` (+ `FAQPage` if an FAQ exists) + `Dataset` (one per .gov/authoritative source cited) |
 | How-to / tutorial | `HowTo` (+ `BreadcrumbList`) |
 | Product | `Product` + `Offer` (+ `AggregateRating`/`Review` only if real) |
 | Service / category | `Service` (+ `LocalBusiness` if local) + `BreadcrumbList` |
+| Location / geo / service-area page | `LocalBusiness` + `GovernmentService` + `Place` + `BreadcrumbList` + `FAQPage` (+ `Dataset` if it cites local .gov data) — matches the enrollmedicare geo-page recipe; NOT just `LocalBusiness` |
 | FAQ block | `FAQPage` |
 | Comparison / list | `Article` + `BreadcrumbList` |
 | Local business / location | `LocalBusiness` with NAP, hours, geo |
@@ -149,7 +151,57 @@ Add and validate the schema appropriate to the page (validate at a Rich Results 
 - [ ] 🔴 **XML sitemap** — contains only indexable canonical URLs, valid `lastmod`; submitted in Search Console.
 - [ ] 🟡 Custom `404` page.
 - [ ] 🟡 Default social/OG image (~1200×630).
-- [ ] 🟢 `llms.txt` (plain-text site/description file for AI agents), if you want AI-engine discoverability.
+- [ ] 🔴 `llms.txt` — valid `/llms.txt` (H1 + summary + sections) **including a "Tools (agent-callable)" section**. (Pillar 4; see Part H.)
+- [ ] 🔴 AI crawlers **NOT blocked** in `robots.txt`/WAF: GPTBot, OAI-SearchBot, ChatGPT-User, PerplexityBot, Google-Extended, ClaudeBot, Bingbot. (Pillar 4.)
+- [ ] 🔴 Data-driven sites: WebMCP exposed — `/.well-known/mcp.json` (≥1 tool) + a `/mcp` proxy that answers `tools/list` + in-page `navigator.modelContext`. (Pillar 4.)
+
+---
+
+## Part H — Four-Pillar AI Citation Standard (P0 — blocks publish)
+
+The SAA moat. **Every one of these is 🔴. A page is NOT READY if ANY pillar fails, even if Parts A–G all pass.**
+
+- [ ] 🔴 **Pillar 1 — Authoritative author:** `Article`/`WebPage` schema with an Org-level **"<Site> Data Desk"** author (NOT a single `Person` for YMYL: Medicare, ACA, life, health, finance). The named human stays as a visible byline / `reviewedBy`. `datePublished` + `dateModified` both present.
+- [ ] 🔴 **Pillar 2 — FAQPage:** `FAQPage` schema with 3–5 Q&A pairs phrased as **real search queries**.
+- [ ] 🔴 **Pillar 3 — Dataset (the moat):** a `Dataset` schema block for **every** .gov/authoritative source the page cites; `creator.url` = the **exact endpoint** (e.g. `cdc.gov/places`, `census.gov`, `healthcare.gov`, `cms.gov`) — NOT the homepage. Skip ONLY if the page cites no external data.
+- [ ] 🔴 **Pillar 4 — Agentic Readiness (site-level):** valid `/llms.txt` with a **"Tools (agent-callable)"** section; AI crawlers **NOT blocked** in `robots.txt`/WAF (GPTBot, OAI-SearchBot, ChatGPT-User, PerplexityBot, Google-Extended, ClaudeBot, Bingbot); and for **data-driven sites** WebMCP is exposed — `/.well-known/mcp.json` + a `/mcp` proxy + in-page `navigator.modelContext`.
+
+---
+
+## Part I — Readability & Engageability (Human Experience)
+
+A second axis, scored **independently** of the AEO/AI axis. **Reason through these as a human reader — don't just tick boxes.** Quote the offending passage and rewrite it.
+
+- Does the **intro actually answer** the question a human asked (not just an SEO preamble)?
+- Is it **scannable** — short paragraphs, bullets, **bolded takeaways**, clear visual hierarchy and whitespace?
+- Is the **reading level appropriate** for the audience (Medicare/senior audience is 60+ → aim ~6th–8th grade)?
+- Are **jargon terms defined** on first use (APTC, IRMAA, CSR, underwriting, cash value, etc.)?
+- Is there a **real reason to keep reading** — a hook, momentum, payoff — or does it read as filler?
+- Does the page **feel like a person wrote it for a person** (voice, rhythm) rather than templated AI slop?
+
+**Output two scores + a verdict:**
+1. **AEO/AI Readiness** — P0-GATED on Part H (any Part H pillar fails ⇒ capped at NOT-READY).
+2. **Human Experience** — readability + engageability (not gated).
+
+Combined verdict: **READY** (AEO clean + HX strong) · **NEAR** (minor should-fixes, no P0) · **NOT-READY** (any Part H pillar fails, OR open 🔴 in Parts A–G).
+
+---
+
+## Part J — Insurance Compliance (the AI reasons about the words)
+
+**Reasoning-based, not a checklist.** Read the rendered copy **sentence by sentence** — body, headings, CTAs, alt text, meta — and *reason* about whether the words break an insurance-marketing rule. Do not just tick a box. For each issue, return: **the exact offending phrase**, **where it is** (file/section), **which rule it breaks**, and **a compliant rewrite**.
+
+Catch the insurance-marketing violations a generic SEO audit misses:
+- **Banned superlatives / ranking claims** — "the best", "#1", "cheapest", "top-rated", "most popular".
+- **"Every / all plans" claims** — "we offer all the plans", "every plan in your area". CMS TPMO requires you to say you do **NOT** offer every plan; flag self-contradiction with the TPMO disclaimer as a hard fail.
+- **Implied government affiliation** — wording or imagery suggesting endorsement by Medicare / CMS / the federal government.
+- **"Free" misuse** — calling a $0-premium plan "free".
+- **Guaranteed savings / returns** — "you'll save $X", "guaranteed returns" (especially life/IUL/annuity).
+- **Missing required disclaimers** — TPMO + non-affiliation (Medicare); HealthCare.gov direction (ACA); no-guarantee / illustration caveats (life); informational-only.
+- **TCPA** — call/text CTAs without consent language.
+- **Unsourced / absolute claims** on YMYL topics.
+
+**Output:** a verdict — **PASS** or **FIX REQUIRED** — plus the flagged phrases with rewrites, phrased as the AI's reasoning (not a static form). Part J runs as part of the audit; a **FIX-REQUIRED** result **blocks publish** (same gate as Part H). The writers call this before publish.
 
 ---
 
@@ -165,6 +217,8 @@ Tick all before publishing any page:
 7. [ ] Indexable + in sitemap; utility/thin pages set to `noindex`
 8. [ ] Facts sourced (no fabrication); author + dates shown (for articles); clear CTA
 9. [ ] Passes policy check (not thin/doorway/cloaked/stuffed); YMYL pages have visible expertise
+10. [ ] **Four Pillars pass** (Part H) — Org "Data Desk" author + FAQPage + Dataset-per-source + Pillar-4 site surfaces (llms.txt w/ Tools section, AI crawlers not blocked, WebMCP on data sites)
+11. [ ] **Insurance compliance pass** (Part J) — no banned superlatives / "every-plan" overclaims / "free" misuse / guaranteed-savings; required disclaimers present; FIX-REQUIRED blocks publish
 
 ---
 
@@ -172,8 +226,12 @@ Tick all before publishing any page:
 
 ```
 SEO + AEO Audit — <page URL or path>
-Verdict: READY ✅  |  NOT READY ❌  (N must-fix open)
-Score: <passed>/<total> checks
+Verdict: READY ✅ | NEAR 🟡 | NOT READY ❌   (NOT READY if any Part H pillar fails or Part J = FIX REQUIRED)
+AEO/AI Readiness: <score>/100   (P0-gated on Part H)
+Human Experience:  <score>/100   (Part I — readability + engageability)
+
+Four Pillars (Part H): P1 author <pass/fail> · P2 FAQPage <pass/fail> · P3 Dataset <pass/fail> · P4 site-agentic <pass/fail>
+Compliance (Part J): PASS | FIX REQUIRED
 
 🔴 Must-fix
 - <Item> — <what's wrong> → <one-line fix>
@@ -183,6 +241,9 @@ Score: <passed>/<total> checks
 
 🟢 Nice-to-have
 - <Item> — <fix>
+
+Readability & Engageability (Part I): <quote offending passage → rewrite>; reading-level/scannability/voice notes
+Compliance (Part J): <offending phrase> @ <where> — breaks <rule> → <compliant rewrite>
 
 What's already good: <short list>
 ```
