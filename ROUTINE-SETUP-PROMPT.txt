@@ -40,8 +40,20 @@ Do the whole setup end to end and verify each step. Specifically:
 
 3) WRITE + SHIP ONE CORNERSTONE POST NOW (proves the whole pipeline)
    - Pick a high-value topic for the site's niche & location. Write a real, fully SEO+AEO-optimized post
-     using the repo's skills (brand-identity, seo-aeo-publishing, blog-write, blog-geo, blog-schema) and,
-     for insurance/health niches, the `ambrose-insurance-data` skill.
+     using the project's Ambrose Insurance skills. These skills live in `.claude/skills/` IN THIS REPO
+     (they ship with the project, so the remote/cloud routine already has them); the canonical source
+     bundle is kept locally at `D:\amrbsose skills\` and must stay byte-in-sync with each repo's
+     `.claude/skills/`. Read `CLAUDE.md` first, then use:
+       • PRIMARY WRITER → `medicare-blog-writer` (this is a Medicare site). Other niches: `aca-blog-writer`
+         / `life-insurance-blog-writer` / `blog-post-writer`.
+       • REAL DATA → `ambrose-insurance-data` (the Ambrose Brain) — every figure verified, never fabricated.
+       • LOCATION / GEO posts → `location-page-factory` (LocalBusiness + GovernmentService + Place + Dataset).
+       • PRE-PUBLISH GATE → `seo-aeo-page-audit` — must PASS Part H (Four-Pillar) + Part J (insurance
+         compliance) and score Part I (readability) before publish; a Part H/J failure BLOCKS the post.
+     Every post injects the SAA FOUR-PILLAR AI-Citation Standard: Article schema with ORG author
+     "<Brand> Data Desk" (the named advisor is the visible byline / reviewedBy — single-Person YMYL
+     authors are banned), a FAQPage, a Dataset block for every .gov source cited (creator.url = exact
+     endpoint), and site-level llms.txt + WebMCP.
    - DATA RULES (never fabricate a number; cite every stat with a real link):
        • PRIMARY: the Ambrose Insurance Brain MCP ("Ambrose brain MCP" connector) — brain_catalog →
          brain_tool_schema → brain_execute (e.g. cdc_county_health, census_market_snapshot,
@@ -65,13 +77,16 @@ Do the whole setup end to end and verify each step. Specifically:
        • cron_expression derived from POSTS_PER_WEEK, spread across the week at OFF-PEAK, off-:00 minutes
          (e.g. 1/wk → "37 14 * * 1"; 2/wk → "37 14 * * 1,4"; 3/wk → "37 14 * * 1,3,5";
           7/wk → "37 14 * * *"). Cron is in my local timezone.
-   - The routine PROMPT must be fully self-contained and tell each run to: git pull; read BRAND.md +
-     BLOG-AUTHORING.md; pick a FRESH topic not already in the blog (rotate the niche's content cluster);
-     fetch REAL data from the Ambrose brain FIRST and verify/supplement via federal-site web search;
-     write the two files with mandatory stats + a chart, full SEO/AEO schema, and cited .gov sources;
-     build + run the canonical/leak checks; then commit only the content files and push to main so
-     Cloudflare auto-deploys. End by reporting the title, slug, both live URLs, the data sources used,
-     and the commit hash.
+   - The routine PROMPT must be fully self-contained and tell each run to: git pull; read CLAUDE.md +
+     BRAND.md + BLOG-AUTHORING.md; pick a FRESH topic not already in the blog (rotate the niche's content
+     cluster); pull REAL data FIRST via the `ambrose-insurance-data` skill (the Ambrose Brain) and
+     verify/supplement via federal-site web search; draft the post with the niche writer skill
+     (`medicare-blog-writer` for this site, from `.claude/skills/`) — two files, mandatory stats + a chart,
+     the full Four-Pillar schema (Org "<Brand> Data Desk" author + FAQPage + Dataset per .gov source) and
+     cited .gov sources; then run the `seo-aeo-page-audit` skill and FIX until Part H (Four-Pillar) +
+     Part J (compliance) PASS; build + run the canonical/leak checks; then commit only the content files
+     and push to main so Cloudflare auto-deploys. End by reporting the title, slug, both live URLs, the
+     data sources used, the audit verdict, and the commit hash.
 
 5) HYGIENE
    - Do NOT also create a local scheduled task (remote only) to avoid double-posting.
