@@ -48,8 +48,9 @@ Do the whole setup end to end and verify each step. Specifically:
          / `life-insurance-blog-writer` / `blog-post-writer`.
        • REAL DATA → `ambrose-insurance-data` (the Ambrose Brain) — every figure verified, never fabricated.
        • LOCATION / GEO posts → `location-page-factory` (LocalBusiness + GovernmentService + Place + Dataset).
-       • PRE-PUBLISH GATE → `seo-aeo-page-audit` — must PASS Part H (Four-Pillar) + Part J (insurance
-         compliance) and score Part I (readability) before publish; a Part H/J failure BLOCKS the post.
+       • PRE-PUBLISH GATE → `aeo-website-checklist` — must PASS the Four-Pillar P0 + Part J (insurance
+         compliance) + Part K (HIPAA pixel), and `page-quality-score` must hit ≥85 before publish; a
+         Four-Pillar/Part J/K failure or a sub-85 quality score BLOCKS the post.
      Every post injects the SAA FOUR-PILLAR AI-Citation Standard: Article schema with ORG author
      "<Brand> Data Desk" (the named advisor is the visible byline / reviewedBy — single-Person YMYL
      authors are banned), a FAQPage, a Dataset block for every .gov source cited (creator.url = exact
@@ -83,8 +84,9 @@ Do the whole setup end to end and verify each step. Specifically:
      verify/supplement via federal-site web search; draft the post with the niche writer skill
      (`medicare-blog-writer` for this site, from `.claude/skills/`) — two files, mandatory stats + a chart,
      the full Four-Pillar schema (Org "<Brand> Data Desk" author + FAQPage + Dataset per .gov source) and
-     cited .gov sources; then run the `seo-aeo-page-audit` skill and FIX until Part H (Four-Pillar) +
-     Part J (compliance) PASS; build + run the canonical/leak checks; then commit only the content files
+     cited .gov sources; then run the `aeo-website-checklist` skill and FIX until the Four-Pillar P0 +
+     Part J (compliance) + Part K (HIPAA pixel) PASS and `page-quality-score` is ≥85; build + run the
+     canonical/leak checks; then commit only the content files
      and push to main so Cloudflare auto-deploys. End by reporting the title, slug, both live URLs, the
      data sources used, the audit verdict, and the commit hash.
 

@@ -61,7 +61,7 @@ In brand voice, plain accessible language. Include ALL:
 - **Open Graph + Twitter Card:** `og:title`, `og:description`, `og:url` (this page), `og:image` (~1200×630), `og:type`; `twitter:card=summary_large_image`.
 - **JSON-LD schema:** `Article` (or `BlogPosting`) + author `Organization` ("<Site> Data Desk") + publisher `Organization` + `reviewedBy` `Person` (visible byline) + `BreadcrumbList` + `FAQPage` + `Dataset` (per the Dataset bullet below) (and `HowTo` for tutorials). `datePublished` + `dateModified` always present. Markup must match visible content.
 - **Dataset schema (Pillar 3 — the moat):** inject one `Dataset` block per authoritative/.gov source cited (Brain-sourced figures included). `creator.url` = the **exact endpoint** (e.g. `cdc.gov/places`, `census.gov`, `cms.gov`), NOT the homepage. Use the JSON template: `{"@context":"https://schema.org","@type":"Dataset","name":"<source dataset name>","description":"<1 sentence on what was pulled>","creator":{"@type":"Organization","name":"<source name>","url":"<exact endpoint URL>"},"license":"https://creativecommons.org/publicdomain/zero/1.0/","isAccessibleForFree":true}`. Skip ONLY if no external data is cited.
-- **Pillar 4 (site-level) reminder:** confirm the site serves a valid `/llms.txt` (with a "Tools (agent-callable)" section), does **not** block AI crawlers, and (data-driven sites) exposes WebMCP (`/.well-known/mcp.json` + `/mcp` proxy + in-page `navigator.modelContext`). If missing, flag it — the `seo-aeo-page-audit` will gate on it.
+- **Pillar 4 (site-level) reminder:** confirm the site serves a valid `/llms.txt` (with a "Tools (agent-callable)" section), does **not** block AI crawlers, and (data-driven sites) exposes WebMCP (`/.well-known/mcp.json` + `/mcp` proxy + in-page `navigator.modelContext`). If missing, flag it — the `aeo-website-checklist` will gate on it.
 
 ### STEP 7 — Branding & UI consistency
 - Use brand colors/fonts/components via the site's tokens (never hardcode hex). Use existing section/MDX components. **Do not change global UI/CSS** — author within existing components.
@@ -76,7 +76,7 @@ In brand voice, plain accessible language. Include ALL:
 4. **Test UI:** view the rendered page on **desktop + mobile** (preview/screenshot) — proper **spacing**, no overflow/cut-off, readable contrast, **all images have alt**, brand colors correct, layout not broken. Fix and rebuild.
 
 ### STEP 10 — Run the SEO + AEO audit
-- Run the **`seo-aeo-page-audit`** skill (or its checklist) on the finished article. Resolve every 🔴 must-fix before publishing.
+- Run the **`aeo-website-checklist`** skill (or its checklist) on the finished article. Resolve every 🔴 must-fix before publishing.
 
 ---
 
@@ -99,7 +99,7 @@ In brand voice, plain accessible language. Include ALL:
 - [ ] Brand colors/fonts/components; no global UI changes
 - [ ] Category rotated (not same as recent); topic not duplicated (no cannibalization); if site is one of several templated sites, copy is genuinely rewritten per site (not a templated near-duplicate)
 - [ ] Built + previewed; charts/stats render; UI spacing tested desktop + mobile
-- [ ] `seo-aeo-page-audit` run — all 🔴 resolved
+- [ ] `aeo-website-checklist` run — all 🔴 resolved
 
 ## Notes
 - Accuracy > volume. A correct, sourced 3,500-word piece beats an 8,000-word unverified one.

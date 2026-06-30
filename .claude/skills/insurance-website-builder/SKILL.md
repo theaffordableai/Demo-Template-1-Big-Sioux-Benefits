@@ -6,7 +6,7 @@ description: >-
 
 # Insurance Website Builder (USA · Astro · Four-Pillar) — self-contained
 
-Builds ONE complete, premium, COMPLIANT insurance agency website and prepares it to deploy. Everything needed is in this file — pair with `brand-design-kit` for the visual system and `location-page-factory` for local pages, and call `seo-aeo-page-audit` before publish. Insurance is **YMYL**: never fabricate a number, never give individualized advice, always cite authoritative/`.gov` sources, always include the required disclaimers.
+Builds ONE complete, premium, COMPLIANT insurance agency website and prepares it to deploy. Everything needed is in this file — pair with `brand-design-kit` for the visual system and `location-page-factory` for local pages, and call `aeo-website-checklist` before publish. Insurance is **YMYL**: never fabricate a number, never give individualized advice, always cite authoritative/`.gov` sources, always include the required disclaimers.
 
 **Stack:** Astro 5 → Cloudflare Pages (git-connected auto-deploy). Output `dist`, build `npm run build`.
 
@@ -61,7 +61,7 @@ Inject in `<head>` on every page:
 4. Ensure a git-connected Cloudflare Pages project (branch `main`, build `npm run build`, output `dist`); trigger deploy; confirm live.
 
 ### STEP 8 — Run the audit before publish
-- Run **`seo-aeo-page-audit`** on every key page. Resolve every 🔴 (incl. Part H Four-Pillar P0, Part J insurance compliance) before going live.
+- Run **`aeo-website-checklist`** on every key page. Resolve every 🔴 (incl. the Four-Pillar P0, Part J insurance compliance, Part K HIPAA pixel) before going live. Then run **`page-quality-score`** and clear the ≥85 gate — or drive both gates plus the fix loop with **`website-quality-loop`**.
 
 ---
 
@@ -73,7 +73,7 @@ Inject in `<head>` on every page:
 - [ ] 🔴 Niche compliance: Medicare TPMO + non-affiliation, no banned superlatives, no "all/every plan", no "free" misuse / ACA HealthCare.gov + caveats / life no-guarantees; informational-only; TCPA on CTAs
 - [ ] 🔴 GHL lead capture wired; no fabricated data in any field
 - [ ] 🔴 Build clean; canonical = production domain; leak-check = 0; desktop + mobile tested
-- [ ] 🔴 `seo-aeo-page-audit` run on key pages — all 🔴 resolved (Parts H + J included)
+- [ ] 🔴 `aeo-website-checklist` run on key pages — all 🔴 resolved (Four-Pillar + Parts J/K); `page-quality-score` ≥85
 
 ## Notes
 - Quality bar: greenins / enrollmedicare. If it looks like a generic template, it's not done.

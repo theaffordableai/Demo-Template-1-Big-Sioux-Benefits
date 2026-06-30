@@ -25,7 +25,7 @@ names, colors, fonts, phone, address, or advisor — always pull from the config
 or `BRAND.md` — name, advisor, domain, colors, market), **update the brand facts in this CLAUDE.md
 to match** so the two never drift.
 
-## Which skill to use (all 9 live in `.claude/skills/`)
+## Which skill to use (all 11 live in `.claude/skills/`)
 Describe the task; the matching skill triggers. For this **Medicare** site:
 
 | Task | Skill |
@@ -37,9 +37,11 @@ Describe the task; the matching skill triggers. For this **Medicare** site:
 | Write a Medicare article (primary) | **medicare-blog-writer** |
 | Write an ACA / life article (if scope expands) | **aca-blog-writer** / **life-insurance-blog-writer** |
 | Write any non-insurance article | **blog-post-writer** |
-| Pre-publish QA on any page | **seo-aeo-page-audit** (the gate) |
+| Pre-publish structural audit (pass/fail, read-only) | **aeo-website-checklist** (the audit; supersedes `seo-aeo-page-audit`) |
+| Content quality score 0–100 (the ≥85 gate) | **page-quality-score** |
+| Take the whole site to publish-ready (audit → score → fix → publish) | **website-quality-loop** (the orchestrator) |
 
-Typical flow: **brand-design-kit → insurance-website-builder → (ambrose-insurance-data + a writer) → seo-aeo-page-audit → publish.**
+Typical flow: **brand-design-kit → insurance-website-builder → (ambrose-insurance-data + a writer) → aeo-website-checklist + page-quality-score (or run them both via website-quality-loop) → publish.**
 
 ## Non-negotiables on every page (Four-Pillar AI-Citation Standard)
 1. **Authorship** — `Article/WebPage` schema with Org author `"Big Sioux Benefits Data Desk"`;
@@ -58,7 +60,8 @@ Schema is centralized in `src/lib/schema.ts` — don't hand-roll JSON-LD in page
 TPMO + non-affiliation disclaimer in the footer & posts; **state "we do not offer every plan"**;
 no banned superlatives ("best", "#1", "cheapest", "top-rated"); never call a $0-premium plan
 "free"; no implied government/CMS endorsement; TCPA consent on call/text CTAs; education, not
-advice. `seo-aeo-page-audit` **Part J** reads the finished copy and blocks publish on violations.
+advice. `aeo-website-checklist` **Part J** reads the finished copy and blocks publish on violations
+(and **Part K** flags client-side HIPAA/CIPA tracking pixels on health pages).
 
 ## Content & data
 - Pages are data-driven: `src/lib/content.ts` (coverage / education / tools / services arrays) +
@@ -75,4 +78,5 @@ DEPLOY_TARGET=cloudflare npm run build   # use npm run build (runs the image-opt
 grep -rEl "pages\.dev|netlify\.app|vercel\.app|workers\.dev|localhost" dist | wc -l   # must be 0
 ```
 Canonical must be the production domain, never `*.pages.dev`. Test desktop + mobile, then run
-`seo-aeo-page-audit` (resolve every 🔴, incl. Parts H/I/J) before publish.
+`aeo-website-checklist` (resolve every 🔴, incl. Four-Pillar + Parts J/K) and `page-quality-score`
+(≥85) before publish — or run both gates plus the fix loop via `website-quality-loop`.

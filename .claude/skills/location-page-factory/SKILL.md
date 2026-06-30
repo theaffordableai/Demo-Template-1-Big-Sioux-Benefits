@@ -46,7 +46,7 @@ Inject in `<head>`:
 ### STEP 6 — Build, TEST, audit
 1. `DEPLOY_TARGET=cloudflare npm run build` clean; canonical = production domain; leak-check `grep -rEl "pages\.dev|netlify\.app|vercel\.app|workers\.dev|localhost" dist | wc -l` = 0.
 2. Desktop + mobile test: spacing, no overflow, alt text, contrast, brand colors.
-3. Run **`seo-aeo-page-audit`** — resolve every 🔴, especially **Part D (duplicate/doorway)**, **Part H (Four-Pillar P0)**, **Part J (insurance compliance)**.
+3. Run **`aeo-website-checklist`** — resolve every 🔴, especially duplicate/doorway risk (Architecture phase), the **Four-Pillar P0**, and **Part J (insurance compliance)**. Then run **`page-quality-score`** and clear the ≥85 gate (a near-duplicate city page is what tanks the score).
 
 ---
 
@@ -58,7 +58,7 @@ Inject in `<head>`:
 - [ ] 🔴 Site-level Pillar 4: /llms.txt lists location pages, AI crawlers unblocked, WebMCP on data-driven sites
 - [ ] 🔴 Compliance: no banned superlatives / "all plans" / "free" misuse; niche disclaimers + TPMO (Medicare); informational-only; TCPA on CTAs
 - [ ] 🔴 Hero = real advisor photo → optional generation → brand graphic; NEVER anonymous stock; no Higgsfield dependency
-- [ ] 🔴 Build clean; canonical = production domain; leak-check 0; desktop + mobile tested; `seo-aeo-page-audit` Parts D/H/J pass
+- [ ] 🔴 Build clean; canonical = production domain; leak-check 0; desktop + mobile tested; `aeo-website-checklist` (Four-Pillar + Part J) passes and `page-quality-score` ≥85
 
 ## Notes
 - The #1 risk for location pages is thin/doorway/templated-near-duplicate — real per-place Brain data is the defense.
