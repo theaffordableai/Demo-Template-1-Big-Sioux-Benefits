@@ -43,6 +43,20 @@ Describe the task; the matching skill triggers. For this **Medicare** site:
 
 Typical flow: **brand-design-kit → insurance-website-builder → (ambrose-insurance-data + a writer) → aeo-website-checklist + page-quality-score (or run them both via website-quality-loop) → publish.**
 
+> **MANDATORY pre-publish gate for EVERY blog post and EVERY page.** Before any page or article
+> is published, built for deploy, or marked done, you **must** run all three quality skills — no
+> exceptions, even for a one-line edit or a "quick" new page:
+> 1. **`aeo-website-checklist`** — structural audit; resolve every 🔴 (Four-Pillar P0 + Part J
+>    compliance + Part K HIPAA pixel). Must return **READY** (or NEAR with no 🔴).
+> 2. **`page-quality-score`** — content quality; must score **≥85** (3-pass median). Below 85 →
+>    fix the weakest dimension and re-score; do not publish.
+> 3. **`website-quality-loop`** — use to run both gates + the fix→re-score loop across a page set
+>    (or the whole site) and to route failing pages back to the right builder.
+>
+> A page/post publishes **only** when both gates PASS (or are explicitly WAIVED via
+> `audit.overrides` in `site.config.ts`; HIPAA/compliance waivers need a written acknowledgment and
+> are never hidden). Never skip these to "save time."
+
 ## Non-negotiables on every page (Four-Pillar AI-Citation Standard)
 1. **Authorship** — `Article/WebPage` schema with Org author `"Big Sioux Benefits Data Desk"`;
    advisor (Dale Hofer) is a visible byline / `reviewedBy` (single-Person YMYL authors banned).
